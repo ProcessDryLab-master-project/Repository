@@ -5,6 +5,11 @@ namespace Repository
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            if (builder.Environment.IsDevelopment())
+            {
+                Console.WriteLine("Environment.IsDevelopment");
+                builder.WebHost.UseUrls("https://localhost:4000");
+            }
 
             // Add services to the container.
             builder.Services.AddAuthorization();
@@ -28,8 +33,10 @@ namespace Repository
 
             var summaries = new[]
             {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            };
+
+            app.MapGet("/", () => "Hello World!");
 
             app.MapGet("/weatherforecast", (HttpContext httpContext) =>
             {
@@ -44,6 +51,13 @@ namespace Repository
                 return forecast;
             })
             .WithName("GetWeatherForecast");
+
+            _ = new Endpoints.Endpoints(app);
+            //_ = new Requests.Requests(app);
+
+
+            //if (app.Environment.IsDevelopment()) app.Run("https://localhost:4000");
+            //else app.Run();
 
             app.Run();
         }
