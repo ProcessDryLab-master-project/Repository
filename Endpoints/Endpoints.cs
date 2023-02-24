@@ -22,7 +22,7 @@ namespace Repository.Endpoints
             // To retrieve configuration for the registrationprocess in ServiceRegistry
             app.MapGet("/configurations", (HttpContext httpContext) =>
             {
-                return "Here is my stuff";
+                return Registration.GetConfiguration();
             })
             .WithName("GetConfiguration");
 
