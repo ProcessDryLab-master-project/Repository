@@ -2,20 +2,28 @@
 {
     public class ResourceReceiver
     {
-        static string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-        public async Task SaveResource(string resourceName, string resource)
-        {
-            // Find file format to see where it should be saved
-            string saveLocation = "Logs"; // BPMN, PNML, ...
-            Save(resourceName, resource, saveLocation);
-        }
+        static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
 
-        private async Task Save(string resourceName, string resource, string saveLocation)
+        public static IResult SaveResource(HttpRequest request)
         {
-            string path = Path.Combine(pathToResources, saveLocation);
-            string filePath = Path.Combine(path, resourceName);
-
-            await File.WriteAllTextAsync(filePath, resource);
+            if (!request.Form.Files.Any())
+            {
+                return Results.BadRequest("At least one file is needed");
+            }
+            foreach (var file in request.Form.Files)
+            {
+                string fileType = Path.GetExtension(file.FileName).Replace(".", "").ToUpper();
+                string pathToFileType = Path.Combine(pathToResources, fileType);
+                if(!File.Exists(pathToFileType))
+                {
+                    Console.WriteLine("No folder exists for this file type, creating " + pathToFileType);
+                    Directory.CreateDirectory(pathToFileType);
+                }
+                string pathToFile = Path.Combine(pathToFileType, file.FileName);
+                using var stream = new FileStream(pathToFile, FileMode.Create);
+                file.CopyTo(stream);
+            }
+            return Results.Ok("File upload successful");
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Repository.App;
 using System.Net;
+using Repository.App;
+
 
 namespace Repository.Endpoints
 {
@@ -25,13 +27,33 @@ namespace Repository.Endpoints
 
 
             // ----------------- DATA ----------------- //
-            // To save incomming logs from frontend or models (.bpmn, .pnml etc) from miner
-            app.MapPost("/resources", (HttpContext httpContext) =>
+            // To save incomming files (.png, .xes, .bpmn, .pnml etc)
+            app.MapPost("/resources", (HttpRequest request) =>
             {
-                // Find file format and save in corresponding folders (Logs, BPMN, PNML, etc)
-                return "File saved";
+                return ResourceReceiver.SaveResource(request);
             })
-            .WithName("SaveResource");
+            .Accepts<IFormFile>("multipart/form-data")
+            .Produces(200);
+            //.WithName("SaveFile");
+
+            // Alternate approach. You can 
+            //app.MapPost("/resources", async (HttpRequest request) =>
+            //{
+            //    using (var reader = new StreamReader(request.Body, System.Text.Encoding.UTF8))
+            //    {
+            //        // Read the raw file as a `string`.
+            //        string fileContent = await reader.ReadToEndAsync();
+            //        // Do something with `fileContent`...
+            //        return "File Was Processed Sucessfully!";
+            //    }
+            //}).Accepts<IFormFile>("text/plain");
+
+            //[HttpGet]
+            //public IActionResult Get()
+            //{
+            //    Byte[] b = System.IO.File.ReadAllBytes(@"E:\\Test.jpg");   // You can use your own method over here.         
+            //    return File(b, "image/jpeg");
+            //}
 
             // To retrieve a list of available resources
             app.MapGet("/resources", (HttpContext httpContext) =>

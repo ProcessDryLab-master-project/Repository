@@ -5,7 +5,7 @@ namespace Repository.App
 {
     public class ResourceRetriever
     {
-        static string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+        static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
 
         // Should this be async? async Task<string>
         public static string GetResource(string resourceName)
@@ -23,6 +23,7 @@ namespace Repository.App
         {
             string path = Path.Combine(pathToResources, resourceLocation);
             string filePath = Path.Combine(path, resourceName);
+            // Check if file exists, return BadRequest if it doesn't
             string log = File.ReadAllText(filePath);
             return log;
         }
