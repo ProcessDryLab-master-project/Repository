@@ -7,54 +7,37 @@ namespace Repository.App
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
 
-        // Should this be async? async Task<string>
-        public static string GetResource(string resourceName)
+        public static IResult GetResourceByName(string resourceName)
         {
-            // TODO: Find file format and call the corresponding function
-            // (if it's a .xes it will be in Logs, if .bpmn it will be in BPMN)
-
-            // if (resourceName.Contains(".xes", StringComparison.OrdinalIgnoreCase))
-            string saveLocation = "Logs";
-
-            return Load(resourceName, saveLocation);
-        }
-
-        private static string Load(string resourceName, string resourceLocation)
-        {
-            string path = Path.Combine(pathToResources, resourceLocation);
-            string filePath = Path.Combine(path, resourceName);
-            // Check if file exists, return BadRequest if it doesn't
-            string log = File.ReadAllText(filePath);
-            return log;
+            string fileType = Path.GetExtension(resourceName).Replace(".", "").ToUpper();
+            string pathToFileType = Path.Combine(pathToResources, fileType);
+            string pathToFile = Path.Combine(pathToFileType, resourceName);
+            if (!File.Exists(pathToFile))
+            {
+                string badResponse = "No such file exists for path " + pathToFileType;
+                return Results.BadRequest(badResponse);
+            }
+            return Results.File(pathToFile, resourceName);
         }
 
         // Alternative way. Might be better for streaming a file
-        public static string GetFilePath(string resourceName)
+        public static HttpResponseMessage StreamResponse(string resourceName)
         {
-            // TODO: Find file format and call the corresponding function
-            // (if it's a .xes it will be in Logs, if .bpmn it will be in BPMN)
+            string fileType = Path.GetExtension(resourceName).Replace(".", "").ToUpper();
+            string pathToFileType = Path.Combine(pathToResources, fileType);
+            string pathToFile = Path.Combine(pathToFileType, resourceName);
+            if (!File.Exists(pathToFile))
+            {
+                string badResponse = "No such file exists for path " + pathToFileType;
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+            response.Content = new StreamContent(new FileStream(pathToFile, FileMode.Open, FileAccess.Read));
+            response.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+            response.Content.Headers.ContentDisposition.FileName = resourceName;
+            //response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/xes");
 
-            // if (resourceName.Contains(".xes", StringComparison.OrdinalIgnoreCase))
-            string resourceLocation = "Logs";
-
-            string path = Path.Combine(pathToResources, resourceLocation);
-            string filePath = Path.Combine(path, resourceName);
-
-            return filePath;
+            return response;
         }
-
-        // If we want separate functions for each type?
-        //GetPNML
-        //string pathToPNML = Path.Combine(pathToResources, "PNML");
-        //string pnmlName = Path.Combine(pathToPNML, resourceName);
-
-        // GetImg
-        //string pathToImages = Path.Combine(pathToResources, "Images");
-        //string imageName = Path.Combine(pathToImages, resourceName);
-
-        // GetBPMN
-        // GetHTML
-        // GetBIN
-        // ...
     }
 }
