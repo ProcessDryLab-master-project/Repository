@@ -18,7 +18,15 @@ namespace Repository
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors();
+
             var app = builder.Build();
+
+            app.UseCors(builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            );
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -31,33 +39,9 @@ namespace Repository
 
             app.UseAuthorization();
 
-            //var summaries = new[]
-            //{
-            //    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            //};
-
             app.MapGet("/", () => "Hello World!");
 
-            //app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            //{
-            //    var forecast = Enumerable.Range(1, 5).Select(index =>
-            //        new WeatherForecast
-            //        {
-            //            Date = DateTime.Now.AddDays(index),
-            //            TemperatureC = Random.Shared.Next(-20, 55),
-            //            Summary = summaries[Random.Shared.Next(summaries.Length)]
-            //        })
-            //        .ToArray();
-            //    return forecast;
-            //})
-            //.WithName("GetWeatherForecast");
-
-            _ = new Endpoints.Endpoints(app);
-            //_ = new Requests.Requests(app);
-
-
-            //if (app.Environment.IsDevelopment()) app.Run("https://localhost:4000");
-            //else app.Run();
+            new Endpoints.Endpoints(app);
 
             app.Run();
         }
