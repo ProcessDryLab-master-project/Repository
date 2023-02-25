@@ -13,7 +13,7 @@ namespace Repository.Endpoints
         {
             // ----------------- CONNECTION ----------------- //
             // To maintain connection
-            app.MapGet("/ping", (HttpContext httpContext) =>
+            app.MapGet("/api/v1/system/ping", (HttpContext httpContext) =>
             {
                 return "pong";
             })
@@ -29,7 +29,7 @@ namespace Repository.Endpoints
 
             // ----------------- DATA ----------------- //
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
-            app.MapPost("/resources", (HttpRequest request) =>
+            app.MapPost("/api/v1/resources", (HttpRequest request) =>
             {
                 return ResourceReceiver.SaveResource(request);
             })
@@ -50,21 +50,21 @@ namespace Repository.Endpoints
 
 
             // To retrieve/output a list of available resources
-            app.MapGet("/resources", (HttpContext httpContext) =>
+            app.MapGet("/api/v1/resources", (HttpContext httpContext) =>
             {
                 return "These resources are available:";
             })
             .WithName("GetAvailableResources");
 
             // To retrieve/output model representation (.bpmn, png etc) for the frontend
-            app.MapGet("/resources/{resourceName}", (string resourceName) =>
+            app.MapGet("/api/v1/resources/{resourceName}", (string resourceName) =>
             {
                 return ResourceRetriever.GetResourceByName(resourceName);
             })
             .WithName("GetResourceByName");
 
             // Alternative way? For streaming?
-            app.MapGet("/resources/stream/{resourceName}", HttpResponseMessage (string resourceName) =>
+            app.MapGet("/api/v1/resources/stream/{resourceName}", HttpResponseMessage (string resourceName) =>
             {
                 return ResourceRetriever.StreamResponse(resourceName);
             }).WithName("StreamResource");
