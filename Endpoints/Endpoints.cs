@@ -3,7 +3,9 @@ using Repository.App;
 using System.Net;
 using Repository.App;
 using System.Reflection;
-
+using Newtonsoft.Json;
+using System;
+using Newtonsoft.Json.Linq;
 
 namespace Repository.Endpoints
 {
@@ -52,7 +54,8 @@ namespace Repository.Endpoints
             // To retrieve/output a list of available resources
             app.MapGet("/api/v1/resources", (HttpContext httpContext) =>
             {
-                return "These resources are available:";
+                //return "These resources are available:";
+                return new JArray();
             })
             .WithName("GetAvailableResources");
 
