@@ -35,7 +35,7 @@ namespace Repository.Endpoints
             {
                 return ResourceReceiver.SaveResource(request);
             })
-            .Accepts<IFormFile>("multipart/form-data")
+            //.Accepts<IFormFile>("multipart/form-data")
             .Produces(200);
 
             // Alternate approach to save incomming files. You can send any content type as string 
