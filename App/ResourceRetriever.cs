@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿using Microsoft.VisualBasic.FileIO;
+using Newtonsoft.Json;
+using System.Collections.Specialized;
+using System.Net;
 using System.Reflection;
 
 namespace Repository.App
@@ -6,6 +9,59 @@ namespace Repository.App
     public class ResourceRetriever
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+
+        public static IResult GetResourceList()
+        {
+            string pathToFileType = Path.Combine(pathToResources, "XES");
+
+            string[] files = Directory.GetFiles(pathToResources, "*.*", System.IO.SearchOption.AllDirectories);
+
+            List<Dictionary<string, object>> resourceList = new();
+            foreach (string file in files)
+            {
+                string fileName = Path.GetFileName(file); // To remove path, and only get file name
+                BuildResourceObject(resourceList, fileName);
+            }
+            var json = JsonConvert.SerializeObject(resourceList);
+            return Results.Text(json, contentType: "application/json");
+
+            static void BuildResourceObject(List<Dictionary<string, object>> resourceList, string fileName)
+            {
+                resourceList.Add(new Dictionary<string, object>
+                {
+                    { "id", "id1" },
+                    { "name", fileName },
+                    { "type",  new Dictionary<string, object>
+                        {
+                            {
+                                "name", Path.GetExtension(fileName).Replace(".", "")
+                            },
+                            {
+                                "description", "Some file"
+                            },
+                            {
+                                "visualizations", new List<Dictionary<string, string>>()
+                                {
+                                    new Dictionary<string, string>()
+                                    {
+                                        {"id","v1"},
+                                        {"name","Vis 1"}
+                                    },
+                                    new Dictionary<string, string>()
+                                    {
+                                        {"id","v2"},
+                                        {"name","Vis 2"}
+                                    },
+
+                                }
+                            }
+                        }
+                    },
+                    { "host", "https://localhost:4000" },
+                    { "creationDate", "02-03-2023 10:26:29" },
+                });
+            }
+        }
 
         public static IResult GetResourceByName(string resourceName)
         {
@@ -38,6 +94,81 @@ namespace Repository.App
             //response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/xes");
 
             return response;
+        }
+
+
+
+        // Functions specifically for OLD frontend
+        public static IResult GetResourceListOLD()
+        {
+            string[] files = Directory.GetFiles(pathToResources, "*.*", System.IO.SearchOption.AllDirectories);
+
+            List<Dictionary<string, object>> resourceList = new();
+            foreach (string file in files)
+            {
+                string fileName = Path.GetFileName(file); // To remove path, and only get file name
+                BuildResourceObject(resourceList, fileName);
+            }
+            var json = JsonConvert.SerializeObject(resourceList);
+            return Results.Text(json, contentType: "application/json");
+
+            static void BuildResourceObject(List<Dictionary<string, object>> resourceList, string fileName)
+            {
+                resourceList.Add(new Dictionary<string, object>
+                {
+                    { "id", "id1" },
+                    { "name", fileName },
+                    { "type",  new Dictionary<string, object>
+                        {
+                            {
+                                "name", Path.GetExtension(fileName).Replace(".", "")
+                            },
+                            {
+                                "description", "Some file"
+                            },
+                            {
+                                "visualizations", new List<Dictionary<string, string>>()
+                                {
+                                    new Dictionary<string, string>()
+                                    {
+                                        {"id","v1"},
+                                        {"name","Vis 1"}
+                                    },
+                                    new Dictionary<string, string>()
+                                    {
+                                        {"id","v2"},
+                                        {"name","Vis 2"}
+                                    },
+
+                                }
+                            }
+                        }
+                    },
+                    { "host", "https://localhost:4000" },
+                    { "creationDate", "02-03-2023 10:26:29" },
+                });
+            }
+        }
+
+
+        // This is also an example of an async response and how to read body. Keep for inspiration even if we delete the endpoint.
+        public static async Task<IResult> GetVisualizationById(HttpRequest request, string resourceId, string visualizationId)
+        {
+            // read  body from request:
+            var body = new StreamReader(request.Body);
+            string postData = await body.ReadToEndAsync();
+            Console.WriteLine(postData);
+
+
+            string fileType = Path.GetExtension(visualizationId).Replace(".", "").ToUpper();
+            string pathToFileType = Path.Combine(pathToResources, fileType);
+            string pathToFile = Path.Combine(pathToFileType, visualizationId);
+            if (!File.Exists(pathToFile))
+            {
+                string badResponse = "No such file exists for path " + pathToFileType;
+                return Results.BadRequest(badResponse);
+            }
+            return Results.File(pathToFile, visualizationId);
         }
     }
 }

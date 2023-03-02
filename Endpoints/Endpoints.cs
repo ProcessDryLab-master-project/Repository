@@ -15,23 +15,21 @@ namespace Repository.Endpoints
         {
             // ----------------- CONNECTION ----------------- //
             // To maintain connection
-            app.MapGet("/api/v1/system/ping", (HttpContext httpContext) =>
+            app.MapGet("ping", (HttpContext httpContext) =>
             {
                 return "pong";
-            })
-            .WithName("Ping");
+            });
 
             // To retrieve configuration for the registrationprocess in ServiceRegistry
             app.MapGet("/configurations", (HttpContext httpContext) =>
             {
                 return Registration.GetConfiguration();
-            })
-            .WithName("GetConfiguration");
+            });
 
 
             // ----------------- DATA ----------------- //
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
-            app.MapPost("/api/v1/resources", (HttpRequest request) =>
+            app.MapPost("/resources", (HttpRequest request) =>
             {
                 return ResourceReceiver.SaveResource(request);
             })
@@ -52,25 +50,72 @@ namespace Repository.Endpoints
 
 
             // To retrieve/output a list of available resources
-            app.MapGet("/api/v1/resources", (HttpContext httpContext) =>
+            app.MapGet("/resources", (HttpContext httpContext) =>
             {
-                //return "These resources are available:";
-                return new JArray();
-            })
-            .WithName("GetAvailableResources");
+                return ResourceRetriever.GetResourceList();
+            });
 
             // To retrieve/output model representation (.bpmn, png etc) for the frontend
-            app.MapGet("/api/v1/resources/{resourceName}", (string resourceName) =>
+            app.MapGet("/resources/{resourceId}", (string resourceId) =>
             {
-                return ResourceRetriever.GetResourceByName(resourceName);
+                return ResourceRetriever.GetResourceByName(resourceId);
+            });
+
+            // Alternative way? For streaming?
+            app.MapGet("/resources/stream/{resourceName}", HttpResponseMessage (string resourceName) =>
+            {
+                return ResourceRetriever.StreamResponse(resourceName);
+            });
+
+
+
+            // ----------------- Ugly endpoints ----------------- //
+            // ----------------- CONNECTION ----------------- //
+            // To maintain connection
+            app.MapGet("/api/v1/system/ping", (HttpContext httpContext) =>
+            {
+                return "pong";
+            });
+
+            // To retrieve configuration for the registrationprocess in ServiceRegistry
+            app.MapGet("/api/v1/configurations", (HttpContext httpContext) =>
+            {
+                return Registration.GetConfiguration();
+            });
+
+
+            // ----------------- DATA ----------------- //
+            // To save incomming files (.png, .xes, .bpmn, .pnml etc)
+            app.MapPost("/api/v1/resources", (HttpRequest request) =>
+            {
+                return ResourceReceiver.SaveResource(request);
             })
-            .WithName("GetResourceByName");
+            .Produces(200);
+
+
+            // To retrieve/output a list of available resources
+            app.MapGet("/api/v1/resources", (HttpContext httpContext) =>
+            {
+                return ResourceRetriever.GetResourceList();
+            });
+
+            // To retrieve resource (any resource, .xes, .bpmn, .png etc)
+            app.MapGet("/api/v1/resources/{resourceId}/content", (string resourceId) =>
+            {
+                return ResourceRetriever.GetResourceByName(resourceId);
+            });
+
+            // To retrieve representation of resource - specifically for "buildResourceVisualization" in the old frontend
+            //app.MapGet("/api/v1/resources/{resourceId}/view/{visualizationId}", async (HttpRequest request, string resourceId, string visualizationId) =>
+            //{
+            //    return ResourceRetriever.GetVisualizationById(request, resourceId, visualizationId);
+            //});
 
             // Alternative way? For streaming?
             app.MapGet("/api/v1/resources/stream/{resourceName}", HttpResponseMessage (string resourceName) =>
             {
                 return ResourceRetriever.StreamResponse(resourceName);
-            }).WithName("StreamResource");
+            });
         }
     }
 }
