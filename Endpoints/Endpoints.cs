@@ -68,7 +68,7 @@ namespace Repository.Endpoints
             });
 
 
-
+            #region OldEndpoints
             // ----------------- Ugly endpoints ----------------- //
             // ----------------- CONNECTION ----------------- //
             // To maintain connection
@@ -96,7 +96,7 @@ namespace Repository.Endpoints
             // To retrieve/output a list of available resources
             app.MapGet("/api/v1/resources", (HttpContext httpContext) =>
             {
-                return ResourceRetriever.GetResourceList();
+                return ResourceRetriever.GetResourceListOld();
             });
 
             // To retrieve resource (any resource, .xes, .bpmn, .png etc)
@@ -116,6 +116,7 @@ namespace Repository.Endpoints
             {
                 return ResourceRetriever.StreamResponse(resourceName);
             });
+            #endregion
         }
     }
 }

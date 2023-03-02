@@ -16,8 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\Logs\" />
-    <Folder Include="Resources\Visualization\" />
+    <Folder Include="Resources\Visualization\JPG\" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,13 @@
+using Repository.App;
+
 namespace Repository
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+            //DBManager.FillMetadata(); // Will fill the metadata file with all the files in Resources. REMEMBER to delete the contents of the file before
+
             var builder = WebApplication.CreateBuilder(args);
             if (builder.Environment.IsDevelopment())
             {

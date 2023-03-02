@@ -12,61 +12,15 @@ namespace Repository.App
 
         public static IResult GetResourceList()
         {
-            string pathToFileType = Path.Combine(pathToResources, "XES");
-
-            string[] files = Directory.GetFiles(pathToResources, "*.*", System.IO.SearchOption.AllDirectories);
-
-            List<Dictionary<string, object>> resourceList = new();
-            foreach (string file in files)
-            {
-                string fileName = Path.GetFileName(file); // To remove path, and only get file name
-                BuildResourceObject(resourceList, fileName);
-            }
+            var resourceList = DBManager.GetMetadataAsList();
             var json = JsonConvert.SerializeObject(resourceList);
             return Results.Text(json, contentType: "application/json");
-
-            static void BuildResourceObject(List<Dictionary<string, object>> resourceList, string fileName)
-            {
-                resourceList.Add(new Dictionary<string, object>
-                {
-                    { "id", "id1" },
-                    { "name", fileName },
-                    { "type",  new Dictionary<string, object>
-                        {
-                            {
-                                "name", Path.GetExtension(fileName).Replace(".", "")
-                            },
-                            {
-                                "description", "Some file"
-                            },
-                            {
-                                "visualizations", new List<Dictionary<string, string>>()
-                                {
-                                    new Dictionary<string, string>()
-                                    {
-                                        {"id","v1"},
-                                        {"name","Vis 1"}
-                                    },
-                                    new Dictionary<string, string>()
-                                    {
-                                        {"id","v2"},
-                                        {"name","Vis 2"}
-                                    },
-
-                                }
-                            }
-                        }
-                    },
-                    { "host", "https://localhost:4000" },
-                    { "creationDate", "02-03-2023 10:26:29" },
-                });
-            }
         }
 
         public static IResult GetResourceByName(string resourceName)
         {
-            string fileType = Path.GetExtension(resourceName).Replace(".", "").ToUpper();
-            string pathToFileType = Path.Combine(pathToResources, fileType);
+            string fileExtension = Path.GetExtension(resourceName).Replace(".", "").ToUpper();
+            string pathToFileType = Path.Combine(pathToResources, fileExtension);
             string pathToFile = Path.Combine(pathToFileType, resourceName);
             if (!File.Exists(pathToFile))
             {
@@ -97,9 +51,9 @@ namespace Repository.App
         }
 
 
-
-        // Functions specifically for OLD frontend
-        public static IResult GetResourceListOLD()
+        #region OldFrontend
+        // --------- FUNCTIONS FOR OLD FRONTEND --------- //
+        public static IResult GetResourceListOld()
         {
             string[] files = Directory.GetFiles(pathToResources, "*.*", System.IO.SearchOption.AllDirectories);
 
@@ -170,5 +124,6 @@ namespace Repository.App
             }
             return Results.File(pathToFile, visualizationId);
         }
+        #endregion
     }
 }
