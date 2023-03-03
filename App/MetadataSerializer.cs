@@ -6,7 +6,7 @@ namespace Repository.App
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string? FileId { get; set; }
-        public string FileName { get; set; }
+        public string FileLabel { get; set; }
         public string FileType { get; set; }
         public string FileExtension { get; set; }
         public string RepositoryHost { get; set; }

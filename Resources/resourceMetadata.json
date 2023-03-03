@@ -1,186 +1,171 @@
 {
-  "resourceMetadata.json": {
-    "FileName": "resourceMetadata",
-    "FileType": "Visualization",
-    "FileExtension": "json",
-    "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
-  },
-  "custom-conformant-long.xes": {
-    "FileName": "custom-conformant-long",
+  "custom-conformant-longXES": {
+    "FileLabel": "custom-conformant-longXES",
     "FileType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:58"
   },
-  "custom-conformant-small.xes": {
-    "FileName": "custom-conformant-small",
+  "custom-conformant-smallXES": {
+    "FileLabel": "custom-conformant-smallXES",
     "FileType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "custom-conformant.xes": {
-    "FileName": "custom-conformant",
+  "custom-conformantXES": {
+    "FileLabel": "custom-conformantXES",
     "FileType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "example-log.xes": {
-    "FileName": "example-log",
+  "example-logXES": {
+    "FileLabel": "example-logXES",
     "FileType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "loan-process.xes": {
-    "FileName": "loan-process",
+  "loan-processXES": {
+    "FileLabel": "loan-processXES",
     "FileType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "ML1_renamed.xes": {
-    "FileName": "ML1_renamed",
+  "ML1_renamedXES": {
+    "FileLabel": "ML1_renamedXES",
     "FileType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "running-example.xes": {
-    "FileName": "running-example",
+  "running-exampleXES": {
+    "FileLabel": "running-exampleXES",
     "FileType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "A3E1.bpmn": {
-    "FileName": "A3E1",
+  "A3E1BPMN": {
+    "FileLabel": "A3E1BPMN",
     "FileType": "Visualization",
     "FileExtension": "bpmn",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "create_content.bpmn": {
-    "FileName": "create_content",
+  "create_contentBPMN": {
+    "FileLabel": "create_contentBPMN",
     "FileType": "Visualization",
     "FileExtension": "bpmn",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "credit-score.bpmn": {
-    "FileName": "credit-score",
+  "credit-scoreBPMN": {
+    "FileLabel": "credit-scoreBPMN",
     "FileType": "Visualization",
     "FileExtension": "bpmn",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "NewBPMN.bpmn": {
-    "FileName": "NewBPMN",
+  "NewBPMNBPMN": {
+    "FileLabel": "NewBPMNBPMN",
     "FileType": "Visualization",
     "FileExtension": "bpmn",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "exampleDOT.dot": {
-    "FileName": "exampleDOT",
+  "exampleDOT2DOT": {
+    "FileLabel": "exampleDOT2DOT",
     "FileType": "Visualization",
     "FileExtension": "dot",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "exampleDOT2.dot": {
-    "FileName": "exampleDOT2",
+  "exampleDOTDOT": {
+    "FileLabel": "exampleDOTDOT",
     "FileType": "Visualization",
     "FileExtension": "dot",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "exampleBackup.png": {
-    "FileName": "exampleBackup",
+  "exampleBackupPNG": {
+    "FileLabel": "exampleBackupPNG",
     "FileType": "Visualization",
     "FileExtension": "png",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "exampleBPMN.png": {
-    "FileName": "exampleBPMN",
+  "exampleBPMNPNG": {
+    "FileLabel": "exampleBPMNPNG",
     "FileType": "Visualization",
     "FileExtension": "png",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "test.png": {
-    "FileName": "test",
+  "testFromC#PNG": {
+    "FileLabel": "testFromC#PNG",
     "FileType": "Visualization",
     "FileExtension": "png",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "testFromC#.png": {
-    "FileName": "testFromC#",
+  "testFromPythonPNG": {
+    "FileLabel": "testFromPythonPNG",
     "FileType": "Visualization",
     "FileExtension": "png",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "testFromPython.png": {
-    "FileName": "testFromPython",
+  "testPNG": {
+    "FileLabel": "testPNG",
     "FileType": "Visualization",
     "FileExtension": "png",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "custom-ref-model.pnml": {
-    "FileName": "custom-ref-model",
+  "custom-ref-modelPNML": {
+    "FileLabel": "custom-ref-modelPNML",
     "FileType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "running-example.pnml": {
-    "FileName": "running-example",
+  "running-exampleFromC#PNML": {
+    "FileLabel": "running-exampleFromC#PNML",
     "FileType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "running-exampleFromC#.pnml": {
-    "FileName": "running-exampleFromC#",
+  "running-examplePNML": {
+    "FileLabel": "running-examplePNML",
     "FileType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "SimpleTransmissionProtocol.pnml": {
-    "FileName": "SimpleTransmissionProtocol",
+  "SimpleTransmissionProtocolPNML": {
+    "FileLabel": "SimpleTransmissionProtocolPNML",
     "FileType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "stochastic_running_example.pnml": {
-    "FileName": "stochastic_running_example",
+  "stochastic_running_examplePNML": {
+    "FileLabel": "stochastic_running_examplePNML",
     "FileType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:26"
+    "CreationDate": "03-03-2023 11:30:59"
   },
-  "1ac8060a-5ea3-43cf-a8e2-e2c0df34f899": {
-    "FileName": "complex_petrinet",
+  "4ff2be94-03c3-44d6-84c3-8e8c854401f6": {
+    "FileLabel": "complex_petrinet.jpg",
     "FileType": "Visualization",
     "FileExtension": "jpg",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:29:36",
-    "BasedOnId": "custom-conformant.xes"
-  },
-  "369c992f-c7dd-4209-a50c-186d0f7f4ed5": {
-    "FileName": "pnml",
-    "FileType": "Visualization",
-    "FileExtension": "pnml",
-    "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 10:30:53",
-    "BasedOnId": "running-example.xes"
+    "CreationDate": "03-03-2023 11:31:33",
+    "BasedOnId": "custom-conformantXES"
   }
 }

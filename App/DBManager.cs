@@ -24,9 +24,9 @@ namespace Repository.App
             return metadataAsList;
         }
 
-        public static void AddToMetadata(string fileName, string fileType, string fileExtension, string GUID, string? basedOnId = null)
+        public static void AddToMetadata(string fileLabel, string fileType, string fileExtension, string GUID, string? basedOnId = null)
         {
-            var newMetadataObj = BuildResourceObject(fileName, fileType, fileExtension, basedOnId);
+            var newMetadataObj = BuildResourceObject(fileLabel, fileType, fileExtension, basedOnId);
 
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
 
@@ -43,11 +43,11 @@ namespace Repository.App
         }
 
         
-        private static MetadataObject BuildResourceObject(string fileName, string fileType, string fileExtension, string? basedOnId = null)
+        private static MetadataObject BuildResourceObject(string fileLabel, string fileType, string fileExtension, string? basedOnId = null)
         {
             return new MetadataObject
             {
-                FileName = fileName,                        // Puts file name without extension
+                FileLabel = fileLabel,                      // Puts file name without extension
                 FileType = fileType,                        // EventLog or Visualization. Could make an Enum for this.
                 FileExtension = fileExtension,              // .xes, .bpmn etc.
                 RepositoryHost = "https://localhost:4000",  // TODO: Should probably read this from somewhere to make it dynamic.
@@ -75,17 +75,34 @@ namespace Repository.App
             {
                 string fileName = Path.GetFileNameWithoutExtension(file);
                 string fileExtension = Path.GetExtension(file).Replace(".", ""); // e.g. save "xes", not ".xes". Can also do ToUpper() to save with upper case like the folders
+
                 string fileType;
                 if (fileExtension.Equals("XES", StringComparison.OrdinalIgnoreCase))
                     fileType = "EventLog";
                 else
                     fileType = "Visualization";
 
-                string nameAsId = fileName + "." + fileExtension;
-                AddToMetadata(fileName, fileType, fileExtension, nameAsId);
+                
+
+                if(!fileExtension.Equals("json", StringComparison.OrdinalIgnoreCase))
+                {
+                    string fileId = fileName;
+                    //fileId = ChangeFileNames(file, fileName, fileExtension); // Should not be called unless you want to change all file names to include the extension
+                    AddToMetadata(fileName, fileType, fileExtension, fileId);
+                }
             }
         }
 
+
+        // Should ONLY be called if we want to change all the file names to include the extension
+        private static string ChangeFileNames(string file, string fileName, string fileExtension)
+        {
+            string fileId = fileName + fileExtension.ToUpper();
+            string newFilePath = Path.Combine(Path.GetDirectoryName(file), fileId + Path.GetExtension(file));
+            File.Move(file, newFilePath);
+            Console.WriteLine("New file name: " + fileId);
+            return fileId;
+        }
 
 
         // If we don't want to serialize into an object, but just want to use ListDictionary:
