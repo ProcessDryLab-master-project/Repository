@@ -167,5 +167,13 @@
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:31:33",
     "BasedOnId": "custom-conformantXES"
+  },
+  "47d992ef-106a-4361-a39e-ab3d07bf0883": {
+    "FileLabel": "running-exampleXES.pnml",
+    "FileType": "Visualization",
+    "FileExtension": "pnml",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:40:18",
+    "BasedOnId": "running-exampleXES"
   }
 }
