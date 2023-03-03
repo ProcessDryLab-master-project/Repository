@@ -17,17 +17,19 @@ namespace Repository.App
             return Results.Text(json, contentType: "application/json");
         }
 
-        public static IResult GetResourceByName(string resourceName)
+        public static IResult GetResourceById(string resourceId)
         {
-            string fileExtension = Path.GetExtension(resourceName).Replace(".", "").ToUpper();
-            string pathToFileType = Path.Combine(pathToResources, fileExtension);
-            string pathToFile = Path.Combine(pathToFileType, resourceName);
+            MetadataObject metadataObject = DBManager.GetMetadataObjectById(resourceId);
+            string pathToFileType = Path.Combine(pathToResources, metadataObject.FileType);
+            //string fileExtension = Path.GetExtension(resourceId).Replace(".", "").ToUpper();
+            string pathToFileExtension = Path.Combine(pathToFileType, metadataObject.FileExtension.ToUpper());
+            string pathToFile = Path.Combine(pathToFileExtension, resourceId);
             if (!File.Exists(pathToFile))
             {
-                string badResponse = "No such file exists for path " + pathToFileType;
+                string badResponse = "No such file exists for path " + pathToFile; // TODO: Should not return the entire path, just easier like this for now
                 return Results.BadRequest(badResponse);
             }
-            return Results.File(pathToFile, resourceName);
+            return Results.File(pathToFile, resourceId);
         }
 
         // Alternative way. Might be better for streaming a file

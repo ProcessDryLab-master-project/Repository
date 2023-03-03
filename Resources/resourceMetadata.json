@@ -1,177 +1,186 @@
 {
-  "c8458edb-68ba-49a4-8435-7645acceede4": {
-    "name": "resourceMetadata",
-    "type": "Visualization",
-    "extension": ".json",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.2564307+01:00"
+  "resourceMetadata.json": {
+    "FileName": "resourceMetadata",
+    "FileType": "Visualization",
+    "FileExtension": "json",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "caf600ef-e288-4e32-a248-c60f95ddbedf": {
-    "name": "custom-conformant-long",
-    "type": "Visualization",
-    "extension": ".xes",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.4935377+01:00"
+  "custom-conformant-long.xes": {
+    "FileName": "custom-conformant-long",
+    "FileType": "EventLog",
+    "FileExtension": "xes",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "8d813c6b-4fb1-490a-9e31-aa88430daf45": {
-    "name": "custom-conformant-small",
-    "type": "Visualization",
-    "extension": ".xes",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.5632453+01:00"
+  "custom-conformant-small.xes": {
+    "FileName": "custom-conformant-small",
+    "FileType": "EventLog",
+    "FileExtension": "xes",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "ef5c060d-3b63-4a6a-b9ae-387528e02d04": {
-    "name": "custom-conformant",
-    "type": "Visualization",
-    "extension": ".xes",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.5754403+01:00"
+  "custom-conformant.xes": {
+    "FileName": "custom-conformant",
+    "FileType": "EventLog",
+    "FileExtension": "xes",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "f833f35c-3bbb-4f81-aad8-ab421dc2f797": {
-    "name": "example-log",
-    "type": "Visualization",
-    "extension": ".xes",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.5850803+01:00"
+  "example-log.xes": {
+    "FileName": "example-log",
+    "FileType": "EventLog",
+    "FileExtension": "xes",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "c34e3b65-0f7e-4f07-85cd-c9de1091b64d": {
-    "name": "loan-process",
-    "type": "Visualization",
-    "extension": ".xes",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.5975055+01:00"
+  "loan-process.xes": {
+    "FileName": "loan-process",
+    "FileType": "EventLog",
+    "FileExtension": "xes",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "d69e7b88-6d31-4582-b2c8-a873d9b02a3e": {
-    "name": "ML1_renamed",
-    "type": "Visualization",
-    "extension": ".xes",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.6099602+01:00"
+  "ML1_renamed.xes": {
+    "FileName": "ML1_renamed",
+    "FileType": "EventLog",
+    "FileExtension": "xes",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "167e0747-6af4-4b81-9273-c2cc81f39362": {
-    "name": "running-example",
-    "type": "Visualization",
-    "extension": ".xes",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.6195839+01:00"
+  "running-example.xes": {
+    "FileName": "running-example",
+    "FileType": "EventLog",
+    "FileExtension": "xes",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "73629cb8-a7d5-4910-abf4-0a85205a5da2": {
-    "name": "A3E1",
-    "type": "Visualization",
-    "extension": ".bpmn",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.6309264+01:00"
+  "A3E1.bpmn": {
+    "FileName": "A3E1",
+    "FileType": "Visualization",
+    "FileExtension": "bpmn",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "44be274b-284e-446a-89c5-38998c33d720": {
-    "name": "create_content",
-    "type": "Visualization",
-    "extension": ".bpmn",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.6464221+01:00"
+  "create_content.bpmn": {
+    "FileName": "create_content",
+    "FileType": "Visualization",
+    "FileExtension": "bpmn",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "df9c7187-07e7-4190-9fc0-c219cc80f62b": {
-    "name": "credit-score",
-    "type": "Visualization",
-    "extension": ".bpmn",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.6641149+01:00"
+  "credit-score.bpmn": {
+    "FileName": "credit-score",
+    "FileType": "Visualization",
+    "FileExtension": "bpmn",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "ea0428ab-7ea9-4d08-860d-e58e9115e9f9": {
-    "name": "NewBPMN",
-    "type": "Visualization",
-    "extension": ".bpmn",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.6949595+01:00"
+  "NewBPMN.bpmn": {
+    "FileName": "NewBPMN",
+    "FileType": "Visualization",
+    "FileExtension": "bpmn",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "867a2553-dadf-43bb-9fda-5e938474098c": {
-    "name": "exampleDOT",
-    "type": "Visualization",
-    "extension": ".dot",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.7255046+01:00"
+  "exampleDOT.dot": {
+    "FileName": "exampleDOT",
+    "FileType": "Visualization",
+    "FileExtension": "dot",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "7abbca5e-013b-4650-a3c6-16823e7e4c02": {
-    "name": "exampleDOT2",
-    "type": "Visualization",
-    "extension": ".dot",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.7457327+01:00"
+  "exampleDOT2.dot": {
+    "FileName": "exampleDOT2",
+    "FileType": "Visualization",
+    "FileExtension": "dot",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "77ce630d-e81e-4343-9128-e8fa2ed9eecc": {
-    "name": "complex_petrinet",
-    "type": "Visualization",
-    "extension": ".jpg",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.7624366+01:00"
+  "exampleBackup.png": {
+    "FileName": "exampleBackup",
+    "FileType": "Visualization",
+    "FileExtension": "png",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "a32d638b-6a11-434c-a6f1-e7ec44e9125d": {
-    "name": "exampleBackup",
-    "type": "Visualization",
-    "extension": ".png",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.7780876+01:00"
+  "exampleBPMN.png": {
+    "FileName": "exampleBPMN",
+    "FileType": "Visualization",
+    "FileExtension": "png",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "02d8679b-4af1-4dd6-aa91-5c61cb81eed2": {
-    "name": "exampleBPMN",
-    "type": "Visualization",
-    "extension": ".png",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.7973125+01:00"
+  "test.png": {
+    "FileName": "test",
+    "FileType": "Visualization",
+    "FileExtension": "png",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "9bca2091-535e-4d14-9b1e-f150802210e2": {
-    "name": "test",
-    "type": "Visualization",
-    "extension": ".png",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.8109634+01:00"
+  "testFromC#.png": {
+    "FileName": "testFromC#",
+    "FileType": "Visualization",
+    "FileExtension": "png",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "acd7cfd7-0f98-45f6-9bd8-3f94ac3623e8": {
-    "name": "testFromC#",
-    "type": "Visualization",
-    "extension": ".png",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.8227709+01:00"
+  "testFromPython.png": {
+    "FileName": "testFromPython",
+    "FileType": "Visualization",
+    "FileExtension": "png",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "bd334753-4393-45ba-a1b0-b66a1d9ad91f": {
-    "name": "testFromPython",
-    "type": "Visualization",
-    "extension": ".png",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.837782+01:00"
+  "custom-ref-model.pnml": {
+    "FileName": "custom-ref-model",
+    "FileType": "Visualization",
+    "FileExtension": "pnml",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "156aa6ad-f2b5-435c-aacc-f1a122fa548a": {
-    "name": "custom-ref-model",
-    "type": "Visualization",
-    "extension": ".pnml",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.8527723+01:00"
+  "running-example.pnml": {
+    "FileName": "running-example",
+    "FileType": "Visualization",
+    "FileExtension": "pnml",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "4677940a-3aef-4163-ad11-903fc59bb3e3": {
-    "name": "running-example",
-    "type": "Visualization",
-    "extension": ".pnml",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.8732591+01:00"
+  "running-exampleFromC#.pnml": {
+    "FileName": "running-exampleFromC#",
+    "FileType": "Visualization",
+    "FileExtension": "pnml",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "93d33ec3-a1c0-4212-a7c1-91159c39662b": {
-    "name": "running-exampleFromC#",
-    "type": "Visualization",
-    "extension": ".pnml",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.8938966+01:00"
+  "SimpleTransmissionProtocol.pnml": {
+    "FileName": "SimpleTransmissionProtocol",
+    "FileType": "Visualization",
+    "FileExtension": "pnml",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "71742583-3023-481b-ab16-6c0a6cd4b745": {
-    "name": "SimpleTransmissionProtocol",
-    "type": "Visualization",
-    "extension": ".pnml",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.9101177+01:00"
+  "stochastic_running_example.pnml": {
+    "FileName": "stochastic_running_example",
+    "FileType": "Visualization",
+    "FileExtension": "pnml",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:26"
   },
-  "e0960814-af3a-4394-848f-347f95200b48": {
-    "name": "stochastic_running_example",
-    "type": "Visualization",
-    "extension": ".pnml",
-    "host": "https://localhost:4000",
-    "creationDate": "2023-03-02T14:20:39.9269232+01:00"
+  "1ac8060a-5ea3-43cf-a8e2-e2c0df34f899": {
+    "FileName": "complex_petrinet",
+    "FileType": "Visualization",
+    "FileExtension": "jpg",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:29:36",
+    "BasedOnId": "custom-conformant.xes"
+  },
+  "369c992f-c7dd-4209-a50c-186d0f7f4ed5": {
+    "FileName": "pnml",
+    "FileType": "Visualization",
+    "FileExtension": "pnml",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 10:30:53",
+    "BasedOnId": "running-example.xes"
   }
 }

@@ -37,16 +37,15 @@ namespace Repository.Endpoints
             .Produces(200);
 
             // Alternate approach to save incomming files. You can send any content type as string 
-            //app.MapPost("/resources", async (HttpRequest request) =>
-            //{
-            //    using (var reader = new StreamReader(request.Body, System.Text.Encoding.UTF8))
-            //    {
-            //        // Read the raw file as a `string`.
-            //        string fileContent = await reader.ReadToEndAsync();
-            //        // Do something with `fileContent`...
-            //        return "File Was Processed Sucessfully!";
-            //    }
-            //}).Accepts<IFormFile>("text/plain");
+            app.MapPost("/resources/binary", async (HttpRequest request) =>
+            {
+                using var reader = new StreamReader(request.Body, System.Text.Encoding.UTF8);
+                // Read the raw file as a `string`.
+                string fileContent = await reader.ReadToEndAsync();
+                // Do something with `fileContent`...
+                return "File Was Processed Sucessfully!";
+            });
+            //.Accepts<IFormFile>("text/plain");
 
 
             // To retrieve/output a list of available resources
@@ -58,7 +57,7 @@ namespace Repository.Endpoints
             // To retrieve/output model representation (.bpmn, png etc) for the frontend
             app.MapGet("/resources/{resourceId}", (string resourceId) =>
             {
-                return ResourceRetriever.GetResourceByName(resourceId);
+                return ResourceRetriever.GetResourceById(resourceId);
             });
 
             // Alternative way? For streaming?
@@ -102,7 +101,7 @@ namespace Repository.Endpoints
             // To retrieve resource (any resource, .xes, .bpmn, .png etc)
             app.MapGet("/api/v1/resources/{resourceId}/content", (string resourceId) =>
             {
-                return ResourceRetriever.GetResourceByName(resourceId);
+                return ResourceRetriever.GetResourceById(resourceId);
             });
 
             // To retrieve representation of resource - specifically for "buildResourceVisualization" in the old frontend
