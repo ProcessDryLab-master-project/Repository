@@ -36,10 +36,10 @@ namespace Repository.App
             File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
 
-        public static MetadataObject GetMetadataObjectById(string resourceId)
+        public static MetadataObject? GetMetadataObjectById(string resourceId)
         {
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            return metadataDict[resourceId];
+            return metadataDict.GetValue(resourceId);
         }
 
         
@@ -118,4 +118,15 @@ namespace Repository.App
         //    };
         //}
     }
+
+    #region extensionMethods
+    public static class ExtensionMethods
+    {
+        public static TV GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default(TV))
+        {
+            TV value;
+            return dict.TryGetValue(key, out value) ? value : defaultValue;
+        }
+    }
+    #endregion
 }

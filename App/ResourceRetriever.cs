@@ -19,7 +19,8 @@ namespace Repository.App
 
         public static IResult GetResourceById(string resourceId)
         {
-            MetadataObject metadataObject = DBManager.GetMetadataObjectById(resourceId);
+            MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);
+            if(metadataObject == null) return Results.BadRequest("Invalid resource ID.");
             string pathToFileType = Path.Combine(pathToResources, metadataObject.FileType);
             string pathToFileExtension = Path.Combine(pathToFileType, metadataObject.FileExtension.ToUpper());
             string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.FileExtension);

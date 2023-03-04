@@ -24,6 +24,12 @@ namespace Repository
 
             builder.Services.AddCors();
 
+            // Streaming? Register a third party API with the HttpClient instance in the DI services. From here: https://www.learmoreseekmore.com/2021/12/minimal-api-Result-stream-return-type.html
+            builder.Services.AddScoped(httpClient => new HttpClient
+            {
+                BaseAddress = new Uri("https://jsonplaceholder.typicode.com/")
+            });
+
             var app = builder.Build();
 
             app.UseCors(builder => builder

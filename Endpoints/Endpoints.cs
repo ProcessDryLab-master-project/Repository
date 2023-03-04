@@ -6,6 +6,8 @@ using System.Reflection;
 using Newtonsoft.Json;
 using System;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Hosting;
+using System.IO.Pipelines;
 
 namespace Repository.Endpoints
 {
@@ -13,6 +15,7 @@ namespace Repository.Endpoints
     {
         public Endpoints(WebApplication app)
         {
+            var _hostEnvironment = app.Environment;
             // ----------------- CONNECTION ----------------- //
             // To maintain connection
             app.MapGet("ping", (HttpContext httpContext) =>
@@ -36,18 +39,6 @@ namespace Repository.Endpoints
             //.Accepts<IFormFile>("multipart/form-data")
             .Produces(200);
 
-            // Alternate approach to save incomming files. You can send any content type as string 
-            app.MapPost("/resources/binary", async (HttpRequest request) =>
-            {
-                using var reader = new StreamReader(request.Body, System.Text.Encoding.UTF8);
-                // Read the raw file as a `string`.
-                string fileContent = await reader.ReadToEndAsync();
-                // Do something with `fileContent`...
-                return "File Was Processed Sucessfully!";
-            });
-            //.Accepts<IFormFile>("text/plain");
-
-
             // To retrieve/output a list of available resources
             app.MapGet("/resources", (HttpContext httpContext) =>
             {
@@ -60,12 +51,60 @@ namespace Repository.Endpoints
                 return ResourceRetriever.GetResourceById(resourceId);
             });
 
-            // Alternative way? For streaming?
-            app.MapGet("/resources/stream/{resourceName}", HttpResponseMessage (string resourceName) =>
+            #region streamingAndTesting
+            // To input a stream
+            app.MapPost("/resources/stream", async (Stream body) =>
             {
-                return ResourceRetriever.StreamResponse(resourceName);
+                //string tempfile = CreateTempfilePath();
+                //using var stream = File.OpenWrite(tempfile);
+                //await body.CopyToAsync(stream);
+            });
+            static string CreateTempfilePath()
+            {
+                var filename = $"{Guid.NewGuid()}.tmp";
+                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "temp");
+                if (!Directory.Exists(directoryPath)) Directory.CreateDirectory(directoryPath);
+
+                return Path.Combine(directoryPath, filename);
+            }
+
+
+            // To output a stream
+            app.MapGet("test-api", async (HttpClient httpClient) =>
+            {
+                var streamResponse = await httpClient.GetStreamAsync("posts");
+                return Results.Stream(streamResponse, "application/json");
             });
 
+            app.MapGet("/resources/stream/{resourceId}", (string resourceId) =>
+            {
+                string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+
+                MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);
+                if (metadataObject == null) return Results.BadRequest("Invalid resource ID.");
+                string pathToFileType = Path.Combine(pathToResources, metadataObject.FileType);
+                string pathToFileExtension = Path.Combine(pathToFileType, metadataObject.FileExtension.ToUpper());
+                string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.FileExtension);
+
+                var filestream = File.OpenRead(pathToFile);
+                return Results.File(filestream, contentType: "video/mp4", fileDownloadName: resourceId, enableRangeProcessing: true);
+            });
+
+            // Alternate approach to save incomming files. You can send any content type as string 
+            app.MapPost("/resources/binary", async (HttpRequest request) =>
+            {
+                using var reader = new StreamReader(request.Body, System.Text.Encoding.UTF8);
+                // Read the raw file as a `string`.
+                string fileContent = await reader.ReadToEndAsync();
+                // Do something with `fileContent`...
+                return "File Was Processed Sucessfully!";
+            });
+            // Alternative way? For streaming?
+            //app.MapGet("/resources/stream/{resourceName}", HttpResponseMessage (string resourceName) =>
+            //{
+            //    return ResourceRetriever.StreamResponse(resourceName);
+            //});
+            #endregion
 
             #region OldEndpoints
             // ----------------- Ugly endpoints ----------------- //
