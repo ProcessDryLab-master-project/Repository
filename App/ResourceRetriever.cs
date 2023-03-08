@@ -17,6 +17,21 @@ namespace Repository.App
             return Results.Text(json, contentType: "application/json");
         }
 
+        public static IResult GetVisualizationList()
+        {
+            var resourceList = DBManager.GetMetadataAsList();
+            var eventLogList = resourceList.Where(resource => resource.FileType.Equals("Visualization", StringComparison.OrdinalIgnoreCase));
+            var json = JsonConvert.SerializeObject(eventLogList);
+            return Results.Text(json, contentType: "application/json");
+        }
+        public static IResult GetEventLogList()
+        {
+            var resourceList = DBManager.GetMetadataAsList();
+            var eventLogList = resourceList.Where(resource => resource.FileType.Equals("EventLog", StringComparison.OrdinalIgnoreCase));
+            var json = JsonConvert.SerializeObject(eventLogList);
+            return Results.Text(json, contentType: "application/json");
+        }
+
         public static IResult GetResourceById(string resourceId)
         {
             MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);

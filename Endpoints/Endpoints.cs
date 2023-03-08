@@ -45,6 +45,18 @@ namespace Repository.Endpoints
                 return ResourceRetriever.GetResourceList();
             });
 
+            // To retrieve/output a list of available Visualization resources
+            app.MapGet("/resources/visualizations", (HttpContext httpContext) =>
+            {
+                return ResourceRetriever.GetVisualizationList();
+            });
+
+            // To retrieve/output a list of available EventLog resources
+            app.MapGet("/resources/eventlogs", (HttpContext httpContext) =>
+            {
+                return ResourceRetriever.GetEventLogList();
+            });
+
             // To retrieve/output model representation (.bpmn, png etc) for the frontend
             app.MapGet("/resources/{resourceId}", (string resourceId) =>
             {
