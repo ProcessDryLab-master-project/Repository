@@ -175,5 +175,12 @@
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:40:18",
     "BasedOnId": "running-exampleXES"
+  },
+  "44ddad39-e2c8-469f-b7a0-113c94488fec": {
+    "FileLabel": "testDot-1.dot",
+    "FileType": "Visualization",
+    "FileExtension": "dot",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "09-03-2023 15:50:24"
   }
 }

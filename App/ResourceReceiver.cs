@@ -18,10 +18,15 @@ namespace Repository.App
             string GUID = Guid.NewGuid().ToString();
             string? basedOnId = request.Form["basedOnId"];
             basedOnId = string.IsNullOrWhiteSpace(basedOnId) ? null : basedOnId.ToString();
+            string? overwriteId = request.Form["overwriteId"];
+            //overwriteId = string.IsNullOrWhiteSpace(overwriteId) ? null : overwriteId.ToString();
 
-            foreach (var file in request.Form.Files)
+            foreach (var file in request.Form.Files) // TODO: Should only ever be one file. Maybe change code to better represent that.
             {
                 string pathToFileExtension = DefaultFileMetadata(ref fileName, ref fileType, ref fileExtension, file);
+
+                if(!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
+
                 string nameToSaveFile = GUID + "." + fileExtension;
 
                 string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);

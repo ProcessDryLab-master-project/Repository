@@ -1,0 +1,4 @@
+strict digraph StreamGraph {
+	START -> LOWER;
+	LOWER -> END;
+}
