@@ -94,8 +94,8 @@ namespace Repository.Endpoints
 
                 MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);
                 if (metadataObject == null) return Results.BadRequest("Invalid resource ID.");
-                string pathToFileType = Path.Combine(pathToResources, metadataObject.FileType);
-                string pathToFileExtension = Path.Combine(pathToFileType, metadataObject.FileExtension.ToUpper());
+                string pathToResourceType = Path.Combine(pathToResources, metadataObject.ResourceType);
+                string pathToFileExtension = Path.Combine(pathToResourceType, metadataObject.FileExtension.ToUpper());
                 string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.FileExtension);
 
                 var filestream = File.OpenRead(pathToFile);

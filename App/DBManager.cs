@@ -24,9 +24,9 @@ namespace Repository.App
             return metadataAsList;
         }
 
-        public static void AddToMetadata(string fileLabel, string fileType, string fileExtension, string GUID, string? basedOnId = null)
+        public static void AddToMetadata(string fileLabel, string resourceType, string fileExtension, string GUID, string? basedOnId = null)
         {
-            var newMetadataObj = BuildResourceObject(fileLabel, fileType, fileExtension, basedOnId);
+            var newMetadataObj = BuildResourceObject(fileLabel, resourceType, fileExtension, basedOnId);
 
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
 
@@ -43,12 +43,12 @@ namespace Repository.App
         }
 
         
-        private static MetadataObject BuildResourceObject(string fileLabel, string fileType, string fileExtension, string? basedOnId = null)
+        private static MetadataObject BuildResourceObject(string fileLabel, string resourceType, string fileExtension, string? basedOnId = null)
         {
             return new MetadataObject
             {
                 FileLabel = fileLabel,                      // Puts file name without extension
-                FileType = fileType,                        // EventLog or Visualization. Could make an Enum for this.
+                ResourceType = resourceType,                        // EventLog or Visualization. Could make an Enum for this.
                 FileExtension = fileExtension,              // .xes, .bpmn etc.
                 RepositoryHost = "https://localhost:4000",  // TODO: Should probably read this from somewhere to make it dynamic.
                 CreationDate = DateTime.Now.ToString(),
@@ -76,11 +76,11 @@ namespace Repository.App
                 string fileName = Path.GetFileNameWithoutExtension(file);
                 string fileExtension = Path.GetExtension(file).Replace(".", ""); // e.g. save "xes", not ".xes". Can also do ToUpper() to save with upper case like the folders
 
-                string fileType;
+                string resourceType;
                 if (fileExtension.Equals("XES", StringComparison.OrdinalIgnoreCase))
-                    fileType = "EventLog";
+                    resourceType = "EventLog";
                 else
-                    fileType = "Visualization";
+                    resourceType = "Visualization";
 
                 
 
@@ -88,7 +88,7 @@ namespace Repository.App
                 {
                     string fileId = fileName;
                     //fileId = ChangeFileNames(file, fileName, fileExtension); // Should not be called unless you want to change all file names to include the extension
-                    AddToMetadata(fileName, fileType, fileExtension, fileId);
+                    AddToMetadata(fileName, resourceType, fileExtension, fileId);
                 }
             }
         }
@@ -103,20 +103,6 @@ namespace Repository.App
             Console.WriteLine("New file name: " + fileId);
             return fileId;
         }
-
-
-        // If we don't want to serialize into an object, but just want to use ListDictionary:
-        //private static ListDictionary BuildResourceObject(string fileName, string fileType, string fileExtension)
-        //{
-        //    return new ListDictionary
-        //    {
-        //        { "FileName", fileName },                       // Puts file name without extension
-        //        { "FileType", fileType },                       // EventLog or Visualization. Could make an Enum for this.
-        //        { "FileExtension", fileExtension },             // .xes, .bpmn etc.
-        //        { "RepositoryHost", "https://localhost:4000" }, // TODO: Should probably read this from somewhere to make it dynamic.
-        //        { "CreationDate", DateTime.Now },
-        //    };
-        //}
     }
 
     #region extensionMethods

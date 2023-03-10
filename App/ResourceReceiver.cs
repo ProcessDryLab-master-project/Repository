@@ -13,7 +13,7 @@ namespace Repository.App
                 return Results.BadRequest("At least one file is needed");
             }
             string fileName = request.Form["fileName"].ToString();
-            string fileType = request.Form["fileType"].ToString(); 
+            string resourceType = request.Form["ResourceType"].ToString(); 
             string fileExtension = request.Form["fileExtension"].ToString().Replace(".", "");
             string GUID = Guid.NewGuid().ToString();
             string? basedOnId = request.Form["basedOnId"];
@@ -23,7 +23,7 @@ namespace Repository.App
 
             foreach (var file in request.Form.Files) // TODO: Should only ever be one file. Maybe change code to better represent that.
             {
-                string pathToFileExtension = DefaultFileMetadata(ref fileName, ref fileType, ref fileExtension, file);
+                string pathToFileExtension = DefaultFileMetadata(ref fileName, ref resourceType, ref fileExtension, file);
 
                 if(!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
 
@@ -33,34 +33,34 @@ namespace Repository.App
                 using var stream = new FileStream(pathToSaveFile, FileMode.Create);
                 file.CopyTo(stream);
 
-                DBManager.AddToMetadata(fileName, fileType, fileExtension, GUID, basedOnId);
+                DBManager.AddToMetadata(fileName, resourceType, fileExtension, GUID, basedOnId);
             }
             // Return ID
             return Results.Ok(GUID);
         }
 
         // This function is to write metadata based on the file that was sent, in case some metadata is missing.
-        private static string DefaultFileMetadata(ref string fileName, ref string fileType, ref string fileExtension, IFormFile file)
+        private static string DefaultFileMetadata(ref string fileName, ref string resourceType, ref string fileExtension, IFormFile file)
         {
-            string pathToFileType;
+            string pathToResourceType;
             if (string.IsNullOrWhiteSpace(fileName)) fileName = file.FileName;
             if (string.IsNullOrWhiteSpace(fileExtension)) fileExtension = Path.GetExtension(file.FileName).Replace(".", "");
-            if (string.IsNullOrWhiteSpace(fileType))
+            if (string.IsNullOrWhiteSpace(resourceType))
             {
                 if (fileExtension.Equals("XES", StringComparison.OrdinalIgnoreCase))
                 {
-                    pathToFileType = Path.Combine(pathToResources, "EventLog"); // Cannot be "Log" as C# will ignore it
+                    pathToResourceType = Path.Combine(pathToResources, "EventLog"); // Cannot be "Log" as C# will ignore it
                 }
                 else
                 {
-                    pathToFileType = Path.Combine(pathToResources, "Visualization");
+                    pathToResourceType = Path.Combine(pathToResources, "Visualization");
                 }
             }
             else
             {
-                pathToFileType = Path.Combine(pathToResources, fileType);
+                pathToResourceType = Path.Combine(pathToResources, resourceType);
             }
-            string pathToFileExtension = Path.Combine(pathToFileType, fileExtension.ToUpper());
+            string pathToFileExtension = Path.Combine(pathToResourceType, fileExtension.ToUpper());
             if (!File.Exists(pathToFileExtension))
             {
                 Console.WriteLine("No folder exists for this file type, creating " + pathToFileExtension);

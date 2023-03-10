@@ -20,14 +20,14 @@ namespace Repository.App
         public static IResult GetVisualizationList()
         {
             var resourceList = DBManager.GetMetadataAsList();
-            var eventLogList = resourceList.Where(resource => resource.FileType.Equals("Visualization", StringComparison.OrdinalIgnoreCase));
+            var eventLogList = resourceList.Where(resource => resource.ResourceType.Equals("Visualization", StringComparison.OrdinalIgnoreCase));
             var json = JsonConvert.SerializeObject(eventLogList);
             return Results.Text(json, contentType: "application/json");
         }
         public static IResult GetEventLogList()
         {
             var resourceList = DBManager.GetMetadataAsList();
-            var eventLogList = resourceList.Where(resource => resource.FileType.Equals("EventLog", StringComparison.OrdinalIgnoreCase));
+            var eventLogList = resourceList.Where(resource => resource.ResourceType.Equals("EventLog", StringComparison.OrdinalIgnoreCase));
             var json = JsonConvert.SerializeObject(eventLogList);
             return Results.Text(json, contentType: "application/json");
         }
@@ -36,8 +36,8 @@ namespace Repository.App
         {
             MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);
             if(metadataObject == null) return Results.BadRequest("Invalid resource ID.");
-            string pathToFileType = Path.Combine(pathToResources, metadataObject.FileType);
-            string pathToFileExtension = Path.Combine(pathToFileType, metadataObject.FileExtension.ToUpper());
+            string pathToResourceType = Path.Combine(pathToResources, metadataObject.ResourceType);
+            string pathToFileExtension = Path.Combine(pathToResourceType, metadataObject.FileExtension.ToUpper());
             string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.FileExtension);
             if (!File.Exists(pathToFile))
             {
@@ -50,12 +50,12 @@ namespace Repository.App
         // Alternative way. Might be better for streaming a file
         public static HttpResponseMessage StreamResponse(string resourceName)
         {
-            string fileType = Path.GetExtension(resourceName).Replace(".", "").ToUpper();
-            string pathToFileType = Path.Combine(pathToResources, fileType);
-            string pathToFile = Path.Combine(pathToFileType, resourceName);
+            string resourceType = Path.GetExtension(resourceName).Replace(".", "").ToUpper();
+            string pathToResourceType = Path.Combine(pathToResources, resourceType);
+            string pathToFile = Path.Combine(pathToResourceType, resourceName);
             if (!File.Exists(pathToFile))
             {
-                string badResponse = "No such file exists for path " + pathToFileType;
+                string badResponse = "No such file exists for path " + pathToResourceType;
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
             }
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
@@ -131,12 +131,12 @@ namespace Repository.App
             Console.WriteLine(postData);
 
 
-            string fileType = Path.GetExtension(visualizationId).Replace(".", "").ToUpper();
-            string pathToFileType = Path.Combine(pathToResources, fileType);
-            string pathToFile = Path.Combine(pathToFileType, visualizationId);
+            string resourceType = Path.GetExtension(visualizationId).Replace(".", "").ToUpper();
+            string pathToResourceType = Path.Combine(pathToResources, resourceType);
+            string pathToFile = Path.Combine(pathToResourceType, visualizationId);
             if (!File.Exists(pathToFile))
             {
-                string badResponse = "No such file exists for path " + pathToFileType;
+                string badResponse = "No such file exists for path " + pathToResourceType;
                 return Results.BadRequest(badResponse);
             }
             return Results.File(pathToFile, visualizationId);
