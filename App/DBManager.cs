@@ -24,11 +24,11 @@ namespace Repository.App
             return metadataAsList;
         }
 
-        public static void AddToMetadata(string fileLabel, string resourceType, string fileExtension, string GUID, string? parents = null, string? children = null)
+        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string? fileExtension = null, string? streamBroker = null, string? streamTopic = null, string? parents = null, string? children = null)
         {
             bool providedParents = parents.TryParseJson(out List<string> parentsList);
             bool providedChildren = children.TryParseJson(out List<string> childrenList);
-            var newMetadataObj = BuildResourceObject(fileLabel, resourceType, fileExtension, parentsList, childrenList);
+            var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, fileExtension, streamBroker, streamTopic, parentsList, childrenList);
 
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
             UpdateParentResource(GUID, providedParents, parentsList, metadataDict);
@@ -61,13 +61,15 @@ namespace Repository.App
         }
 
         
-        private static MetadataObject BuildResourceObject(string fileLabel, string resourceType, string fileExtension, List<string>? parents = null, List<string>? children = null)
+        private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string? fileExtension = null, string? streamBroker = null, string? streamTopic = null,  List<string>? parents = null, List<string>? children = null)
         {
             return new MetadataObject
             {
-                FileLabel = fileLabel,                      // Puts file name without extension
+                ResourceLabel = resourceLabel,
                 ResourceType = resourceType,                // EventLog or Visualization. Could make an Enum for this.
-                FileExtension = fileExtension,              // .xes, .bpmn etc.
+                FileExtension = fileExtension, //string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension,  // .xes, .bpmn etc. Streams don't have FileExtension
+                StreamBroker = streamBroker, // string.IsNullOrWhiteSpace(streamBroker) ? null : streamBroker,
+                StreamTopic = streamTopic, // string.IsNullOrWhiteSpace(streamTopic) ? null : streamTopic,
                 RepositoryHost = "https://localhost:4000",  // TODO: Should probably read this from somewhere to make it dynamic.
                 CreationDate = DateTime.Now.ToString(),
                 Parents = parents,
@@ -107,7 +109,7 @@ namespace Repository.App
                 {
                     string fileId = fileName;
                     //fileId = ChangeFileNames(file, fileName, fileExtension); // Should not be called unless you want to change all file names to include the extension
-                    AddToMetadata(fileName, resourceType, fileExtension, fileId);
+                    AddToMetadata(fileName, resourceType, fileId, fileExtension);
                 }
             }
         }

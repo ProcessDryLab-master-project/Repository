@@ -8,41 +8,43 @@ namespace Repository.App
 
         public static IResult SaveResource(HttpRequest request)
         {
-            if (!request.Form.Files.Any())
-            {
-                return Results.BadRequest("At least one file is needed");
-            }
-            string fileName = request.Form["fileName"].ToString();
-            string resourceType = request.Form["ResourceType"].ToString(); 
-            string fileExtension = request.Form["fileExtension"].ToString().Replace(".", "");
+            string resourceLabel = request.Form["resourceLabel"].ToString();
+            string resourceType = request.Form["resourceType"].ToString(); 
+            string? fileExtension = request.Form["fileExtension"];
+            fileExtension = string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension.ToString().Replace(".", "");
             string GUID = Guid.NewGuid().ToString();
             string? parents = request.Form["parents"];
             string? children = request.Form["children"];
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
             children = string.IsNullOrWhiteSpace(children) ? null : children.ToString();
             string? overwriteId = request.Form["overwriteId"];
-            //overwriteId = string.IsNullOrWhiteSpace(overwriteId) ? null : overwriteId.ToString();
+            if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
+            // Stream specific
+            string? streamBroker = request.Form["streamBroker"];
+            string? streamTopic = request.Form["streamTopic"];
+            streamBroker = string.IsNullOrWhiteSpace(streamBroker) ? null : streamBroker.ToString();
+            streamTopic = string.IsNullOrWhiteSpace(streamTopic) ? null : streamTopic.ToString();
 
-            foreach (var file in request.Form.Files) // TODO: Should only ever be one file. Maybe change code to better represent that.
+            if(resourceType != "EventStream")
             {
-                string pathToFileExtension = DefaultFileMetadata(ref fileName, ref resourceType, ref fileExtension, file);
-
-                if(!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
-
+                if (!request.Form.Files.Any())
+                {
+                    return Results.BadRequest("Exactly one file is required");
+                }
+                var file = request.Form.Files[0];
+                string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
                 string nameToSaveFile = GUID + "." + fileExtension;
-
                 string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
                 using var stream = new FileStream(pathToSaveFile, FileMode.Create);
                 file.CopyTo(stream);
-
-                DBManager.AddToMetadata(fileName, resourceType, fileExtension, GUID, parents, children);
             }
-            // Return ID
+
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, fileExtension, streamBroker, streamTopic, parents, children);
             return Results.Ok(GUID);
         }
 
         // This function is to write metadata based on the file that was sent, in case some metadata is missing.
-        private static string DefaultFileMetadata(ref string fileName, ref string resourceType, ref string fileExtension, IFormFile file)
+        private static string DefaultFileMetadata(ref string fileName, ref string resourceType, ref string? fileExtension, IFormFile file)
         {
             string pathToResourceType;
             if (string.IsNullOrWhiteSpace(fileName)) fileName = file.FileName;

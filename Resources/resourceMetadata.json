@@ -1,212 +1,212 @@
 {
   "custom-conformant-longXES": {
-    "FileLabel": "custom-conformant-longXES",
+    "ResourceLabel": "custom-conformant-longXES",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:58"
   },
   "custom-conformant-smallXES": {
-    "FileLabel": "custom-conformant-smallXES",
+    "ResourceLabel": "custom-conformant-smallXES",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "custom-conformantXES": {
-    "FileLabel": "custom-conformantXES",
+    "ResourceLabel": "custom-conformantXES",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "example-logXES": {
-    "FileLabel": "example-logXES",
+    "ResourceLabel": "example-logXES",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "loan-processXES": {
-    "FileLabel": "loan-processXES",
+    "ResourceLabel": "loan-processXES",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "ML1_renamedXES": {
-    "FileLabel": "ML1_renamedXES",
+    "ResourceLabel": "ML1_renamedXES",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "running-exampleXES": {
-    "FileLabel": "running-exampleXES",
+    "ResourceLabel": "running-exampleXES",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "A3E1BPMN": {
-    "FileLabel": "A3E1BPMN",
+    "ResourceLabel": "A3E1BPMN",
     "ResourceType": "Visualization",
     "FileExtension": "bpmn",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "create_contentBPMN": {
-    "FileLabel": "create_contentBPMN",
+    "ResourceLabel": "create_contentBPMN",
     "ResourceType": "Visualization",
     "FileExtension": "bpmn",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "credit-scoreBPMN": {
-    "FileLabel": "credit-scoreBPMN",
+    "ResourceLabel": "credit-scoreBPMN",
     "ResourceType": "Visualization",
     "FileExtension": "bpmn",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "NewBPMNBPMN": {
-    "FileLabel": "NewBPMNBPMN",
+    "ResourceLabel": "NewBPMNBPMN",
     "ResourceType": "Visualization",
     "FileExtension": "bpmn",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "exampleDOT2DOT": {
-    "FileLabel": "exampleDOT2DOT",
+    "ResourceLabel": "exampleDOT2DOT",
     "ResourceType": "Visualization",
     "FileExtension": "dot",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "exampleDOTDOT": {
-    "FileLabel": "exampleDOTDOT",
+    "ResourceLabel": "exampleDOTDOT",
     "ResourceType": "Visualization",
     "FileExtension": "dot",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "exampleBackupPNG": {
-    "FileLabel": "exampleBackupPNG",
+    "ResourceLabel": "exampleBackupPNG",
     "ResourceType": "Visualization",
     "FileExtension": "png",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "exampleBPMNPNG": {
-    "FileLabel": "exampleBPMNPNG",
+    "ResourceLabel": "exampleBPMNPNG",
     "ResourceType": "Visualization",
     "FileExtension": "png",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "testFromC#PNG": {
-    "FileLabel": "testFromC#PNG",
+    "ResourceLabel": "testFromC#PNG",
     "ResourceType": "Visualization",
     "FileExtension": "png",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "testFromPythonPNG": {
-    "FileLabel": "testFromPythonPNG",
+    "ResourceLabel": "testFromPythonPNG",
     "ResourceType": "Visualization",
     "FileExtension": "png",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "testPNG": {
-    "FileLabel": "testPNG",
+    "ResourceLabel": "testPNG",
     "ResourceType": "Visualization",
     "FileExtension": "png",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "custom-ref-modelPNML": {
-    "FileLabel": "custom-ref-modelPNML",
+    "ResourceLabel": "custom-ref-modelPNML",
     "ResourceType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "running-exampleFromC#PNML": {
-    "FileLabel": "running-exampleFromC#PNML",
+    "ResourceLabel": "running-exampleFromC#PNML",
     "ResourceType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "running-examplePNML": {
-    "FileLabel": "running-examplePNML",
+    "ResourceLabel": "running-examplePNML",
     "ResourceType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "SimpleTransmissionProtocolPNML": {
-    "FileLabel": "SimpleTransmissionProtocolPNML",
+    "ResourceLabel": "SimpleTransmissionProtocolPNML",
     "ResourceType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "stochastic_running_examplePNML": {
-    "FileLabel": "stochastic_running_examplePNML",
+    "ResourceLabel": "stochastic_running_examplePNML",
     "ResourceType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
   "47d992ef-106a-4361-a39e-ab3d07bf0883": {
-    "FileLabel": "running-exampleXES.pnml",
+    "ResourceLabel": "running-exampleXES.pnml",
     "ResourceType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:40:18",
     "Parents": [
-      "21514961-4208-41ab-8c7a-3b549e22e3e3" // running-exampleXES.xes
+      "21514961-4208-41ab-8c7a-3b549e22e3e3"
     ]
   },
   "44ddad39-e2c8-469f-b7a0-113c94488fec": {
-    "FileLabel": "testDot-1.dot",
+    "ResourceLabel": "testDot-1.dot",
     "ResourceType": "Visualization",
     "FileExtension": "dot",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "09-03-2023 15:50:24"
   },
   "54af5ae7-50a2-4c40-ac78-ceabc2ce057a": {
-    "FileLabel": "custom-conformant-longXES.xes",
+    "ResourceLabel": "custom-conformant-longXES.xes",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "10-03-2023 10:44:35"
   },
   "a8c44369-5c2c-4d41-86e8-7fa53d53e2d6": {
-    "FileLabel": "custom-conformant-smallXES.xes",
+    "ResourceLabel": "custom-conformant-smallXES.xes",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "10-03-2023 10:45:01"
   },
   "8fdeee39-93d0-4d12-a62c-8e7474ebd748": {
-    "FileLabel": "custom-conformantXES.xes",
+    "ResourceLabel": "custom-conformantXES.xes",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "10-03-2023 10:45:42",
     "Parents": [
-      "54af5ae7-50a2-4c40-ac78-ceabc2ce057a" // custom-conformant-longXES.xes
+      "54af5ae7-50a2-4c40-ac78-ceabc2ce057a"
     ],
     "Children": [
-      "4ff2be94-03c3-44d6-84c3-8e8c854401f6",// custom-conformant-smallXES.xes
-      "a8c44369-5c2c-4d41-86e8-7fa53d53e2d6" // complex_petrinet.jpg
+      "4ff2be94-03c3-44d6-84c3-8e8c854401f6",
+      "a8c44369-5c2c-4d41-86e8-7fa53d53e2d6"
     ]
   },
   "4ff2be94-03c3-44d6-84c3-8e8c854401f6": {
-    "FileLabel": "complex_petrinet.jpg",
+    "ResourceLabel": "complex_petrinet.jpg",
     "ResourceType": "Visualization",
     "FileExtension": "jpg",
     "RepositoryHost": "https://localhost:4000",
@@ -216,34 +216,55 @@
     ]
   },
   "ed3b6458-606d-4566-a408-176fda055544": {
-    "FileLabel": "example-logXES.xes",
+    "ResourceLabel": "example-logXES.xes",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "10-03-2023 10:45:59"
   },
   "db9bb61c-f9a9-4d0f-ad3d-f2b5d881581e": {
-    "FileLabel": "loan-processXES.xes",
+    "ResourceLabel": "loan-processXES.xes",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "10-03-2023 10:46:07"
   },
   "9ea5471d-f998-4253-b95e-c7f2b287ae42": {
-    "FileLabel": "ML1_renamedXES.xes",
+    "ResourceLabel": "ML1_renamedXES.xes",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "10-03-2023 10:46:16"
+    "CreationDate": "10-03-2023 10:46:16",
+    "Children": [
+      "845151cf-744b-46d9-bdd0-ab181464f8b1"
+    ]
   },
   "21514961-4208-41ab-8c7a-3b549e22e3e3": {
-    "FileLabel": "running-exampleXES.xes",
+    "ResourceLabel": "running-exampleXES.xes",
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "10-03-2023 10:46:27",
     "Children": [
       "47d992ef-106a-4361-a39e-ab3d07bf0883"
+    ]
+  },
+  "7d2c9c2c-ccc3-45d7-9c82-c9365b34bf42": {
+    "ResourceLabel": "Alphabet Stream",
+    "ResourceType": "EventStream",
+    "StreamBroker": "mqtt.eclipseprojects.io",
+    "StreamTopic": "EventStream",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "11-03-2023 11:48:37"
+  },
+  "845151cf-744b-46d9-bdd0-ab181464f8b1": {
+    "ResourceLabel": "ML1_renamed-alpha-net",
+    "ResourceType": "Visualization",
+    "FileExtension": "jpg",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "11-03-2023 11:48:56",
+    "Parents": [
+      "9ea5471d-f998-4253-b95e-c7f2b287ae42"
     ]
   }
 }
