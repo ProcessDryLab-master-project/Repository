@@ -18,7 +18,7 @@ namespace Repository.App
             foreach (var metadataObject in metadataDict)
             {
                 Console.WriteLine($"{metadataObject.Key}: {metadataObject.Value}");
-                metadataObject.Value.FileId = metadataObject.Key;
+                metadataObject.Value.ResourceId = metadataObject.Key;
                 metadataAsList.Add(metadataObject.Value);
             }
             return metadataAsList;

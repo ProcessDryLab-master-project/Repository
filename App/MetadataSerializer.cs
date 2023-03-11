@@ -11,8 +11,8 @@ namespace Repository.App
     public class MetadataObject
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string? FileId { get; set; } // TODO: Change to ResourceId across all projects to better reflect that it can also be a Stream
-        public string ResourceLabel { get; set; } // TODO: Change to ResourceLabel across all projects to better reflect that it can also be a Stream
+        public string? ResourceId { get; set; }
+        public string ResourceLabel { get; set; }
         public string ResourceType { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string? FileExtension { get; set; }
