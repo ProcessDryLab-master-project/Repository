@@ -24,16 +24,34 @@ namespace Repository.App
             return metadataAsList;
         }
 
-        public static void AddToMetadata(string fileLabel, string resourceType, string fileExtension, string GUID, string? basedOnId = null)
+        public static void AddToMetadata(string fileLabel, string resourceType, string fileExtension, string GUID, string? parents = null, string? children = null)
         {
-            var newMetadataObj = BuildResourceObject(fileLabel, resourceType, fileExtension, basedOnId);
+            bool providedParents = parents.TryParseJson(out List<string> parentsList);
+            bool providedChildren = children.TryParseJson(out List<string> childrenList);
+            var newMetadataObj = BuildResourceObject(fileLabel, resourceType, fileExtension, parentsList, childrenList);
 
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+            UpdateParentResource(GUID, providedParents, parentsList, metadataDict);
 
             metadataDict[GUID] = newMetadataObj;
             string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
 
             File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+        }
+
+        private static void UpdateParentResource(string GUID, bool providedParents, List<string> parentsList, Dictionary<string, MetadataObject> metadataDict)
+        {
+            if (providedParents)
+            {   // Add own ID as child to parent resource
+                foreach (var parent in parentsList)
+                {
+                    var parentObj = metadataDict.GetValue(parent);
+                    if (parentObj == null) return;              // If we can't find parentObj in metadata, do nothing (likely means it exists in another repo or has been deleted).
+                    parentObj.Children ??= new List<string>();  // If children are null, initialize
+                    parentObj.Children.Add(GUID);
+                    metadataDict[parent] = parentObj;           // Overwrite with updated parentObj
+                }
+            }
         }
 
         public static MetadataObject? GetMetadataObjectById(string resourceId)
@@ -43,16 +61,17 @@ namespace Repository.App
         }
 
         
-        private static MetadataObject BuildResourceObject(string fileLabel, string resourceType, string fileExtension, string? basedOnId = null)
+        private static MetadataObject BuildResourceObject(string fileLabel, string resourceType, string fileExtension, List<string>? parents = null, List<string>? children = null)
         {
             return new MetadataObject
             {
                 FileLabel = fileLabel,                      // Puts file name without extension
-                ResourceType = resourceType,                        // EventLog or Visualization. Could make an Enum for this.
+                ResourceType = resourceType,                // EventLog or Visualization. Could make an Enum for this.
                 FileExtension = fileExtension,              // .xes, .bpmn etc.
                 RepositoryHost = "https://localhost:4000",  // TODO: Should probably read this from somewhere to make it dynamic.
                 CreationDate = DateTime.Now.ToString(),
-                BasedOnId = string.IsNullOrWhiteSpace(basedOnId) ? null : basedOnId,
+                Parents = parents,
+                Children = children,
             };
         }
 
@@ -112,6 +131,22 @@ namespace Repository.App
         {
             TV value;
             return dict.TryGetValue(key, out value) ? value : defaultValue;
+        }
+        public static bool TryParseJson<T>(this string obj, out T result)
+        {
+            try
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.MissingMemberHandling = MissingMemberHandling.Error;
+
+                result = JsonConvert.DeserializeObject<T>(obj, settings);
+                return true;
+            }
+            catch (Exception)
+            {
+                result = default(T);
+                return false;
+            }
         }
     }
     #endregion

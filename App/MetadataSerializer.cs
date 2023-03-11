@@ -18,6 +18,8 @@ namespace Repository.App
         public string RepositoryHost { get; set; }
         public string CreationDate { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string? BasedOnId { get; set; }
+        public List<string>? Parents { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public List<string>? Children { get; set; }
     }
 }

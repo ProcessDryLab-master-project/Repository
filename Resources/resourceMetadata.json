@@ -160,21 +160,15 @@
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:30:59"
   },
-  "4ff2be94-03c3-44d6-84c3-8e8c854401f6": {
-    "FileLabel": "complex_petrinet.jpg",
-    "ResourceType": "Visualization",
-    "FileExtension": "jpg",
-    "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "03-03-2023 11:31:33",
-    "BasedOnId": "custom-conformantXES"
-  },
   "47d992ef-106a-4361-a39e-ab3d07bf0883": {
     "FileLabel": "running-exampleXES.pnml",
     "ResourceType": "Visualization",
     "FileExtension": "pnml",
     "RepositoryHost": "https://localhost:4000",
     "CreationDate": "03-03-2023 11:40:18",
-    "BasedOnId": "running-exampleXES"
+    "Parents": [
+      "21514961-4208-41ab-8c7a-3b549e22e3e3" // running-exampleXES.xes
+    ]
   },
   "44ddad39-e2c8-469f-b7a0-113c94488fec": {
     "FileLabel": "testDot-1.dot",
@@ -202,7 +196,24 @@
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "10-03-2023 10:45:42"
+    "CreationDate": "10-03-2023 10:45:42",
+    "Parents": [
+      "54af5ae7-50a2-4c40-ac78-ceabc2ce057a" // custom-conformant-longXES.xes
+    ],
+    "Children": [
+      "4ff2be94-03c3-44d6-84c3-8e8c854401f6",// custom-conformant-smallXES.xes
+      "a8c44369-5c2c-4d41-86e8-7fa53d53e2d6" // complex_petrinet.jpg
+    ]
+  },
+  "4ff2be94-03c3-44d6-84c3-8e8c854401f6": {
+    "FileLabel": "complex_petrinet.jpg",
+    "ResourceType": "Visualization",
+    "FileExtension": "jpg",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:31:33",
+    "Parents": [
+      "8fdeee39-93d0-4d12-a62c-8e7474ebd748"
+    ]
   },
   "ed3b6458-606d-4566-a408-176fda055544": {
     "FileLabel": "example-logXES.xes",
@@ -230,6 +241,9 @@
     "ResourceType": "EventLog",
     "FileExtension": "xes",
     "RepositoryHost": "https://localhost:4000",
-    "CreationDate": "10-03-2023 10:46:27"
+    "CreationDate": "10-03-2023 10:46:27",
+    "Children": [
+      "47d992ef-106a-4361-a39e-ab3d07bf0883"
+    ]
   }
 }
