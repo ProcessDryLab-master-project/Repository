@@ -266,5 +266,19 @@
     "Parents": [
       "9ea5471d-f998-4253-b95e-c7f2b287ae42"
     ]
+  },
+  "9ed3a5e2-e97f-4cbf-941f-4a199c5a014d": {
+    "ResourceLabel": "miner-2-json",
+    "ResourceType": "Visualization",
+    "FileExtension": "json",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "15-03-2023 13:56:04"
+  },
+  "e6fe0c3a-f483-4dec-ac58-abd473bcb51a": {
+    "ResourceLabel": "miner-2-json",
+    "ResourceType": "Visualization",
+    "FileExtension": "json",
+    "RepositoryHost": "https://localhost:4000",
+    "CreationDate": "15-03-2023 13:57:19"
   }
 }
