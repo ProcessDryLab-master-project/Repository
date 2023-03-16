@@ -66,15 +66,15 @@ namespace Repository.Endpoints
             });
 
             // To retrieve/output model representation (.bpmn, png etc) for the frontend
-            app.MapGet("/resources/files/{resourceId}", (string resourceId) =>
+            app.MapGet("/resources/{resourceId}", (string resourceId) =>
             {
                 return ResourceRetriever.GetResourceById(resourceId);
             });            
-            // To retrieve metadata object for resource
-            app.MapGet("/resources/info/{resourceId}", (string resourceId) =>
-            {
-                return DBManager.GetMetadataObjectById(resourceId);
-            });
+            // To retrieve metadata object for resource - not sure we need this anyway
+            //app.MapGet("/resources/info/{resourceId}", (string resourceId) =>
+            //{
+            //    return DBManager.GetMetadataObjectById(resourceId);
+            //});
         }
     }
 }

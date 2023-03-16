@@ -17,10 +17,8 @@ namespace Repository.App
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string? FileExtension { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string? StreamBroker { get; set; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string? StreamTopic { get; set; }
-        public string RepositoryHost { get; set; }
+        public string Host { get; set; }
         public string CreationDate { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public List<string>? Parents { get; set; }

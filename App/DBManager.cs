@@ -54,6 +54,7 @@ namespace Repository.App
             }
         }
 
+        // Not sure we need this anyway
         public static MetadataObject? GetMetadataObjectById(string resourceId)
         {
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
@@ -70,7 +71,7 @@ namespace Repository.App
                 FileExtension = fileExtension, //string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension,  // .xes, .bpmn etc. Streams don't have FileExtension
                 StreamBroker = streamBroker, // string.IsNullOrWhiteSpace(streamBroker) ? null : streamBroker,
                 StreamTopic = streamTopic, // string.IsNullOrWhiteSpace(streamTopic) ? null : streamTopic,
-                RepositoryHost = "https://localhost:4000",  // TODO: Should probably read this from somewhere to make it dynamic.
+                Host = "https://localhost:4000",  // TODO: Should probably read this from somewhere to make it dynamic.
                 CreationDate = DateTime.Now.ToString(),
                 Parents = parents,
                 Children = children,
