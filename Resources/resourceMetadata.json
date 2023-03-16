@@ -1,7 +1,7 @@
 {
   "21514961-4208-41ab-8c7a-3b549e22e3e3": {
-    "CreationDate": "16-03-2023 14:24:10",
-    "ResourceLabel": "running-exampleXES",
+    "CreationDate": "16-03-2023 14:30:32",
+    "ResourceLabel": "21514961-4208-41ab-8c7a-3b549e22e3e3",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -17,8 +17,8 @@
     }
   },
   "54af5ae7-50a2-4c40-ac78-ceabc2ce057a": {
-    "CreationDate": "16-03-2023 14:24:11",
-    "ResourceLabel": "custom-conformant-longXES",
+    "CreationDate": "16-03-2023 14:30:33",
+    "ResourceLabel": "54af5ae7-50a2-4c40-ac78-ceabc2ce057a",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -34,8 +34,8 @@
     }
   },
   "8fdeee39-93d0-4d12-a62c-8e7474ebd748": {
-    "CreationDate": "16-03-2023 14:24:11",
-    "ResourceLabel": "custom-conformantXES",
+    "CreationDate": "16-03-2023 14:30:33",
+    "ResourceLabel": "8fdeee39-93d0-4d12-a62c-8e7474ebd748",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -51,8 +51,8 @@
     }
   },
   "9ea5471d-f998-4253-b95e-c7f2b287ae42": {
-    "CreationDate": "16-03-2023 14:24:11",
-    "ResourceLabel": "ML1_renamedXES",
+    "CreationDate": "16-03-2023 14:30:33",
+    "ResourceLabel": "9ea5471d-f998-4253-b95e-c7f2b287ae42",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -68,8 +68,8 @@
     }
   },
   "a8c44369-5c2c-4d41-86e8-7fa53d53e2d6": {
-    "CreationDate": "16-03-2023 14:24:11",
-    "ResourceLabel": "custom-conformant-smallXES",
+    "CreationDate": "16-03-2023 14:30:33",
+    "ResourceLabel": "a8c44369-5c2c-4d41-86e8-7fa53d53e2d6",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -85,7 +85,7 @@
     }
   },
   "custom-conformant-longXES": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "custom-conformant-longXES",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
@@ -102,7 +102,7 @@
     }
   },
   "custom-conformant-smallXES": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "custom-conformant-smallXES",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
@@ -119,7 +119,7 @@
     }
   },
   "custom-conformantXES": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "custom-conformantXES",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
@@ -136,8 +136,8 @@
     }
   },
   "db9bb61c-f9a9-4d0f-ad3d-f2b5d881581e": {
-    "CreationDate": "16-03-2023 14:24:11",
-    "ResourceLabel": "loan-processXES",
+    "CreationDate": "16-03-2023 14:30:33",
+    "ResourceLabel": "db9bb61c-f9a9-4d0f-ad3d-f2b5d881581e",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -153,8 +153,8 @@
     }
   },
   "ed3b6458-606d-4566-a408-176fda055544": {
-    "CreationDate": "16-03-2023 14:24:11",
-    "ResourceLabel": "example-logXES",
+    "CreationDate": "16-03-2023 14:30:33",
+    "ResourceLabel": "ed3b6458-606d-4566-a408-176fda055544",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -170,7 +170,7 @@
     }
   },
   "example-logXES": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "example-logXES",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
@@ -187,7 +187,7 @@
     }
   },
   "loan-processXES": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "loan-processXES",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
@@ -204,7 +204,7 @@
     }
   },
   "ML1_renamedXES": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "ML1_renamedXES",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
@@ -221,7 +221,7 @@
     }
   },
   "running-exampleXES": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "running-exampleXES",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources",
@@ -238,7 +238,7 @@
     }
   },
   "A3E1BPMN": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "A3E1BPMN",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -255,7 +255,7 @@
     }
   },
   "create_contentBPMN": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "create_contentBPMN",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -272,7 +272,7 @@
     }
   },
   "credit-scoreBPMN": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "credit-scoreBPMN",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -289,7 +289,7 @@
     }
   },
   "NewBPMNBPMN": {
-    "CreationDate": "16-03-2023 14:24:11",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "NewBPMNBPMN",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -306,8 +306,8 @@
     }
   },
   "44ddad39-e2c8-469f-b7a0-113c94488fec": {
-    "CreationDate": "16-03-2023 14:24:11",
-    "ResourceLabel": "testDot-1",
+    "CreationDate": "16-03-2023 14:30:33",
+    "ResourceLabel": "44ddad39-e2c8-469f-b7a0-113c94488fec",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -323,7 +323,7 @@
     }
   },
   "exampleDOT2DOT": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "exampleDOT2DOT",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -340,7 +340,7 @@
     }
   },
   "exampleDOTDOT": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:33",
     "ResourceLabel": "exampleDOTDOT",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -357,8 +357,8 @@
     }
   },
   "4ff2be94-03c3-44d6-84c3-8e8c854401f6": {
-    "CreationDate": "16-03-2023 14:24:12",
-    "ResourceLabel": "complex_petrinet",
+    "CreationDate": "16-03-2023 14:30:34",
+    "ResourceLabel": "4ff2be94-03c3-44d6-84c3-8e8c854401f6",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -374,8 +374,8 @@
     }
   },
   "845151cf-744b-46d9-bdd0-ab181464f8b1": {
-    "CreationDate": "16-03-2023 14:24:12",
-    "ResourceLabel": "ML1_renamed-alpha-net",
+    "CreationDate": "16-03-2023 14:30:34",
+    "ResourceLabel": "845151cf-744b-46d9-bdd0-ab181464f8b1",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -391,8 +391,8 @@
     }
   },
   "9ed3a5e2-e97f-4cbf-941f-4a199c5a014d": {
-    "CreationDate": "16-03-2023 14:24:12",
-    "ResourceLabel": "miner-2-json",
+    "CreationDate": "16-03-2023 14:30:34",
+    "ResourceLabel": "9ed3a5e2-e97f-4cbf-941f-4a199c5a014d",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -408,8 +408,8 @@
     }
   },
   "e6fe0c3a-f483-4dec-ac58-abd473bcb51a": {
-    "CreationDate": "16-03-2023 14:24:12",
-    "ResourceLabel": "miner-2-json",
+    "CreationDate": "16-03-2023 14:30:34",
+    "ResourceLabel": "e6fe0c3a-f483-4dec-ac58-abd473bcb51a",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -425,7 +425,7 @@
     }
   },
   "exampleBackupPNG": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:34",
     "ResourceLabel": "exampleBackupPNG",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -442,7 +442,7 @@
     }
   },
   "exampleBPMNPNG": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:34",
     "ResourceLabel": "exampleBPMNPNG",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -459,7 +459,7 @@
     }
   },
   "testFromC#PNG": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:34",
     "ResourceLabel": "testFromC#PNG",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -476,7 +476,7 @@
     }
   },
   "testFromPythonPNG": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:34",
     "ResourceLabel": "testFromPythonPNG",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -493,7 +493,7 @@
     }
   },
   "testPNG": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:34",
     "ResourceLabel": "testPNG",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -510,8 +510,8 @@
     }
   },
   "47d992ef-106a-4361-a39e-ab3d07bf0883": {
-    "CreationDate": "16-03-2023 14:24:12",
-    "ResourceLabel": "running-example pnml",
+    "CreationDate": "16-03-2023 14:30:34",
+    "ResourceLabel": "47d992ef-106a-4361-a39e-ab3d07bf0883",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
     "Description": "Some file description",
@@ -527,7 +527,7 @@
     }
   },
   "custom-ref-modelPNML": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:34",
     "ResourceLabel": "custom-ref-modelPNML",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -544,7 +544,7 @@
     }
   },
   "running-exampleFromC#PNML": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:34",
     "ResourceLabel": "running-exampleFromC#PNML",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -561,7 +561,7 @@
     }
   },
   "running-examplePNML": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:34",
     "ResourceLabel": "running-examplePNML",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -578,7 +578,7 @@
     }
   },
   "SimpleTransmissionProtocolPNML": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:34",
     "ResourceLabel": "SimpleTransmissionProtocolPNML",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -595,7 +595,7 @@
     }
   },
   "stochastic_running_examplePNML": {
-    "CreationDate": "16-03-2023 14:24:12",
+    "CreationDate": "16-03-2023 14:30:34",
     "ResourceLabel": "stochastic_running_examplePNML",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources",
@@ -605,6 +605,40 @@
     },
     "FileInfo": {
       "FileExtension": "pnml"
+    },
+    "GenerationTree": {
+      "Parents": null,
+      "Children": null
+    }
+  },
+  "c3339b12-bdd6-4bfd-8f25-080fcec6b981": {
+    "CreationDate": "16-03-2023 14:33:09",
+    "ResourceLabel": "ML5 Renamed",
+    "ResourceType": "EventLog",
+    "Host": "https://localhost:4000",
+    "Description": "This is a test file",
+    "StreamInfo": {
+      "StreamTopic": null
+    },
+    "FileInfo": {
+      "FileExtension": "xes"
+    },
+    "GenerationTree": {
+      "Parents": null,
+      "Children": null
+    }
+  },
+  "8b8ceaae-1425-4bf6-8316-cd432c007638": {
+    "CreationDate": "16-03-2023 14:30:48",
+    "ResourceLabel": "Alphabet Stream",
+    "ResourceType": "EventStream",
+    "Host": "mqtt.eclipseprojects.io",
+    "Description": "Stream with all the letters of the alphabet",
+    "StreamInfo": {
+      "StreamTopic": "EventStream"
+    },
+    "FileInfo": {
+      "FileExtension": null
     },
     "GenerationTree": {
       "Parents": null,
