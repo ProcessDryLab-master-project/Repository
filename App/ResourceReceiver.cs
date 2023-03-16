@@ -6,23 +6,24 @@ namespace Repository.App
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
 
-        public static IResult SaveResource(HttpRequest request)
+        public static IResult SaveResource(HttpRequest request, string appUrl)
         {
-            string resourceLabel = request.Form["resourceLabel"].ToString();
-            string resourceType = request.Form["resourceType"].ToString(); 
-            string? fileExtension = request.Form["fileExtension"];
+            string resourceLabel = request.Form["ResourceLabel"].ToString();
+            string resourceType = request.Form["ResourceType"].ToString();
+            string description = request.Form["Description"].ToString();
+            string? fileExtension = request.Form["FileExtension"];
             fileExtension = string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension.ToString().Replace(".", "");
             string GUID = Guid.NewGuid().ToString();
-            string? parents = request.Form["parents"];
-            string? children = request.Form["children"];
+            string? parents = request.Form["Parents"];
+            string? children = request.Form["Children"];
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
             children = string.IsNullOrWhiteSpace(children) ? null : children.ToString();
-            string? overwriteId = request.Form["overwriteId"];
+            string? overwriteId = request.Form["OverwriteId"];
             if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
             // Stream specific
-            string? streamBroker = request.Form["streamBroker"];
-            string? streamTopic = request.Form["streamTopic"];
-            streamBroker = string.IsNullOrWhiteSpace(streamBroker) ? null : streamBroker.ToString();
+            string? host = request.Form["Host"];
+            string? streamTopic = request.Form["StreamTopic"];
+            host = string.IsNullOrWhiteSpace(host) ? null : host.ToString();
             streamTopic = string.IsNullOrWhiteSpace(streamTopic) ? null : streamTopic.ToString();
 
             if(resourceType != "EventStream")
@@ -32,14 +33,19 @@ namespace Repository.App
                     return Results.BadRequest("Exactly one file is required");
                 }
                 var file = request.Form.Files[0];
+                host = appUrl;
                 string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
                 string nameToSaveFile = GUID + "." + fileExtension;
                 string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
                 using var stream = new FileStream(pathToSaveFile, FileMode.Create);
                 file.CopyTo(stream);
             }
+            else if (string.IsNullOrWhiteSpace(host))
+            {
+                return Results.BadRequest("Host must be provided for resource type EventStream");
+            }
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, fileExtension, streamBroker, streamTopic, parents, children);
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension, streamTopic, parents, children);
             return Results.Ok(GUID);
         }
 

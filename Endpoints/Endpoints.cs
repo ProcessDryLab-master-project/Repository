@@ -34,15 +34,8 @@ namespace Repository.Endpoints
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
             app.MapPost("/resources", (HttpRequest request) =>
             {
-                return ResourceReceiver.SaveResource(request);
-            })
-            //.Accepts<IFormFile>("multipart/form-data")
-            .Produces(200);
-
-            // To save a stream in Metadata:
-            app.MapPost("/resources/streams", (HttpRequest request) =>
-            {
-                return ResourceReceiver.SaveResource(request);
+                var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+                return ResourceReceiver.SaveResource(request, appUrl);
             })
             //.Accepts<IFormFile>("multipart/form-data")
             .Produces(200);

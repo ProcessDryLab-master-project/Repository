@@ -1,0 +1,283 @@
+{
+  "custom-conformant-longXES": {
+    "ResourceLabel": "custom-conformant-longXES",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:58"
+  },
+  "custom-conformant-smallXES": {
+    "ResourceLabel": "custom-conformant-smallXES",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "custom-conformantXES": {
+    "ResourceLabel": "custom-conformantXES",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "example-logXES": {
+    "ResourceLabel": "example-logXES",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "loan-processXES": {
+    "ResourceLabel": "loan-processXES",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "ML1_renamedXES": {
+    "ResourceLabel": "ML1_renamedXES",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "running-exampleXES": {
+    "ResourceLabel": "running-exampleXES",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "A3E1BPMN": {
+    "ResourceLabel": "A3E1BPMN",
+    "ResourceType": "Visualization",
+    "FileExtension": "bpmn",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "create_contentBPMN": {
+    "ResourceLabel": "create_contentBPMN",
+    "ResourceType": "Visualization",
+    "FileExtension": "bpmn",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "credit-scoreBPMN": {
+    "ResourceLabel": "credit-scoreBPMN",
+    "ResourceType": "Visualization",
+    "FileExtension": "bpmn",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "NewBPMNBPMN": {
+    "ResourceLabel": "NewBPMNBPMN",
+    "ResourceType": "Visualization",
+    "FileExtension": "bpmn",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "exampleDOT2DOT": {
+    "ResourceLabel": "exampleDOT2DOT",
+    "ResourceType": "Visualization",
+    "FileExtension": "dot",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "exampleDOTDOT": {
+    "ResourceLabel": "exampleDOTDOT",
+    "ResourceType": "Visualization",
+    "FileExtension": "dot",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "exampleBackupPNG": {
+    "ResourceLabel": "exampleBackupPNG",
+    "ResourceType": "Visualization",
+    "FileExtension": "png",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "exampleBPMNPNG": {
+    "ResourceLabel": "exampleBPMNPNG",
+    "ResourceType": "Visualization",
+    "FileExtension": "png",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "testFromC#PNG": {
+    "ResourceLabel": "testFromC#PNG",
+    "ResourceType": "Visualization",
+    "FileExtension": "png",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "testFromPythonPNG": {
+    "ResourceLabel": "testFromPythonPNG",
+    "ResourceType": "Visualization",
+    "FileExtension": "png",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "testPNG": {
+    "ResourceLabel": "testPNG",
+    "ResourceType": "Visualization",
+    "FileExtension": "png",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "custom-ref-modelPNML": {
+    "ResourceLabel": "custom-ref-modelPNML",
+    "ResourceType": "Visualization",
+    "FileExtension": "pnml",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "running-exampleFromC#PNML": {
+    "ResourceLabel": "running-exampleFromC#PNML",
+    "ResourceType": "Visualization",
+    "FileExtension": "pnml",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "running-examplePNML": {
+    "ResourceLabel": "running-examplePNML",
+    "ResourceType": "Visualization",
+    "FileExtension": "pnml",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "SimpleTransmissionProtocolPNML": {
+    "ResourceLabel": "SimpleTransmissionProtocolPNML",
+    "ResourceType": "Visualization",
+    "FileExtension": "pnml",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "stochastic_running_examplePNML": {
+    "ResourceLabel": "stochastic_running_examplePNML",
+    "ResourceType": "Visualization",
+    "FileExtension": "pnml",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:30:59"
+  },
+  "47d992ef-106a-4361-a39e-ab3d07bf0883": {
+    "ResourceLabel": "running-exampleXES.pnml",
+    "ResourceType": "Visualization",
+    "FileExtension": "pnml",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:40:18",
+    "Parents": [
+      "21514961-4208-41ab-8c7a-3b549e22e3e3"
+    ]
+  },
+  "44ddad39-e2c8-469f-b7a0-113c94488fec": {
+    "ResourceLabel": "testDot-1.dot",
+    "ResourceType": "Visualization",
+    "FileExtension": "dot",
+    "Host": "https://localhost:4000",
+    "CreationDate": "09-03-2023 15:50:24"
+  },
+  "54af5ae7-50a2-4c40-ac78-ceabc2ce057a": {
+    "ResourceLabel": "custom-conformant-longXES.xes",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "10-03-2023 10:44:35"
+  },
+  "a8c44369-5c2c-4d41-86e8-7fa53d53e2d6": {
+    "ResourceLabel": "custom-conformant-smallXES.xes",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "10-03-2023 10:45:01"
+  },
+  "8fdeee39-93d0-4d12-a62c-8e7474ebd748": {
+    "ResourceLabel": "custom-conformantXES.xes",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "10-03-2023 10:45:42",
+    "Parents": [
+      "54af5ae7-50a2-4c40-ac78-ceabc2ce057a"
+    ],
+    "Children": [
+      "4ff2be94-03c3-44d6-84c3-8e8c854401f6",
+      "a8c44369-5c2c-4d41-86e8-7fa53d53e2d6"
+    ]
+  },
+  "4ff2be94-03c3-44d6-84c3-8e8c854401f6": {
+    "ResourceLabel": "complex_petrinet.jpg",
+    "ResourceType": "Visualization",
+    "FileExtension": "jpg",
+    "Host": "https://localhost:4000",
+    "CreationDate": "03-03-2023 11:31:33",
+    "Parents": [
+      "8fdeee39-93d0-4d12-a62c-8e7474ebd748"
+    ]
+  },
+  "ed3b6458-606d-4566-a408-176fda055544": {
+    "ResourceLabel": "example-logXES.xes",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "10-03-2023 10:45:59"
+  },
+  "db9bb61c-f9a9-4d0f-ad3d-f2b5d881581e": {
+    "ResourceLabel": "loan-processXES.xes",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "10-03-2023 10:46:07"
+  },
+  "9ea5471d-f998-4253-b95e-c7f2b287ae42": {
+    "ResourceLabel": "ML1_renamedXES.xes",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "10-03-2023 10:46:16",
+    "Children": [
+      "845151cf-744b-46d9-bdd0-ab181464f8b1"
+    ]
+  },
+  "21514961-4208-41ab-8c7a-3b549e22e3e3": {
+    "ResourceLabel": "running-exampleXES.xes",
+    "ResourceType": "EventLog",
+    "FileExtension": "xes",
+    "Host": "https://localhost:4000",
+    "CreationDate": "10-03-2023 10:46:27",
+    "Children": [
+      "47d992ef-106a-4361-a39e-ab3d07bf0883"
+    ]
+  },
+  "7d2c9c2c-ccc3-45d7-9c82-c9365b34bf42": {
+    "ResourceLabel": "Alphabet Stream",
+    "ResourceType": "EventStream",
+    "Host": "mqtt.eclipseprojects.io",
+    "StreamTopic": "AlphabetStream",
+    "CreationDate": "11-03-2023 11:48:37"
+  },
+  "845151cf-744b-46d9-bdd0-ab181464f8b1": {
+    "ResourceLabel": "ML1_renamed-alpha-net",
+    "ResourceType": "Visualization",
+    "FileExtension": "jpg",
+    "Host": "https://localhost:4000",
+    "CreationDate": "11-03-2023 11:48:56",
+    "Parents": [
+      "9ea5471d-f998-4253-b95e-c7f2b287ae42"
+    ]
+  },
+  "9ed3a5e2-e97f-4cbf-941f-4a199c5a014d": {
+    "ResourceLabel": "miner-2-json",
+    "ResourceType": "Visualization",
+    "FileExtension": "json",
+    "Host": "https://localhost:4000",
+    "CreationDate": "15-03-2023 13:56:04"
+  },
+  "e6fe0c3a-f483-4dec-ac58-abd473bcb51a": {
+    "ResourceLabel": "miner-2-json",
+    "ResourceType": "Visualization",
+    "FileExtension": "json",
+    "Host": "https://localhost:4000",
+    "CreationDate": "15-03-2023 13:57:19"
+  }
+}

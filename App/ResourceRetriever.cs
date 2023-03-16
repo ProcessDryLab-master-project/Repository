@@ -37,8 +37,8 @@ namespace Repository.App
             MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);
             if(metadataObject == null) return Results.BadRequest("Invalid resource ID.");
             string pathToResourceType = Path.Combine(pathToResources, metadataObject.ResourceType);
-            string pathToFileExtension = Path.Combine(pathToResourceType, metadataObject.FileExtension.ToUpper());
-            string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.FileExtension);
+            string pathToFileExtension = Path.Combine(pathToResourceType, metadataObject.FileInfo.FileExtension.ToUpper()); // TODO: Add null check or try/catch
+            string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.FileInfo.FileExtension);
             if (!File.Exists(pathToFile))
             {
                 string badResponse = "No such file exists for path " + pathToFile; // TODO: Should not return the entire path, just easier like this for now

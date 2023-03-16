@@ -24,11 +24,11 @@ namespace Repository.App
             return metadataAsList;
         }
 
-        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string? fileExtension = null, string? streamBroker = null, string? streamTopic = null, string? parents = null, string? children = null)
+        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, string? parents = null, string? children = null)
         {
             bool providedParents = parents.TryParseJson(out List<string> parentsList);
             bool providedChildren = children.TryParseJson(out List<string> childrenList);
-            var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, fileExtension, streamBroker, streamTopic, parentsList, childrenList);
+            var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, parentsList, childrenList);
 
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
             UpdateParentResource(GUID, providedParents, parentsList, metadataDict);
@@ -47,8 +47,8 @@ namespace Repository.App
                 {
                     var parentObj = metadataDict.GetValue(parent);
                     if (parentObj == null) return;              // If we can't find parentObj in metadata, do nothing (likely means it exists in another repo or has been deleted).
-                    parentObj.Children ??= new List<string>();  // If children are null, initialize
-                    parentObj.Children.Add(GUID);
+                    parentObj.GenerationTree.Children ??= new List<string>();  // If children are null, initialize
+                    parentObj.GenerationTree.Children.Add(GUID);
                     metadataDict[parent] = parentObj;           // Overwrite with updated parentObj
                 }
             }
@@ -62,19 +62,28 @@ namespace Repository.App
         }
 
         
-        private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string? fileExtension = null, string? streamBroker = null, string? streamTopic = null,  List<string>? parents = null, List<string>? children = null)
+        private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null,  List<string>? parents = null, List<string>? children = null)
         {
             return new MetadataObject
             {
+                CreationDate = DateTime.Now.ToString(),
                 ResourceLabel = resourceLabel,
                 ResourceType = resourceType,                // EventLog or Visualization. Could make an Enum for this.
-                FileExtension = fileExtension, //string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension,  // .xes, .bpmn etc. Streams don't have FileExtension
-                StreamBroker = streamBroker, // string.IsNullOrWhiteSpace(streamBroker) ? null : streamBroker,
-                StreamTopic = streamTopic, // string.IsNullOrWhiteSpace(streamTopic) ? null : streamTopic,
-                Host = "https://localhost:4000",  // TODO: Should probably read this from somewhere to make it dynamic.
-                CreationDate = DateTime.Now.ToString(),
-                Parents = parents,
-                Children = children,
+                Host = host,  // TODO: Should probably read this from somewhere to make it dynamic.
+                Description = description,
+                FileInfo = new FileInfo
+                {
+                    FileExtension = fileExtension,
+                },
+                StreamInfo = new StreamInfo
+                {
+                    StreamTopic = streamTopic
+                },
+                GenerationTree = new GenerationTree
+                {
+                    Parents = parents,
+                    Children = children,
+                }
             };
         }
 
@@ -106,11 +115,11 @@ namespace Repository.App
 
                 
 
-                if(!fileExtension.Equals("json", StringComparison.OrdinalIgnoreCase))
+                if(!fileName.Contains("metadata", StringComparison.OrdinalIgnoreCase))
                 {
                     string fileId = fileName;
                     //fileId = ChangeFileNames(file, fileName, fileExtension); // Should not be called unless you want to change all file names to include the extension
-                    AddToMetadata(fileName, resourceType, fileId, fileExtension);
+                    AddToMetadata(fileName, resourceType, fileId, "https://localhost:4000/resources", "Some file description", fileExtension);
                 }
             }
         }

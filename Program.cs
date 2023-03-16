@@ -6,7 +6,7 @@ namespace Repository
     {
         public static void Main(string[] args)
         {
-            //DBManager.FillMetadata(); // Will fill the metadata file with all the files in Resources. REMEMBER to delete the contents of the file before
+            DBManager.FillMetadata(); // Will fill the metadata file with all the files in Resources. REMEMBER to delete the contents of the file before
 
             var builder = WebApplication.CreateBuilder(args);
             if (builder.Environment.IsDevelopment())
@@ -52,7 +52,6 @@ namespace Repository
             app.MapGet("/", () => "Hello World!");
 
             new Endpoints.Endpoints(app);
-
             app.Run();
         }
     }
