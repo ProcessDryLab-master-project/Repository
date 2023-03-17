@@ -33,7 +33,7 @@ namespace Repository.App
                     return Results.BadRequest("Exactly one file is required");
                 }
                 var file = request.Form.Files[0];
-                host = appUrl;
+                host = $"{appUrl}/resources/";
                 string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
                 string nameToSaveFile = GUID + "." + fileExtension;
                 string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
