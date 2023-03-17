@@ -33,7 +33,7 @@ namespace Repository.App
             using var stream = new FileStream(pathToSaveFile, FileMode.Create);
             file.CopyTo(stream);
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension, null, parents, children);
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension, parents: parents, children: children);
             return Results.Ok(GUID);
         }
 
@@ -55,7 +55,7 @@ namespace Repository.App
             string? overwriteId = request.Form["OverwriteId"];
             if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, null, streamTopic, parents, children);
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, streamTopic: streamTopic, parents: parents, children: children);
             return Results.Ok(GUID);
         }
 

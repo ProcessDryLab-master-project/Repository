@@ -1,4 +1,21 @@
 {
+  "8b8ceaae-1425-4bf6-8316-cd432c007638": {
+    "CreationDate": "16-03-2023 14:30:48",
+    "ResourceLabel": "Alphabet Stream",
+    "ResourceType": "EventStream",
+    "Host": "mqtt.eclipseprojects.io",
+    "Description": "Stream with all the letters of the alphabet",
+    "StreamInfo": {
+      "StreamTopic": "AlphabetStream"
+    },
+    "FileInfo": {
+      "FileExtension": null
+    },
+    "GenerationTree": {
+      "Parents": null,
+      "Children": null
+    }
+  },
   "21514961-4208-41ab-8c7a-3b549e22e3e3": {
     "CreationDate": "16-03-2023 14:30:32",
     "ResourceLabel": "21514961-4208-41ab-8c7a-3b549e22e3e3",
@@ -613,10 +630,10 @@
   },
   "c3339b12-bdd6-4bfd-8f25-080fcec6b981": {
     "CreationDate": "16-03-2023 14:33:09",
-    "ResourceLabel": "ML5 Renamed",
+    "ResourceLabel": "OG ML5",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources/files/",
-    "Description": "This is a test file",
+    "Description": "This is the OG ML5",
     "StreamInfo": {
       "StreamTopic": null
     },
@@ -625,23 +642,68 @@
     },
     "GenerationTree": {
       "Parents": null,
+      "Children": [
+        "fe960d94-5928-4463-b0f8-c59072b5d449",
+        "4a558af6-8257-4728-af50-22d2f22e4d79"
+      ]
+    }
+  },
+  "4a558af6-8257-4728-af50-22d2f22e4d79": {
+    "CreationDate": "17-03-2023 14:53:28",
+    "ResourceLabel": "ML5 Child 2",
+    "ResourceType": "EventLog",
+    "Host": "https://localhost:4000/resources/",
+    "Description": "This is a child to \"OG ML5\" without any children",
+    "StreamInfo": {
+      "StreamTopic": null
+    },
+    "FileInfo": {
+      "FileExtension": "xes"
+    },
+    "GenerationTree": {
+      "Parents": [
+        "c3339b12-bdd6-4bfd-8f25-080fcec6b981"
+      ],
       "Children": null
     }
   },
-  "8b8ceaae-1425-4bf6-8316-cd432c007638": {
-    "CreationDate": "16-03-2023 14:30:48",
-    "ResourceLabel": "Alphabet Stream",
-    "ResourceType": "EventStream",
-    "Host": "mqtt.eclipseprojects.io",
-    "Description": "Stream with all the letters of the alphabet",
+  "fe960d94-5928-4463-b0f8-c59072b5d449": {
+    "CreationDate": "17-03-2023 14:47:22",
+    "ResourceLabel": "ML5 Child 1",
+    "ResourceType": "EventLog",
+    "Host": "https://localhost:4000/resources/",
+    "Description": "This is a child to \"OG ML5\" that also has some child",
     "StreamInfo": {
-      "StreamTopic": "AlphabetStream"
+      "StreamTopic": null
     },
     "FileInfo": {
-      "FileExtension": null
+      "FileExtension": "xes"
     },
     "GenerationTree": {
-      "Parents": null,
+      "Parents": [
+        "c3339b12-bdd6-4bfd-8f25-080fcec6b981"
+      ],
+      "Children": [
+        "09d57d96-4c46-423a-ae29-0f8da770b2b8"
+      ]
+    }
+  },
+  "09d57d96-4c46-423a-ae29-0f8da770b2b8": {
+    "CreationDate": "17-03-2023 14:49:41",
+    "ResourceLabel": "Complex Petri Net",
+    "ResourceType": "Visualization",
+    "Host": "https://localhost:4000/resources/",
+    "Description": "Grandchild to \"OG ML5\", child to \"ML5 Child 1\"",
+    "StreamInfo": {
+      "StreamTopic": null
+    },
+    "FileInfo": {
+      "FileExtension": "jpg"
+    },
+    "GenerationTree": {
+      "Parents": [
+        "fe960d94-5928-4463-b0f8-c59072b5d449"
+      ],
       "Children": null
     }
   }
