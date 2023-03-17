@@ -81,7 +81,7 @@ namespace Repository.App
                 pathToResourceType = Path.Combine(pathToResources, resourceType);
             }
             string pathToFileExtension = Path.Combine(pathToResourceType, fileExtension.ToUpper());
-            if (!File.Exists(pathToFileExtension))
+            if (!Directory.Exists(pathToFileExtension))
             {
                 Console.WriteLine("No folder exists for this file type, creating " + pathToFileExtension);
                 Directory.CreateDirectory(pathToFileExtension);
