@@ -664,7 +664,9 @@
       "Parents": [
         "c3339b12-bdd6-4bfd-8f25-080fcec6b981"
       ],
-      "Children": null
+      "Children": [
+        "1d7c0255-e376-4caa-b25c-585176a4c799"
+      ]
     }
   },
   "fe960d94-5928-4463-b0f8-c59072b5d449": {
@@ -684,7 +686,8 @@
         "c3339b12-bdd6-4bfd-8f25-080fcec6b981"
       ],
       "Children": [
-        "09d57d96-4c46-423a-ae29-0f8da770b2b8"
+        "09d57d96-4c46-423a-ae29-0f8da770b2b8",
+        "1d7c0255-e376-4caa-b25c-585176a4c799"
       ]
     }
   },
@@ -702,6 +705,26 @@
     },
     "GenerationTree": {
       "Parents": [
+        "fe960d94-5928-4463-b0f8-c59072b5d449"
+      ],
+      "Children": null
+    }
+  },
+  "1d7c0255-e376-4caa-b25c-585176a4c799": {
+    "CreationDate": "17-03-2023 15:47:12",
+    "ResourceLabel": "ML5 ",
+    "ResourceType": "EventLog",
+    "Host": "https://localhost:4000/resources/",
+    "Description": "This is a child to both of \"OG ML5\"'s children",
+    "StreamInfo": {
+      "StreamTopic": null
+    },
+    "FileInfo": {
+      "FileExtension": "xes"
+    },
+    "GenerationTree": {
+      "Parents": [
+        "4a558af6-8257-4728-af50-22d2f22e4d79",
         "fe960d94-5928-4463-b0f8-c59072b5d449"
       ],
       "Children": null

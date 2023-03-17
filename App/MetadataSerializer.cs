@@ -34,7 +34,6 @@ namespace Repository.App
     }
     public class GenerationTree
     {
-
         //[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public List<string>? Parents { get; set; }
         //[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
