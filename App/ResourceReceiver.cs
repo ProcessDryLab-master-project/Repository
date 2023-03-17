@@ -6,7 +6,7 @@ namespace Repository.App
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
 
-        public static IResult SaveResource(HttpRequest request, string appUrl)
+        public static IResult SaveFile(HttpRequest request, string appUrl)
         {
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
@@ -20,32 +20,42 @@ namespace Repository.App
             children = string.IsNullOrWhiteSpace(children) ? null : children.ToString();
             string? overwriteId = request.Form["OverwriteId"];
             if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
-            // Stream specific
-            string? host = request.Form["Host"];
-            string? streamTopic = request.Form["StreamTopic"];
-            host = string.IsNullOrWhiteSpace(host) ? null : host.ToString();
-            streamTopic = string.IsNullOrWhiteSpace(streamTopic) ? null : streamTopic.ToString();
 
-            if(resourceType != "EventStream")
+            if (!request.Form.Files.Any())
             {
-                if (!request.Form.Files.Any())
-                {
-                    return Results.BadRequest("Exactly one file is required");
-                }
-                var file = request.Form.Files[0];
-                host = $"{appUrl}/resources/";
-                string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
-                string nameToSaveFile = GUID + "." + fileExtension;
-                string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
-                using var stream = new FileStream(pathToSaveFile, FileMode.Create);
-                file.CopyTo(stream);
+                return Results.BadRequest("Exactly one file is required");
             }
-            else if (string.IsNullOrWhiteSpace(host))
-            {
-                return Results.BadRequest("Host must be provided for resource type EventStream");
-            }
+            var file = request.Form.Files[0];
+            string host = $"{appUrl}/resources/";
+            string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
+            string nameToSaveFile = GUID + "." + fileExtension;
+            string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
+            using var stream = new FileStream(pathToSaveFile, FileMode.Create);
+            file.CopyTo(stream);
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension, streamTopic, parents, children);
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension, null, parents, children);
+            return Results.Ok(GUID);
+        }
+
+        // Assuming this is only relevant for streaming?
+        public static IResult SaveMetadataOnly(HttpRequest request, string appUrl)
+        {
+            string host = request.Form["Host"];
+            string resourceLabel = request.Form["ResourceLabel"].ToString();
+            string resourceType = request.Form["ResourceType"].ToString();
+            if (resourceType != "EventStream") return Results.BadRequest("Only ResourceType: EventStream can be added to metadata like this");
+
+            string streamTopic = request.Form["StreamTopic"].ToString();
+            string description = request.Form["Description"].ToString();
+            string GUID = Guid.NewGuid().ToString();
+            string? parents = request.Form["Parents"];
+            string? children = request.Form["Children"];
+            parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
+            children = string.IsNullOrWhiteSpace(children) ? null : children.ToString();
+            string? overwriteId = request.Form["OverwriteId"];
+            if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
+
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, null, streamTopic, parents, children);
             return Results.Ok(GUID);
         }
 

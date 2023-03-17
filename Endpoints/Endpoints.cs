@@ -32,10 +32,18 @@ namespace Repository.Endpoints
 
             // ----------------- DATA ----------------- //
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
-            app.MapPost("/resources", (HttpRequest request) =>
+            app.MapPost("/resources/files", (HttpRequest request) =>
             {
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
-                return ResourceReceiver.SaveResource(request, appUrl);
+                return ResourceReceiver.SaveFile(request, appUrl);
+            })
+            //.Accepts<IFormFile>("multipart/form-data")
+            .Produces(200);
+
+            app.MapPost("/resources/info", (HttpRequest request) =>
+            {
+                var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+                return ResourceReceiver.SaveMetadataOnly(request, appUrl);
             })
             //.Accepts<IFormFile>("multipart/form-data")
             .Produces(200);
@@ -58,16 +66,16 @@ namespace Repository.Endpoints
                 return ResourceRetriever.GetEventLogList();
             });
 
-            // To retrieve/output model representation (.bpmn, png etc) for the frontend
-            app.MapGet("/resources/{resourceId}", (string resourceId) =>
+            // To retrieve file for given resourceId
+            app.MapGet("/resources/files/{resourceId}", (string resourceId) =>
             {
                 return ResourceRetriever.GetResourceById(resourceId);
-            });            
-            // To retrieve metadata object for resource - not sure we need this anyway
-            //app.MapGet("/resources/info/{resourceId}", (string resourceId) =>
-            //{
-            //    return DBManager.GetMetadataObjectById(resourceId);
-            //});
+            });
+            // To retrieve metadata object for given resourceId
+            app.MapGet("/resources/info/{resourceId}", (string resourceId) =>
+            {
+                return DBManager.GetMetadataObjectById(resourceId);
+            });
         }
     }
 }

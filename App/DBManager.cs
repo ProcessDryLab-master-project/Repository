@@ -54,11 +54,12 @@ namespace Repository.App
             }
         }
 
-        // Not sure we need this anyway
         public static MetadataObject? GetMetadataObjectById(string resourceId)
         {
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            return metadataDict.GetValue(resourceId);
+            MetadataObject metadataObj = metadataDict.GetValue(resourceId);
+            metadataObj.ResourceId = resourceId;
+            return metadataObj;
         }
 
         
