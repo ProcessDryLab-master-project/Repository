@@ -64,9 +64,8 @@ namespace Repository.App
 
         public static string GetMetadataObjectStringById(string resourceId)
         {
-            var mdo = GetMetadataObjectById(resourceId);
-            string updatedMetadataJsonString = JsonConvert.SerializeObject(mdo, Formatting.Indented);
-            Console.WriteLine(updatedMetadataJsonString);
+            MetadataObject metadataObject = GetMetadataObjectById(resourceId);
+            string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataObject, Formatting.Indented);
             return updatedMetadataJsonString;
         }
 
