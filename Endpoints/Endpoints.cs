@@ -76,6 +76,12 @@ namespace Repository.Endpoints
             {
                 return DBManager.GetMetadataObjectById(resourceId);
             });
+            // To retrieve graph for given resourceId
+            app.MapGet("/resources/graph/{resourceId}", (string resourceId) =>
+            {
+                return ResourceConnector.GetGraphForResource(resourceId);
+            });
+
         }
     }
 }
