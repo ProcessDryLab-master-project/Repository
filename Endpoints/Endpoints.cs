@@ -74,7 +74,7 @@ namespace Repository.Endpoints
             // To retrieve metadata object for given resourceId
             app.MapGet("/resources/info/{resourceId}", (string resourceId) =>
             {
-                return DBManager.GetMetadataObjectById(resourceId);
+                return DBManager.GetMetadataObjectStringById(resourceId);
             });
             // To retrieve graph for given resourceId
             app.MapGet("/resources/graph/{resourceId}", (string resourceId) =>

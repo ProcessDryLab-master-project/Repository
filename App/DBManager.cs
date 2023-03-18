@@ -62,6 +62,14 @@ namespace Repository.App
             return metadataObj;
         }
 
+        public static string GetMetadataObjectStringById(string resourceId)
+        {
+            var mdo = GetMetadataObjectById(resourceId);
+            string updatedMetadataJsonString = JsonConvert.SerializeObject(mdo, Formatting.Indented);
+            Console.WriteLine(updatedMetadataJsonString);
+            return updatedMetadataJsonString;
+        }
+
         
         private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null,  List<string>? parents = null, List<string>? children = null)
         {

@@ -8,6 +8,8 @@ namespace Repository
         {
             //DBManager.FillMetadata(); // Will fill the metadata file with all the files in Resources. REMEMBER to delete the contents of the file before
 
+            //ResourceConnector.GetGraphForResource("fe960d94-5928-4463-b0f8-c59072b5d449");
+
             var builder = WebApplication.CreateBuilder(args);
             if (builder.Environment.IsDevelopment())
             {

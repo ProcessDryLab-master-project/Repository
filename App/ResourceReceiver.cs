@@ -40,22 +40,26 @@ namespace Repository.App
         // Assuming this is only relevant for streaming?
         public static IResult SaveMetadataOnly(HttpRequest request, string appUrl)
         {
-            string host = request.Form["Host"];
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
-            if (resourceType != "EventStream") return Results.BadRequest("Only ResourceType: EventStream can be added to metadata like this");
+            //if (resourceType != "EventStream") return Results.BadRequest("On-ly ResourceType: EventStream can be added to metadata like this");
 
-            string streamTopic = request.Form["StreamTopic"].ToString();
             string description = request.Form["Description"].ToString();
             string GUID = Guid.NewGuid().ToString();
+            string? streamTopic = request.Form["StreamTopic"];
+            streamTopic = string.IsNullOrWhiteSpace(streamTopic) ? null : streamTopic.ToString();
+            string? fileExtension = request.Form["FileExtension"];
+            fileExtension = string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension.ToString().Replace(".", "");
+            string? host = request.Form["Host"];
+            host = string.IsNullOrWhiteSpace(host) ? null : host.ToString();
             string? parents = request.Form["Parents"];
-            string? children = request.Form["Children"];
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
+            string? children = request.Form["Children"];
             children = string.IsNullOrWhiteSpace(children) ? null : children.ToString();
             string? overwriteId = request.Form["OverwriteId"];
             if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, streamTopic: streamTopic, parents: parents, children: children);
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension: fileExtension, streamTopic: streamTopic, parents: parents, children: children);
             return Results.Ok(GUID);
         }
 
