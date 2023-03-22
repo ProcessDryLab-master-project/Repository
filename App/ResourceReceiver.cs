@@ -34,6 +34,8 @@ namespace Repository.App
             file.CopyTo(stream);
 
             DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension, parents: parents, children: children);
+
+            Console.WriteLine($"Saved file: {nameToSaveFile}");
             return Results.Ok(GUID);
         }
 
