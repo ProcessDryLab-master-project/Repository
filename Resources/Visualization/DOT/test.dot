@@ -1,0 +1,18 @@
+digraph "49dd7eeb-5d34-4829-a2d3-8e052c64cd0f"
+{
+	"fe960d94-5928-4463-b0f8-c59072b5d449" [ color = "blue", label = "CORE ML5 Child 1" ]
+	"c3339b12-bdd6-4bfd-8f25-080fcec6b981" [ label = "OG ML5" ]
+	"c3339b12-bdd6-4bfd-8f25-080fcec6b981" -> "fe960d94-5928-4463-b0f8-c59072b5d449" 
+	"4a558af6-8257-4728-af50-22d2f22e4d79" [ label = "ML5 Child 2" ]
+	"c3339b12-bdd6-4bfd-8f25-080fcec6b981" -> "4a558af6-8257-4728-af50-22d2f22e4d79" 
+	"id_from_foreign_repository" [ color = "red" ]
+	"id_from_foreign_repository" -> "4a558af6-8257-4728-af50-22d2f22e4d79" 
+	"1d7c0255-e376-4caa-b25c-585176a4c799" [ label = "ML5 combi child" ]
+	"4a558af6-8257-4728-af50-22d2f22e4d79" -> "1d7c0255-e376-4caa-b25c-585176a4c799" 
+	"fe960d94-5928-4463-b0f8-c59072b5d449" [ label = "CORE ML5 Child 1" ]
+	"fe960d94-5928-4463-b0f8-c59072b5d449" -> "1d7c0255-e376-4caa-b25c-585176a4c799" 
+	"09d57d96-4c46-423a-ae29-0f8da770b2b8" [ label = "Complex Petri Net" ]
+	"fe960d94-5928-4463-b0f8-c59072b5d449" -> "09d57d96-4c46-423a-ae29-0f8da770b2b8" 
+	"988366f1-6bce-4d7b-9859-86b7e77ac244" [ label = "ML5 Great Grandchild" ]
+	"1d7c0255-e376-4caa-b25c-585176a4c799" -> "988366f1-6bce-4d7b-9859-86b7e77ac244" 
+}

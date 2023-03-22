@@ -10,33 +10,30 @@ namespace Repository.App
         static readonly string pathToVisualization = Path.Combine(pathToResources, "Visualization");
         static readonly string pathToDot = Path.Combine(pathToVisualization, "DOT");
         static HashSet<string> exploredNodes = new HashSet<string>();
-        public static IResult GetGraphForResource(string resourceId, out string pathToFile)
+        public static string GetGraphForResource(string resourceId)
         {
+            Console.WriteLine("Getting graph for requested object: " + resourceId);
             var requestedMdObject = DBManager.GetMetadataObjectById(resourceId);
             string graphId = Guid.NewGuid().ToString();
-            //string graphId = "test";
-            pathToFile = Path.Combine(pathToDot, graphId + ".dot");
-            //File.AppendAllText(pathToFile, "");
-
-            // Build graph
-            Graph graph = new Graph(graphId);
+            Graph graph = new Graph($"\"{graphId}\"");
             graph.type = "digraph";
 
             Node centerNode = new Node($"\"{resourceId}\"");
             centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's the requested node.
             centerNode.Attribute.label.Value = requestedMdObject.ResourceLabel;// "Center label";
-            Console.WriteLine("Getting graph for requested object: " + requestedMdObject.ResourceLabel);
             graph.AddElement(centerNode);
 
-            InsertNode(graph, centerNode, requestedMdObject, resourceId);
+            RecursiveInsert(graph, centerNode, requestedMdObject, resourceId);
 
-            DotDocument dotDocument = new DotDocument();
-            //Console.WriteLine(dotDocument.ToString());
-            dotDocument.SaveToFile(graph, pathToFile);
+            // This if we want to save as a file and send it as IResult instead.
+            //string pathToFile = Path.Combine(pathToDot, graphId + ".dot");
+            //DotDocument dotDocument = new DotDocument();
+            //dotDocument.SaveToFile(graph, pathToFile);
+            //return Results.File(pathToFile, resourceId);
 
-            return Results.File(pathToFile, resourceId);
+            return graph.ElementToString();
         }
-        public static void InsertNode(Graph graph, Node node, MetadataObject? mdObject, string resourceId)
+        public static void RecursiveInsert(Graph graph, Node node, MetadataObject? mdObject, string resourceId)
         {
             if(mdObject == null) { return; } // The node is not part of this repository.
 
@@ -74,7 +71,7 @@ namespace Repository.App
             else { edge = DirectedEdge(relativeNode, currentNode); }
 
             graph.AddElements(relativeNode, edge);
-            InsertNode(graph, relativeNode, relativeMdObject, relativeId);
+            RecursiveInsert(graph, relativeNode, relativeMdObject, relativeId);
         }
 
         private static Edge DirectedEdge(Node parent, Node child)

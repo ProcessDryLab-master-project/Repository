@@ -713,7 +713,7 @@
   },
   "1d7c0255-e376-4caa-b25c-585176a4c799": {
     "CreationDate": "17-03-2023 15:47:12",
-    "ResourceLabel": "ML5 Incest",
+    "ResourceLabel": "ML5 combi child",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources/",
     "Description": "This is a child to both of \"OG ML5\"'s children",
@@ -738,7 +738,7 @@
     "ResourceLabel": "ML5 Great Grandchild",
     "ResourceType": "Visualization",
     "Host": "https://localhost:4000/resources/",
-    "Description": "Child to incest child",
+    "Description": "Great Grandchild to ML5",
     "StreamInfo": {
       "StreamTopic": null
     },
