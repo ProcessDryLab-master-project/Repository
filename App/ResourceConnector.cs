@@ -28,38 +28,41 @@ namespace Repository.App
             Console.WriteLine("Getting graph for requested object: " + requestedMdObject.ResourceLabel);
             graph.AddElement(centerNode);
 
-            InsertNode(graph, centerNode, resourceId);
+            InsertNode(graph, centerNode, requestedMdObject, resourceId);
 
             DotDocument dotDocument = new DotDocument();
             dotDocument.SaveToFile(graph, pathToFile);
 
             return Results.File(pathToFile, resourceId);
         }
-        public static void InsertNode(Graph graph, Node node, string resourceId)
+        public static void InsertNode(Graph graph, Node node, MetadataObject? mdObject, string resourceId)
         {
-            MetadataObject mdObject = DBManager.GetMetadataObjectById(resourceId);
+            if(mdObject == null) { return; } // The node is not part of this repository.
+
             var parentList = mdObject.GenerationTree.Parents;
             foreach (var relativeId in parentList ?? Enumerable.Empty<string>())
             {
                 if (!exploredNodes.Contains(relativeId + resourceId))
                 {
                     exploredNodes.Add(relativeId + resourceId);
-                    MetadataObject relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
-                    Node relativeNode = (Node)graph.GetElementByName(relativeId, "node");
-                    if (relativeNode == null)
-                    {
-                        relativeNode = new Node($"\"{relativeId}\"");
-                        relativeNode.Attribute.label.Value = relativeMdObject.ResourceLabel;
-                    }
+                    Node relativeNode = new Node($"\"{relativeId}\"");
+
+                    MetadataObject? relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
+
+                    if(relativeMdObject == null) relativeNode.Attribute.color.Value = Color.X11.red; // Red because it's not part of this repository
+                    else relativeNode.Attribute.label.Value = relativeMdObject.ResourceLabel;   // Can only use label if it's part of this repo
+                    graph.AddElement(relativeNode);
+
                     List<Transition> transition = new List<Transition>()
                     {
                         new Transition(relativeNode, EdgeOp.directed),
                         new Transition(node, EdgeOp.unspecified),
                     };
                     Edge edge = new Edge(transition);
-                    graph.AddElements(relativeNode, edge);
+                    graph.AddElement(edge);
+                    //graph.AddElements(relativeNode, edge);
 
-                    InsertNode(graph, relativeNode, relativeId);
+                    InsertNode(graph, relativeNode, relativeMdObject, relativeId);
                 }
             }
 
@@ -69,13 +72,10 @@ namespace Repository.App
                 if (!exploredNodes.Contains(resourceId + relativeId))
                 {
                     exploredNodes.Add(resourceId + relativeId);
+                    Node relativeNode = new Node($"\"{relativeId}\"");
+
                     MetadataObject relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
-                    Node relativeNode = (Node)graph.GetElementByName(relativeId, "node");
-                    if (relativeNode == null)
-                    {
-                        relativeNode = new Node($"\"{relativeId}\"");
-                        relativeNode.Attribute.label.Value = relativeMdObject.ResourceLabel;
-                    }
+                    relativeNode.Attribute.label.Value = relativeMdObject.ResourceLabel;
                     List<Transition> transition = new List<Transition>()
                     {
                         new Transition(node, EdgeOp.directed),
@@ -84,30 +84,9 @@ namespace Repository.App
                     Edge edge = new Edge(transition);
                     graph.AddElements(relativeNode, edge);
 
-                    InsertNode(graph, relativeNode, relativeId);
+                    InsertNode(graph, relativeNode, relativeMdObject, relativeId);
                 }
             }
-
-
-            //foreach (var parentId in parentList ?? Enumerable.Empty<string>())
-            //{
-            //    if (!exploredNodes.Contains(parentId + resourceId))
-            //    {
-            //        exploredNodes.Add(parentId + resourceId);
-            //        InsertNode(graph, node, parentId);
-            //    }
-
-            //}
-            //foreach (var childId in childList ?? Enumerable.Empty<string>())
-            //{
-            //    if (!exploredNodes.Contains(resourceId + childId))
-            //    {
-            //        exploredNodes.Add(resourceId + childId);
-            //        InsertNode(graph, node, childId);
-            //    }
-            //}
-            //IterateAndAdd(graph, node, parentList);
-            //IterateAndAdd(graph, node, childList);
         }
 
         //public static void InsertNode(Graph graph, Node? relativeNode, string resourceId)
@@ -150,29 +129,27 @@ namespace Repository.App
         //            InsertNode(graph, node, childId);
         //        }
         //    }
-        //    //IterateAndAdd(graph, node, parentList);
-        //    //IterateAndAdd(graph, node, childList);
         //}
 
-        private static void IterateAndAdd(Graph graph, Node node, List<string>? relativeList)
-        {
-            foreach (var relativeId in relativeList ?? Enumerable.Empty<string>())
-            {
-                MetadataObject mdObject = DBManager.GetMetadataObjectById(relativeId);
+        //private static void IterateAndAdd(Graph graph, Node node, List<string>? relativeList)
+        //{
+        //    foreach (var relativeId in relativeList ?? Enumerable.Empty<string>())
+        //    {
+        //        MetadataObject mdObject = DBManager.GetMetadataObjectById(relativeId);
 
-                Node relativeNode = new Node($"\"{relativeId}\"");
-                relativeNode.Attribute.label.Value = mdObject.ResourceLabel;
-                List<Transition> transition = new List<Transition>()
-                {
-                    new Transition(relativeNode, EdgeOp.directed),
-                    new Transition(node, EdgeOp.unspecified),
-                };
-                Edge edge = new Edge(transition);
-                graph.AddElements(relativeNode, edge);
+        //        Node relativeNode = new Node($"\"{relativeId}\"");
+        //        relativeNode.Attribute.label.Value = mdObject.ResourceLabel;
+        //        List<Transition> transition = new List<Transition>()
+        //        {
+        //            new Transition(relativeNode, EdgeOp.directed),
+        //            new Transition(node, EdgeOp.unspecified),
+        //        };
+        //        Edge edge = new Edge(transition);
+        //        graph.AddElements(relativeNode, edge);
 
-                InsertNode(graph, relativeNode, relativeId);
-            }
-        }
+        //        InsertNode(graph, relativeNode, relativeId);
+        //    }
+        //}
 
         public static string CreateMD5(string input)
         {

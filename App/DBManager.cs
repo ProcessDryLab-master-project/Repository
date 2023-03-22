@@ -57,7 +57,8 @@ namespace Repository.App
         public static MetadataObject? GetMetadataObjectById(string resourceId)
         {
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            MetadataObject metadataObj = metadataDict.GetValue(resourceId);
+            MetadataObject? metadataObj = metadataDict.GetValue(resourceId);
+            if(metadataObj == null) return null;
             metadataObj.ResourceId = resourceId;
             return metadataObj;
         }

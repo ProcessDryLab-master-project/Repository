@@ -662,7 +662,8 @@
     },
     "GenerationTree": {
       "Parents": [
-        "c3339b12-bdd6-4bfd-8f25-080fcec6b981"
+        "c3339b12-bdd6-4bfd-8f25-080fcec6b981",
+        "id_from_foreign_repository"
       ],
       "Children": [
         "1d7c0255-e376-4caa-b25c-585176a4c799"
