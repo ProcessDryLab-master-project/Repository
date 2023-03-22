@@ -8,6 +8,7 @@ using System;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Hosting;
 using System.IO.Pipelines;
+using Microsoft.AspNetCore.Http;
 
 namespace Repository.Endpoints
 {
@@ -77,9 +78,11 @@ namespace Repository.Endpoints
                 return DBManager.GetMetadataObjectStringById(resourceId);
             });
             // To retrieve graph for given resourceId
-            app.MapGet("/resources/graph/{resourceId}", (string resourceId) =>
+            app.MapGet("/resources/graph/{resourceId}", (HttpContext httpContext, string resourceId) =>
             {
-                return ResourceConnector.GetGraphForResource(resourceId);
+                var result = ResourceConnector.GetGraphForResource(resourceId, out string pathToFile);
+                return result;
+                //httpContext.Response.WriteAsync(result);
             });
 
         }
