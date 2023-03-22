@@ -671,7 +671,7 @@
   },
   "fe960d94-5928-4463-b0f8-c59072b5d449": {
     "CreationDate": "17-03-2023 14:47:22",
-    "ResourceLabel": "ML5 Child 1",
+    "ResourceLabel": "CORE ML5 Child 1",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources/",
     "Description": "This is a child to \"OG ML5\" that also has some child",
@@ -712,7 +712,7 @@
   },
   "1d7c0255-e376-4caa-b25c-585176a4c799": {
     "CreationDate": "17-03-2023 15:47:12",
-    "ResourceLabel": "ML5 ",
+    "ResourceLabel": "ML5 Incest",
     "ResourceType": "EventLog",
     "Host": "https://localhost:4000/resources/",
     "Description": "This is a child to both of \"OG ML5\"'s children",
@@ -726,6 +726,27 @@
       "Parents": [
         "4a558af6-8257-4728-af50-22d2f22e4d79",
         "fe960d94-5928-4463-b0f8-c59072b5d449"
+      ],
+      "Children": [
+        "988366f1-6bce-4d7b-9859-86b7e77ac244"
+      ]
+    }
+  },
+  "988366f1-6bce-4d7b-9859-86b7e77ac244": {
+    "CreationDate": "22-03-2023 10:25:04",
+    "ResourceLabel": "ML5 Great Grandchild",
+    "ResourceType": "Visualization",
+    "Host": "https://localhost:4000/resources/",
+    "Description": "Child to incest child",
+    "StreamInfo": {
+      "StreamTopic": null
+    },
+    "FileInfo": {
+      "FileExtension": "jpg"
+    },
+    "GenerationTree": {
+      "Parents": [
+        "1d7c0255-e376-4caa-b25c-585176a4c799"
       ],
       "Children": null
     }

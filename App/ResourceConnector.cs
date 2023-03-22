@@ -8,6 +8,7 @@ namespace Repository.App
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToVisualization = Path.Combine(pathToResources, "Visualization");
         static readonly string pathToDot = Path.Combine(pathToVisualization, "DOT");
+        static HashSet<string> exploredNodes = new HashSet<string>();
         public static IResult GetGraphForResource(string resourceId)
         {
             var requestedMdObject = DBManager.GetMetadataObjectById(resourceId);
@@ -18,27 +19,170 @@ namespace Repository.App
 
             // Build graph
             Graph graph = new Graph(graphId);
-            graph.strict = true;
-            graph.type = "diagraph";
-            Node centerNode = new Node(resourceId);
+            //graph.strict = true;
+            graph.type = "digraph";
+
+            Node centerNode = new Node($"\"{resourceId}\"");
             centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's the requested node.
-            centerNode.Attribute.label.Value = "Center label";
+            centerNode.Attribute.label.Value = requestedMdObject.ResourceLabel;// "Center label";
+            Console.WriteLine("Getting graph for requested object: " + requestedMdObject.ResourceLabel);
             graph.AddElement(centerNode);
-            foreach (var parent in requestedMdObject.GenerationTree.Parents)
-            {
-                Node node = new Node(parent);
-                List<Transition> transition = new List<Transition>()
-                {
-                    new Transition(node, EdgeOp.directed),
-                    new Transition(centerNode, EdgeOp.unspecified),
-                };
-                Edge edge = new Edge(transition);
-                graph.AddElements(node, edge);
-            }
+
+            InsertNode(graph, centerNode, resourceId);
+
             DotDocument dotDocument = new DotDocument();
             dotDocument.SaveToFile(graph, pathToFile);
 
             return Results.File(pathToFile, resourceId);
+        }
+        public static void InsertNode(Graph graph, Node node, string resourceId)
+        {
+            MetadataObject mdObject = DBManager.GetMetadataObjectById(resourceId);
+            var parentList = mdObject.GenerationTree.Parents;
+            foreach (var relativeId in parentList ?? Enumerable.Empty<string>())
+            {
+                if (!exploredNodes.Contains(relativeId + resourceId))
+                {
+                    exploredNodes.Add(relativeId + resourceId);
+                    MetadataObject relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
+                    Node relativeNode = (Node)graph.GetElementByName(relativeId, "node");
+                    if (relativeNode == null)
+                    {
+                        relativeNode = new Node($"\"{relativeId}\"");
+                        relativeNode.Attribute.label.Value = relativeMdObject.ResourceLabel;
+                    }
+                    List<Transition> transition = new List<Transition>()
+                    {
+                        new Transition(relativeNode, EdgeOp.directed),
+                        new Transition(node, EdgeOp.unspecified),
+                    };
+                    Edge edge = new Edge(transition);
+                    graph.AddElements(relativeNode, edge);
+
+                    InsertNode(graph, relativeNode, relativeId);
+                }
+            }
+
+            var childList = mdObject.GenerationTree.Children;
+            foreach (var relativeId in childList ?? Enumerable.Empty<string>())
+            {
+                if (!exploredNodes.Contains(resourceId + relativeId))
+                {
+                    exploredNodes.Add(resourceId + relativeId);
+                    MetadataObject relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
+                    Node relativeNode = (Node)graph.GetElementByName(relativeId, "node");
+                    if (relativeNode == null)
+                    {
+                        relativeNode = new Node($"\"{relativeId}\"");
+                        relativeNode.Attribute.label.Value = relativeMdObject.ResourceLabel;
+                    }
+                    List<Transition> transition = new List<Transition>()
+                    {
+                        new Transition(node, EdgeOp.directed),
+                        new Transition(relativeNode, EdgeOp.unspecified),
+                    };
+                    Edge edge = new Edge(transition);
+                    graph.AddElements(relativeNode, edge);
+
+                    InsertNode(graph, relativeNode, relativeId);
+                }
+            }
+
+
+            //foreach (var parentId in parentList ?? Enumerable.Empty<string>())
+            //{
+            //    if (!exploredNodes.Contains(parentId + resourceId))
+            //    {
+            //        exploredNodes.Add(parentId + resourceId);
+            //        InsertNode(graph, node, parentId);
+            //    }
+
+            //}
+            //foreach (var childId in childList ?? Enumerable.Empty<string>())
+            //{
+            //    if (!exploredNodes.Contains(resourceId + childId))
+            //    {
+            //        exploredNodes.Add(resourceId + childId);
+            //        InsertNode(graph, node, childId);
+            //    }
+            //}
+            //IterateAndAdd(graph, node, parentList);
+            //IterateAndAdd(graph, node, childList);
+        }
+
+        //public static void InsertNode(Graph graph, Node? relativeNode, string resourceId)
+        //{
+        //    MetadataObject mdObject = DBManager.GetMetadataObjectById(resourceId);
+        //    Node node = (Node) graph.GetElementByName(resourceId, "node");
+        //    if(node == null)
+        //    {   // Add current node, if node doesn't already exist:
+        //        node = new Node($"\"{resourceId}\"");
+        //        graph.AddElement(node);
+        //        node.Attribute.label.Value = mdObject.ResourceLabel;
+        //    }
+        //    if(relativeNode != null)
+        //    {   // Add transition unless no relative node was provided (like the first time this is called).
+        //        List<Transition> transition = new List<Transition>()
+        //        {
+        //            new Transition(node, EdgeOp.directed),
+        //            new Transition(relativeNode, EdgeOp.unspecified),
+        //        };
+        //        Edge edge = new Edge(transition);
+        //        graph.AddElement(edge);
+        //    }
+
+        //    var parentList = mdObject.GenerationTree.Parents;
+        //    var childList = mdObject.GenerationTree.Children;
+        //    foreach (var parentId in parentList ?? Enumerable.Empty<string>())
+        //    {
+        //        if (!exploredNodes.Contains(parentId + resourceId))
+        //        {
+        //            exploredNodes.Add(parentId + resourceId);
+        //            InsertNode(graph, node, parentId);
+        //        }
+
+        //    }
+        //    foreach (var childId in childList ?? Enumerable.Empty<string>())
+        //    {
+        //        if (!exploredNodes.Contains(resourceId+childId))
+        //        {
+        //            exploredNodes.Add(resourceId+childId);
+        //            InsertNode(graph, node, childId);
+        //        }
+        //    }
+        //    //IterateAndAdd(graph, node, parentList);
+        //    //IterateAndAdd(graph, node, childList);
+        //}
+
+        private static void IterateAndAdd(Graph graph, Node node, List<string>? relativeList)
+        {
+            foreach (var relativeId in relativeList ?? Enumerable.Empty<string>())
+            {
+                MetadataObject mdObject = DBManager.GetMetadataObjectById(relativeId);
+
+                Node relativeNode = new Node($"\"{relativeId}\"");
+                relativeNode.Attribute.label.Value = mdObject.ResourceLabel;
+                List<Transition> transition = new List<Transition>()
+                {
+                    new Transition(relativeNode, EdgeOp.directed),
+                    new Transition(node, EdgeOp.unspecified),
+                };
+                Edge edge = new Edge(transition);
+                graph.AddElements(relativeNode, edge);
+
+                InsertNode(graph, relativeNode, relativeId);
+            }
+        }
+
+        public static string CreateMD5(string input)
+        {
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                return Convert.ToHexString(hashBytes);
+            }
         }
     }
 }

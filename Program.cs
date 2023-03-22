@@ -50,6 +50,8 @@ namespace Repository
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+            //ResourceConnector.GetGraphForResource("988366f1-6bce-4d7b-9859-86b7e77ac244");
+            ResourceConnector.GetGraphForResource("fe960d94-5928-4463-b0f8-c59072b5d449");
 
             app.MapGet("/", () => "Hello World!");
 
