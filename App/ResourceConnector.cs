@@ -25,7 +25,7 @@ namespace Repository.App
 
             RecursiveInsert(graph, centerNode, requestedMdObject, resourceId);
 
-            // This if we want to save as a file and send it as IResult instead.
+            // This if we want to save as a file and send it as IResult instead. Can convert the dot file to svg with this command: dot -Tsvg test.dot > test.svg
             //string pathToFile = Path.Combine(pathToDot, graphId + ".dot");
             //DotDocument dotDocument = new DotDocument();
             //dotDocument.SaveToFile(graph, pathToFile);

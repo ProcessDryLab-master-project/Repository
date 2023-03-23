@@ -53,7 +53,7 @@ namespace Repository.App
             string? fileExtension = request.Form["FileExtension"];
             fileExtension = string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension.ToString().Replace(".", "");
             string? host = request.Form["Host"];
-            host = string.IsNullOrWhiteSpace(host) ? null : host.ToString();
+            host = string.IsNullOrWhiteSpace(host) ? $"{appUrl}/resources/" : host.ToString(); // Host is only NOT null when adding streams. Otherwise it should always be null.
             string? parents = request.Form["Parents"];
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
             string? children = request.Form["Children"];
