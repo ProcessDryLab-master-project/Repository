@@ -200,7 +200,11 @@
     "GenerationTree": {
       "GeneratedFrom": null,
       "Parents": null,
-      "Children": null
+      "Children": [
+        {
+          "ResourceId": "1321d984-17b6-4ec1-93c7-26ad4cedc85d"
+        }
+      ]
     }
   },
   "ed3b6458-606d-4566-a408-176fda055544": {
@@ -234,7 +238,17 @@
     "GenerationTree": {
       "GeneratedFrom": null,
       "Parents": null,
-      "Children": null
+      "Children": [
+        {
+          "ResourceId": "2286534d-ee50-4eed-8290-1392f1eb5d90"
+        },
+        {
+          "ResourceId": "82fd1533-dc87-4b03-baba-a59c910ab3fa"
+        },
+        {
+          "ResourceId": "1321d984-17b6-4ec1-93c7-26ad4cedc85d"
+        }
+      ]
     }
   },
   "44ddad39-e2c8-469f-b7a0-113c94488fec": {
@@ -257,7 +271,7 @@
   "aa0f67b8-cef3-4d0a-9064-6e9d171be6c0": {
     "CreationDate": "23-03-2023 15:35:00",
     "ResourceInfo": {
-      "ResourceLabel": "BPMN Process Model",
+      "ResourceLabel": "A3E1BPMN",
       "ResourceType": "ProcessModel",
       "Host": "https://localhost:4000/resources/",
       "FileExtension": "bpmn",
@@ -268,6 +282,76 @@
     "GenerationTree": {
       "GeneratedFrom": null,
       "Parents": null,
+      "Children": null
+    }
+  },
+  "2286534d-ee50-4eed-8290-1392f1eb5d90": {
+    "CreationDate": "23-03-2023 15:53:23",
+    "ResourceInfo": {
+      "ResourceLabel": "create_contentBPMN",
+      "ResourceType": "ProcessModel",
+      "Host": "https://localhost:4000/resources/",
+      "FileExtension": "bpmn",
+      "StreamTopic": null,
+      "Description": "Some BPMN for a log",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": null,
+      "Parents": [
+        {
+          "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
+          "From": "InputLog"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "82fd1533-dc87-4b03-baba-a59c910ab3fa": {
+    "CreationDate": "23-03-2023 15:55:40",
+    "ResourceInfo": {
+      "ResourceLabel": "ML5 Great Grandchild",
+      "ResourceType": "Image",
+      "Host": "https://localhost:4000/resources/",
+      "FileExtension": "jpg",
+      "StreamTopic": null,
+      "Description": "Some image of a petri net",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": null,
+      "Parents": [
+        {
+          "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
+          "From": "InputLog"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "1321d984-17b6-4ec1-93c7-26ad4cedc85d": {
+    "CreationDate": "23-03-2023 15:56:40",
+    "ResourceInfo": {
+      "ResourceLabel": "credit-scoreBPMN",
+      "ResourceType": "ProcessModel",
+      "Host": "https://localhost:4000/resources/",
+      "FileExtension": "bpmn",
+      "StreamTopic": null,
+      "Description": "Some BPMN with 2 parents somehow",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": null,
+      "Parents": [
+        {
+          "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
+          "From": "InputLog1"
+        },
+        {
+          "ResourceId": "db9bb61c-f9a9-4d0f-ad3d-f2b5d881581e",
+          "From": "InputLog2"
+        }
+      ],
       "Children": null
     }
   }
