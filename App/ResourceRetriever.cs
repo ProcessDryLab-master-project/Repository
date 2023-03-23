@@ -17,17 +17,23 @@ namespace Repository.App
             return Results.Text(json, contentType: "application/json");
         }
 
-        public static IResult GetVisualizationList()
+        public static async Task<IResult> GetFilteredList(HttpRequest request)
         {
+            var body = new StreamReader(request.Body);
+            string bodyString = await body.ReadToEndAsync();
+
+            bool validRequest = bodyString.TryParseJson(out List<string> filters);
+            if(!validRequest) return Results.BadRequest($"Request body: {bodyString} is not a valid list");
             var resourceList = DBManager.GetMetadataAsList();
-            var eventLogList = resourceList.Where(resource => resource.ResourceType.Equals("Visualization", StringComparison.OrdinalIgnoreCase));
+            var eventLogList = resourceList.Where(resource => filters.Any(filter => resource.ResourceInfo.ResourceType.Equals(filter, StringComparison.OrdinalIgnoreCase)));
+            //var eventLogList = resourceList.Where(resource => !resource.ResourceInfo.ResourceType.Equals("EventLog", StringComparison.OrdinalIgnoreCase) && !!resource.ResourceInfo.ResourceType.Equals("EventStream", StringComparison.OrdinalIgnoreCase));
             var json = JsonConvert.SerializeObject(eventLogList);
             return Results.Text(json, contentType: "application/json");
         }
         public static IResult GetEventLogList()
         {
             var resourceList = DBManager.GetMetadataAsList();
-            var eventLogList = resourceList.Where(resource => resource.ResourceType.Equals("EventLog", StringComparison.OrdinalIgnoreCase));
+            var eventLogList = resourceList.Where(resource => resource.ResourceInfo.ResourceType.Equals("EventLog", StringComparison.OrdinalIgnoreCase));
             var json = JsonConvert.SerializeObject(eventLogList);
             return Results.Text(json, contentType: "application/json");
         }
@@ -36,9 +42,8 @@ namespace Repository.App
         {
             MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);
             if(metadataObject == null) return Results.BadRequest("Invalid resource ID.");
-            string pathToResourceType = Path.Combine(pathToResources, metadataObject.ResourceType);
-            string pathToFileExtension = Path.Combine(pathToResourceType, metadataObject.FileInfo.FileExtension.ToUpper()); // TODO: Add null check or try/catch
-            string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.FileInfo.FileExtension);
+            string pathToFileExtension = Path.Combine(pathToResources, metadataObject.ResourceInfo.FileExtension.ToUpper()); // TODO: Add null check or try/catch
+            string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.ResourceInfo.FileExtension);
             if (!File.Exists(pathToFile))
             {
                 string badResponse = "No such file exists for path " + pathToFile; // TODO: Should not return the entire path, just easier like this for now
@@ -66,81 +71,5 @@ namespace Repository.App
 
             return response;
         }
-
-
-        #region OldFrontend
-        // --------- FUNCTIONS FOR OLD FRONTEND --------- //
-        public static IResult GetResourceListOld()
-        {
-            string[] files = Directory.GetFiles(pathToResources, "*.*", System.IO.SearchOption.AllDirectories);
-
-            List<Dictionary<string, object>> resourceList = new();
-            foreach (string file in files)
-            {
-                string fileName = Path.GetFileName(file); // To remove path, and only get file name
-                BuildResourceObject(resourceList, fileName);
-            }
-            var json = JsonConvert.SerializeObject(resourceList);
-            return Results.Text(json, contentType: "application/json");
-
-            static void BuildResourceObject(List<Dictionary<string, object>> resourceList, string fileName)
-            {
-                resourceList.Add(new Dictionary<string, object>
-                {
-                    { "id", "id1" },
-                    { "name", fileName },
-                    { "type",  new Dictionary<string, object>
-                        {
-                            {
-                                "name", Path.GetExtension(fileName).Replace(".", "")
-                            },
-                            {
-                                "description", "Some file"
-                            },
-                            {
-                                "visualizations", new List<Dictionary<string, string>>()
-                                {
-                                    new Dictionary<string, string>()
-                                    {
-                                        {"id","v1"},
-                                        {"name","Vis 1"}
-                                    },
-                                    new Dictionary<string, string>()
-                                    {
-                                        {"id","v2"},
-                                        {"name","Vis 2"}
-                                    },
-
-                                }
-                            }
-                        }
-                    },
-                    { "host", "https://localhost:4000" },
-                    { "creationDate", "02-03-2023 10:26:29" },
-                });
-            }
-        }
-
-
-        // This is also an example of an async response and how to read body. Keep for inspiration even if we delete the endpoint.
-        public static async Task<IResult> GetVisualizationById(HttpRequest request, string resourceId, string visualizationId)
-        {
-            // read  body from request:
-            var body = new StreamReader(request.Body);
-            string postData = await body.ReadToEndAsync();
-            Console.WriteLine(postData);
-
-
-            string resourceType = Path.GetExtension(visualizationId).Replace(".", "").ToUpper();
-            string pathToResourceType = Path.Combine(pathToResources, resourceType);
-            string pathToFile = Path.Combine(pathToResourceType, visualizationId);
-            if (!File.Exists(pathToFile))
-            {
-                string badResponse = "No such file exists for path " + pathToResourceType;
-                return Results.BadRequest(badResponse);
-            }
-            return Results.File(pathToFile, visualizationId);
-        }
-        #endregion
     }
 }

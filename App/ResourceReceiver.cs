@@ -71,22 +71,7 @@ namespace Repository.App
             string pathToResourceType;
             if (string.IsNullOrWhiteSpace(fileName)) fileName = file.FileName;
             if (string.IsNullOrWhiteSpace(fileExtension)) fileExtension = Path.GetExtension(file.FileName).Replace(".", "");
-            if (string.IsNullOrWhiteSpace(resourceType))
-            {
-                if (fileExtension.Equals("XES", StringComparison.OrdinalIgnoreCase))
-                {
-                    pathToResourceType = Path.Combine(pathToResources, "EventLog"); // Cannot be "Log" as C# will ignore it
-                }
-                else
-                {
-                    pathToResourceType = Path.Combine(pathToResources, "Visualization");
-                }
-            }
-            else
-            {
-                pathToResourceType = Path.Combine(pathToResources, resourceType);
-            }
-            string pathToFileExtension = Path.Combine(pathToResourceType, fileExtension.ToUpper());
+            string pathToFileExtension = Path.Combine(pathToResources, fileExtension.ToUpper());
             if (!Directory.Exists(pathToFileExtension))
             {
                 Console.WriteLine("No folder exists for this file type, creating " + pathToFileExtension);

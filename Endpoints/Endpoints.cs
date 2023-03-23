@@ -56,9 +56,9 @@ namespace Repository.Endpoints
             });
 
             // To retrieve/output a list of available Visualization resources
-            app.MapGet("/resources/visualizations", (HttpContext httpContext) =>
+            app.MapGet("/resources/visualizations", (HttpRequest request) =>
             {
-                return ResourceRetriever.GetVisualizationList();
+                return ResourceRetriever.GetFilteredList(request);
             });
 
             // To retrieve/output a list of available EventLog resources

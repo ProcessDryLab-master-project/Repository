@@ -10,17 +10,19 @@ namespace Repository.App
         static readonly string pathToVisualization = Path.Combine(pathToResources, "Visualization");
         static readonly string pathToDot = Path.Combine(pathToVisualization, "DOT");
         static HashSet<string> exploredNodes = new HashSet<string>();
-        public static string GetGraphForResource(string resourceId)
+        public static IResult GetGraphForResource(string resourceId)
         {
             Console.WriteLine("Getting graph for requested object: " + resourceId);
-            var requestedMdObject = DBManager.GetMetadataObjectById(resourceId);
+            MetadataObject? requestedMdObject = DBManager.GetMetadataObjectById(resourceId);
+            if (requestedMdObject == null) return Results.BadRequest("No resource exist for that ID");
+
             string graphId = Guid.NewGuid().ToString();
             Graph graph = new Graph($"\"{graphId}\"");
             graph.type = "digraph";
 
             Node centerNode = new Node($"\"{resourceId}\"");
             centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's the requested node.
-            centerNode.Attribute.label.Value = requestedMdObject.ResourceLabel;// "Center label";
+            centerNode.Attribute.label.Value = requestedMdObject.ResourceInfo.ResourceLabel;// "Center label";
             graph.AddElement(centerNode);
 
             RecursiveInsert(graph, centerNode, requestedMdObject, resourceId);
@@ -31,15 +33,17 @@ namespace Repository.App
             //dotDocument.SaveToFile(graph, pathToFile);
             //return Results.File(pathToFile, resourceId);
 
-            return graph.ElementToString();
+            return Results.Ok(graph.ElementToString());
         }
         public static void RecursiveInsert(Graph graph, Node node, MetadataObject? mdObject, string resourceId)
         {
             if(mdObject == null) { return; } // The node is not part of this repository.
 
             var parentList = mdObject.GenerationTree.Parents;
-            foreach (var relativeId in parentList ?? Enumerable.Empty<string>())
+            foreach (var relative in parentList ?? Enumerable.Empty<Parent>())
             {
+                string relativeId = relative.ResourceId;
+                string relativeFrom = relative.From;
                 if (!exploredNodes.Contains(relativeId + resourceId))
                 {
                     exploredNodes.Add(relativeId + resourceId);
@@ -48,8 +52,9 @@ namespace Repository.App
             }
 
             var childList = mdObject.GenerationTree.Children;
-            foreach (var relativeId in childList ?? Enumerable.Empty<string>())
+            foreach (var relative in childList ?? Enumerable.Empty<Child>())
             {
+                string relativeId = relative.ResourceId;
                 if (!exploredNodes.Contains(resourceId + relativeId))
                 {
                     exploredNodes.Add(resourceId + relativeId);
@@ -64,7 +69,7 @@ namespace Repository.App
 
             MetadataObject? relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
             if (relativeMdObject == null) relativeNode.Attribute.color.Value = Color.X11.red; // Red because it's not part of this repository
-            else relativeNode.Attribute.label.Value = relativeMdObject.ResourceLabel;   // Can only use label if it's part of this repo
+            else relativeNode.Attribute.label.Value = relativeMdObject.ResourceInfo.ResourceLabel;   // Can only use label if it's part of this repo
 
             Edge edge;
             if(isChild) { edge = DirectedEdge(currentNode, relativeNode); }

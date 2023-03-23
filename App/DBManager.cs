@@ -26,8 +26,8 @@ namespace Repository.App
 
         public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, string? parents = null, string? children = null)
         {
-            bool providedParents = parents.TryParseJson(out List<string> parentsList);
-            bool providedChildren = children.TryParseJson(out List<string> childrenList);
+            bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
+            bool providedChildren = children.TryParseJson(out List<Child> childrenList);
             var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, parentsList, childrenList);
 
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
@@ -39,17 +39,21 @@ namespace Repository.App
             File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
 
-        private static void UpdateParentResource(string GUID, bool providedParents, List<string> parentsList, Dictionary<string, MetadataObject> metadataDict)
+        private static void UpdateParentResource(string GUID, bool providedParents, List<Parent> parentsList, Dictionary<string, MetadataObject> metadataDict)
         {
             if (providedParents)
             {   // Add own ID as child to parent resource
                 foreach (var parent in parentsList)
                 {
-                    var parentObj = metadataDict.GetValue(parent);
+                    string parentId = parent.ResourceId;
+                    var parentObj = metadataDict.GetValue(parentId);
                     if (parentObj == null) return;              // If we can't find parentObj in metadata, do nothing (likely means it exists in another repo or has been deleted).
-                    parentObj.GenerationTree.Children ??= new List<string>();  // If children are null, initialize
-                    parentObj.GenerationTree.Children.Add(GUID);
-                    metadataDict[parent] = parentObj;           // Overwrite with updated parentObj
+                    parentObj.GenerationTree.Children ??= new List<Child>();  // If children are null, initialize
+                    parentObj.GenerationTree.Children.Add(new Child
+                    {
+                        ResourceId = GUID,
+                    });
+                    metadataDict[parentId] = parentObj;           // Overwrite with updated parentObj
                 }
             }
         }
@@ -71,21 +75,18 @@ namespace Repository.App
         }
 
         
-        private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null,  List<string>? parents = null, List<string>? children = null)
+        private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null,  List<Parent>? parents = null, List<Child>? children = null)
         {
             return new MetadataObject
             {
                 CreationDate = DateTime.Now.ToString(),
-                ResourceLabel = resourceLabel,
-                ResourceType = resourceType,                // EventLog or Visualization. Could make an Enum for this.
-                Host = host,  // TODO: Should probably read this from somewhere to make it dynamic.
-                Description = description,
-                FileInfo = new FileInfo
+                ResourceInfo = new ResourceInfo
                 {
+                    ResourceLabel = resourceLabel,
+                    ResourceType = resourceType,
+                    Host = host,  // TODO: Should probably read this from somewhere to make it dynamic.
+                    Description = description,
                     FileExtension = fileExtension,
-                },
-                StreamInfo = new StreamInfo
-                {
                     StreamTopic = streamTopic
                 },
                 GenerationTree = new GenerationTree
@@ -104,31 +105,46 @@ namespace Repository.App
             return metadataDict;
         }
 
-
         // Helper function to fill metadata file with all resources in the Resources folder:
         public static void FillMetadata()
         {
             // TODO: Maybe add a safe way to recreate the metadata file before running this
-
+            int counter = 0;
             string[] files = Directory.GetFiles(pathToResources, "*.*", SearchOption.AllDirectories);
             foreach (string file in files)
             {
                 string fileName = Path.GetFileNameWithoutExtension(file);
+                bool isValidGuid = Guid.TryParse(fileName, out var fileNameGuid);
+
                 string fileExtension = Path.GetExtension(file).Replace(".", ""); // e.g. save "xes", not ".xes". Can also do ToUpper() to save with upper case like the folders
 
                 string resourceType;
                 if (fileExtension.Equals("XES", StringComparison.OrdinalIgnoreCase))
                     resourceType = "EventLog";
+                else if (fileExtension.Equals("BPMN", StringComparison.OrdinalIgnoreCase))
+                    resourceType = "ProcessModel";
+                else if (fileExtension.Equals("DOT", StringComparison.OrdinalIgnoreCase))
+                    resourceType = "Graph";
+                else if (fileExtension.Equals("JPG", StringComparison.OrdinalIgnoreCase))
+                    resourceType = "Image";
+                else if (fileExtension.Equals("PNG", StringComparison.OrdinalIgnoreCase))
+                    resourceType = "Image";
+                else if (fileExtension.Equals("JSON", StringComparison.OrdinalIgnoreCase))
+                    resourceType = "Histogram";
+                else if (fileExtension.Equals("PNML", StringComparison.OrdinalIgnoreCase))
+                    resourceType = "PetriNet";
                 else
-                    resourceType = "Visualization";
+                    resourceType = "Misc";
 
                 
 
-                if(!fileName.Contains("metadata", StringComparison.OrdinalIgnoreCase))
+                //if(!fileName.Contains("metadata", StringComparison.OrdinalIgnoreCase))
+                if(isValidGuid)
                 {
-                    string fileId = fileName;
+                    counter++;
+                    //string fileId = fileName;
                     //fileId = ChangeFileNames(file, fileName, fileExtension); // Should not be called unless you want to change all file names to include the extension
-                    AddToMetadata(fileName, resourceType, fileId, "https://localhost:4000/resources", "Some file description", fileExtension);
+                    AddToMetadata($"Some label {counter}", resourceType, fileNameGuid.ToString(), "https://localhost:4000/resources", "Some file description", fileExtension);
                 }
             }
         }
