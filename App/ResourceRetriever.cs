@@ -23,7 +23,7 @@ namespace Repository.App
             string bodyString = await body.ReadToEndAsync();
 
             bool validRequest = bodyString.TryParseJson(out List<string> filters);
-            if(!validRequest) return Results.BadRequest($"Request body: {bodyString} is not a valid list");
+            if(!validRequest || filters == null || filters.Count == 0) return Results.BadRequest($"Request body: {bodyString} is not a valid list");
             var resourceList = DBManager.GetMetadataAsList();
             var eventLogList = resourceList.Where(resource => filters.Any(filter => resource.ResourceInfo.ResourceType.Equals(filter, StringComparison.OrdinalIgnoreCase)));
             //var eventLogList = resourceList.Where(resource => !resource.ResourceInfo.ResourceType.Equals("EventLog", StringComparison.OrdinalIgnoreCase) && !!resource.ResourceInfo.ResourceType.Equals("EventStream", StringComparison.OrdinalIgnoreCase));
