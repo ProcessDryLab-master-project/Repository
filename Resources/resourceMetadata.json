@@ -21,7 +21,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 1",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -38,7 +38,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 2",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -55,7 +55,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 3",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -72,7 +72,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 4",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -89,7 +89,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 5",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -106,7 +106,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 6",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -123,7 +123,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 7",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -140,7 +140,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 8",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -157,7 +157,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 9",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -174,7 +174,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 10",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -191,7 +191,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 11",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -212,7 +212,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 12",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -229,7 +229,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 13",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -256,7 +256,7 @@
     "ResourceInfo": {
       "ResourceLabel": "Some label 14",
       "ResourceType": "Graph",
-      "Host": "https://localhost:4000/resources/",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "dot",
       "StreamTopic": null,
       "Description": "Some file description",
@@ -273,7 +273,7 @@
     "ResourceInfo": {
       "ResourceLabel": "A3E1BPMN",
       "ResourceType": "ProcessModel",
-      "Host": "https://localhost:4000/resources//",
+      "Host": "https://localhost:4000/resources/files//",
       "FileExtension": "bpmn",
       "StreamTopic": null,
       "Description": "Some BPMN for a log",
@@ -290,7 +290,7 @@
     "ResourceInfo": {
       "ResourceLabel": "create_contentBPMN",
       "ResourceType": "ProcessModel",
-      "Host": "https://localhost:4000/resources//",
+      "Host": "https://localhost:4000/resources/files//",
       "FileExtension": "bpmn",
       "StreamTopic": null,
       "Description": "Some BPMN for a log",
@@ -312,7 +312,7 @@
     "ResourceInfo": {
       "ResourceLabel": "ML5 Great Grandchild",
       "ResourceType": "Image",
-      "Host": "https://localhost:4000/resources//",
+      "Host": "https://localhost:4000/resources/files//",
       "FileExtension": "jpg",
       "StreamTopic": null,
       "Description": "Some image of a petri net",
@@ -334,7 +334,7 @@
     "ResourceInfo": {
       "ResourceLabel": "credit-scoreBPMN",
       "ResourceType": "ProcessModel",
-      "Host": "https://localhost:4000/resources//",
+      "Host": "https://localhost:4000/resources/files//",
       "FileExtension": "bpmn",
       "StreamTopic": null,
       "Description": "Some BPMN with 2 parents somehow",
