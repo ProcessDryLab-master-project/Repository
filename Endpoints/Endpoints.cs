@@ -56,7 +56,7 @@ namespace Repository.Endpoints
             });
 
             // To retrieve/output a list of available Visualization resources
-            app.MapGet("/resources/filter", (HttpRequest request) =>
+            app.MapPost("/resources/filter", (HttpRequest request) =>
             {
                 return ResourceRetriever.GetFilteredList(request);
             });

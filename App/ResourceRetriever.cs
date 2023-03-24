@@ -21,6 +21,7 @@ namespace Repository.App
         {
             var body = new StreamReader(request.Body);
             string bodyString = await body.ReadToEndAsync();
+            Console.WriteLine(bodyString);
 
             bool validRequest = bodyString.TryParseJson(out List<string> filters);
             if(!validRequest || filters == null || filters.Count == 0) return Results.BadRequest($"Request body: {bodyString} is not a valid list");
