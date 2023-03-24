@@ -1,8 +1,9 @@
 ﻿using csdot;
 using csdot.Attributes.DataTypes;
 using Microsoft.AspNetCore.Http;
+using Repository.App;
 
-namespace Repository.App
+namespace Repository.Visualizers
 {
     public class ResourceConnector
     {
@@ -37,7 +38,7 @@ namespace Repository.App
         }
         public static void RecursiveInsert(Graph graph, Node node, MetadataObject? mdObject, string resourceId)
         {
-            if(mdObject == null) { return; } // The node is not part of this repository.
+            if (mdObject == null) { return; } // The node is not part of this repository.
 
             var parentList = mdObject.GenerationTree.Parents;
             foreach (var relative in parentList ?? Enumerable.Empty<Parent>())
@@ -72,7 +73,7 @@ namespace Repository.App
             else relativeNode.Attribute.label.Value = relativeMdObject.ResourceInfo.ResourceLabel;   // Can only use label if it's part of this repo
 
             Edge edge;
-            if(isChild) { edge = DirectedEdge(currentNode, relativeNode); }
+            if (isChild) { edge = DirectedEdge(currentNode, relativeNode); }
             else { edge = DirectedEdge(relativeNode, currentNode); }
 
             graph.AddElements(relativeNode, edge);

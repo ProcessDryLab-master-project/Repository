@@ -26,7 +26,7 @@ namespace Repository.App
                 return Results.BadRequest("Exactly one file is required");
             }
             var file = request.Form.Files[0];
-            string host = $"{appUrl}/resources/";
+            string host = $"{appUrl}/resources/files/";
             string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
             string nameToSaveFile = GUID + "." + fileExtension;
             string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);

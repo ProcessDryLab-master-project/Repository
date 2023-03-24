@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Repository.App;
 using System.Net;
-using Repository.App;
 using System.Reflection;
 using Newtonsoft.Json;
 using System;
@@ -9,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Hosting;
 using System.IO.Pipelines;
 using Microsoft.AspNetCore.Http;
+using Repository.Visualizers;
 
 namespace Repository.Endpoints
 {

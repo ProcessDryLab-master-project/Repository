@@ -273,7 +273,7 @@
     "ResourceInfo": {
       "ResourceLabel": "A3E1BPMN",
       "ResourceType": "ProcessModel",
-      "Host": "https://localhost:4000/resources/files//",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "bpmn",
       "StreamTopic": null,
       "Description": "Some BPMN for a log",
@@ -290,7 +290,7 @@
     "ResourceInfo": {
       "ResourceLabel": "create_contentBPMN",
       "ResourceType": "ProcessModel",
-      "Host": "https://localhost:4000/resources/files//",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "bpmn",
       "StreamTopic": null,
       "Description": "Some BPMN for a log",
@@ -312,7 +312,7 @@
     "ResourceInfo": {
       "ResourceLabel": "ML5 Great Grandchild",
       "ResourceType": "Image",
-      "Host": "https://localhost:4000/resources/files//",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "jpg",
       "StreamTopic": null,
       "Description": "Some image of a petri net",
@@ -334,7 +334,7 @@
     "ResourceInfo": {
       "ResourceLabel": "credit-scoreBPMN",
       "ResourceType": "ProcessModel",
-      "Host": "https://localhost:4000/resources/files//",
+      "Host": "https://localhost:4000/resources/files/",
       "FileExtension": "bpmn",
       "StreamTopic": null,
       "Description": "Some BPMN with 2 parents somehow",
