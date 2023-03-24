@@ -33,7 +33,7 @@ namespace Repository.Endpoints
 
             // ----------------- DATA ----------------- //
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
-            app.MapPost("/resources/files", (HttpRequest request) =>
+            app.MapPost("/resources", (HttpRequest request) =>
             {
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return ResourceReceiver.SaveFile(request, appUrl);
@@ -41,7 +41,7 @@ namespace Repository.Endpoints
             //.Accepts<IFormFile>("multipart/form-data")
             .Produces(200);
 
-            app.MapPost("/resources/info", (HttpRequest request) =>
+            app.MapPost("/resources/metadata", (HttpRequest request) =>
             {
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return ResourceReceiver.SaveMetadataOnly(request, appUrl);
@@ -49,33 +49,33 @@ namespace Repository.Endpoints
             //.Accepts<IFormFile>("multipart/form-data")
             .Produces(200);
 
-            // To retrieve/output a list of available resources
-            app.MapGet("/resources", (HttpContext httpContext) =>
+            // To retrieve/output a list of available resources (metadata list)
+            app.MapGet("/resources/metadata", (HttpContext httpContext) =>
             {
                 return ResourceRetriever.GetResourceList();
             });
+            // To retrieve metadata object for given resourceId
+            app.MapGet("/resources/metadata/{resourceId}", (string resourceId) =>
+            {
+                return DBManager.GetMetadataObjectStringById(resourceId);
+            });
 
             // To retrieve/output a list of available Visualization resources
-            app.MapPost("/resources/filter", (HttpRequest request) =>
+            app.MapPost("/resources/metadata/filters", (HttpRequest request) =>
             {
                 return ResourceRetriever.GetFilteredList(request);
             });
 
-            // To retrieve/output a list of available EventLog resources
-            app.MapGet("/resources/eventlogs", (HttpContext httpContext) =>
-            {
-                return ResourceRetriever.GetEventLogList();
-            });
+            //// To retrieve/output a list of available EventLog resources
+            //app.MapGet("/resources/eventlogs", (HttpContext httpContext) =>
+            //{
+            //    return ResourceRetriever.GetEventLogList();
+            //});
 
             // To retrieve file for given resourceId
-            app.MapGet("/resources/files/{resourceId}", (string resourceId) =>
+            app.MapGet("/resources/{resourceId}", (string resourceId) =>
             {
                 return ResourceRetriever.GetResourceById(resourceId);
-            });
-            // To retrieve metadata object for given resourceId
-            app.MapGet("/resources/info/{resourceId}", (string resourceId) =>
-            {
-                return DBManager.GetMetadataObjectStringById(resourceId);
             });
             // To retrieve graph for given resourceId
             app.MapGet("/resources/graph/{resourceId}", (string resourceId) =>
