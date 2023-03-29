@@ -10,9 +10,9 @@ namespace Repository.Visualizers
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToVisualization = Path.Combine(pathToResources, "Visualization");
         static readonly string pathToDot = Path.Combine(pathToVisualization, "DOT");
-        static HashSet<string> exploredNodes = new HashSet<string>();
         public static IResult GetGraphForResource(string resourceId)
         {
+            HashSet<string> exploredNodes = new HashSet<string>();
             Console.WriteLine("Getting graph for requested object: " + resourceId);
             MetadataObject? requestedMdObject = DBManager.GetMetadataObjectById(resourceId);
             if (requestedMdObject == null) return Results.BadRequest("No resource exist for that ID");
@@ -26,7 +26,7 @@ namespace Repository.Visualizers
             centerNode.Attribute.label.Value = requestedMdObject.ResourceInfo.ResourceLabel;// "Center label";
             graph.AddElement(centerNode);
 
-            RecursiveInsert(graph, centerNode, requestedMdObject, resourceId);
+            RecursiveInsert(graph, centerNode, requestedMdObject, resourceId, exploredNodes);
 
             // This if we want to save as a file and send it as IResult instead. Can convert the dot file to svg with this command: dot -Tsvg test.dot > test.svg
             //string pathToFile = Path.Combine(pathToDot, graphId + ".dot");
@@ -36,7 +36,7 @@ namespace Repository.Visualizers
 
             return Results.Ok(graph.ElementToString());
         }
-        public static void RecursiveInsert(Graph graph, Node node, MetadataObject? mdObject, string resourceId)
+        public static void RecursiveInsert(Graph graph, Node node, MetadataObject? mdObject, string resourceId, HashSet<string> exploredNodes)
         {
             if (mdObject == null) { return; } // The node is not part of this repository.
 
@@ -48,7 +48,7 @@ namespace Repository.Visualizers
                 if (!exploredNodes.Contains(relativeId + resourceId))
                 {
                     exploredNodes.Add(relativeId + resourceId);
-                    CreateNodeAndEdge(graph, node, relativeId, false);
+                    CreateNodeAndEdge(graph, node, relativeId, false, exploredNodes);
                 }
             }
 
@@ -59,12 +59,12 @@ namespace Repository.Visualizers
                 if (!exploredNodes.Contains(resourceId + relativeId))
                 {
                     exploredNodes.Add(resourceId + relativeId);
-                    CreateNodeAndEdge(graph, node, relativeId, true);
+                    CreateNodeAndEdge(graph, node, relativeId, true, exploredNodes);
                 }
             }
         }
 
-        private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild)
+        private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes)
         {
             Node relativeNode = new Node($"\"{relativeId}\"");
 
@@ -77,7 +77,7 @@ namespace Repository.Visualizers
             else { edge = DirectedEdge(relativeNode, currentNode); }
 
             graph.AddElements(relativeNode, edge);
-            RecursiveInsert(graph, relativeNode, relativeMdObject, relativeId);
+            RecursiveInsert(graph, relativeNode, relativeMdObject, relativeId, exploredNodes);
         }
 
         private static Edge DirectedEdge(Node parent, Node child)
