@@ -8,8 +8,7 @@ namespace Repository.Visualizers
     public class ResourceConnector
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-        static readonly string pathToVisualization = Path.Combine(pathToResources, "Visualization");
-        static readonly string pathToDot = Path.Combine(pathToVisualization, "DOT");
+        static readonly string pathToDot = Path.Combine(pathToResources, "DOT");
         public static IResult GetGraphForResource(string resourceId)
         {
             HashSet<string> exploredNodes = new HashSet<string>();
@@ -22,16 +21,16 @@ namespace Repository.Visualizers
             graph.type = "digraph";
 
             Node centerNode = new Node($"\"{resourceId}\"");
-            centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's the requested node.
+            centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's tec62e128-adaf-4907he requested node.
             centerNode.Attribute.label.Value = requestedMdObject.ResourceInfo.ResourceLabel;// "Center label";
             graph.AddElement(centerNode);
 
             RecursiveInsert(graph, centerNode, requestedMdObject, resourceId, exploredNodes);
 
             // This if we want to save as a file and send it as IResult instead. Can convert the dot file to svg with this command: dot -Tsvg test.dot > test.svg
-            string pathToFile = Path.Combine(pathToDot, graphId + ".dot");
-            DotDocument dotDocument = new DotDocument();
-            dotDocument.SaveToFile(graph, pathToFile);
+            //string pathToFile = Path.Combine(pathToDot, graphId + ".dot");
+            //DotDocument dotDocument = new DotDocument();
+            //dotDocument.SaveToFile(graph, pathToFile);
             //return Results.File(pathToFile, resourceId);
 
             return Results.Ok(graph.ElementToString());
