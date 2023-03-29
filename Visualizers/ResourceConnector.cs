@@ -21,14 +21,14 @@ namespace Repository.Visualizers
             graph.type = "digraph";
 
             Node centerNode = new Node($"\"{resourceId}\"");
-            centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's tec62e128-adaf-4907he requested node.
+            centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's the requested node.
             centerNode.Attribute.label.Value = requestedMdObject.ResourceInfo.ResourceLabel;// "Center label";
             graph.AddElement(centerNode);
 
             RecursiveInsert(graph, centerNode, requestedMdObject, resourceId, exploredNodes);
 
             // This if we want to save as a file and send it as IResult instead. Can convert the dot file to svg with this command: dot -Tsvg test.dot > test.svg
-            //string pathToFile = Path.Combine(pathToDot, graphId + ".dot");
+            //string pathToFile = Path.Combine(pathToDot, "test1" + ".dot");
             //DotDocument dotDocument = new DotDocument();
             //dotDocument.SaveToFile(graph, pathToFile);
             //return Results.File(pathToFile, resourceId);
@@ -47,23 +47,23 @@ namespace Repository.Visualizers
                 if (!exploredNodes.Contains(relativeId + resourceId))
                 {
                     exploredNodes.Add(relativeId + resourceId);
-                    CreateNodeAndEdge(graph, node, relativeId, false, exploredNodes);
+                    CreateNodeAndEdge(graph, node, relativeId, false, exploredNodes, relativeFrom);
                 }
             }
-
-            var childList = mdObject.GenerationTree.Children;
-            foreach (var relative in childList ?? Enumerable.Empty<Child>())
-            {
-                string relativeId = relative.ResourceId;
-                if (!exploredNodes.Contains(resourceId + relativeId))
-                {
-                    exploredNodes.Add(resourceId + relativeId);
-                    CreateNodeAndEdge(graph, node, relativeId, true, exploredNodes);
-                }
-            }
+            // Code if we're interested in children.
+            //var childList = mdObject.GenerationTree.Children;
+            //foreach (var relative in childList ?? Enumerable.Empty<Child>())
+            //{
+            //    string relativeId = relative.ResourceId;
+            //    if (!exploredNodes.Contains(resourceId + relativeId))
+            //    {
+            //        exploredNodes.Add(resourceId + relativeId);
+            //        CreateNodeAndEdge(graph, node, relativeId, true, exploredNodes);
+            //    }
+            //}
         }
 
-        private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes)
+        private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeFrom = null)
         {
             Node relativeNode = new Node($"\"{relativeId}\"");
 
@@ -74,7 +74,7 @@ namespace Repository.Visualizers
             Edge edge;
             if (isChild) { edge = DirectedEdge(currentNode, relativeNode); }
             else { edge = DirectedEdge(relativeNode, currentNode); }
-
+            if(!string.IsNullOrWhiteSpace(relativeFrom)) edge.Attribute.label.Value = relativeFrom;
             graph.AddElements(relativeNode, edge);
             RecursiveInsert(graph, relativeNode, relativeMdObject, relativeId, exploredNodes);
         }
@@ -86,6 +86,7 @@ namespace Repository.Visualizers
                         new Transition(parent, EdgeOp.directed),
                         new Transition(child, EdgeOp.unspecified),
                     };
+            
             Edge edge = new Edge(transition);
             return edge;
         }
