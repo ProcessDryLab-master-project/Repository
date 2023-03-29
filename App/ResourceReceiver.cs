@@ -14,8 +14,10 @@ namespace Repository.App
             string? fileExtension = request.Form["FileExtension"];
             fileExtension = string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension.ToString().Replace(".", "");
             string GUID = Guid.NewGuid().ToString();
+            string? generatedFrom = request.Form["GeneratedFrom"];
             string? parents = request.Form["Parents"];
             string? children = request.Form["Children"];
+            generatedFrom = string.IsNullOrWhiteSpace(generatedFrom) ? null : generatedFrom.ToString();
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
             children = string.IsNullOrWhiteSpace(children) ? null : children.ToString();
             string? overwriteId = request.Form["OverwriteId"];
@@ -33,7 +35,7 @@ namespace Repository.App
             using var stream = new FileStream(pathToSaveFile, FileMode.Create);
             file.CopyTo(stream);
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension, parents: parents, children: children);
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension, generatedFrom: generatedFrom, parents: parents, children: children);
 
             Console.WriteLine($"Saved file: {nameToSaveFile}");
             return Results.Ok(GUID);

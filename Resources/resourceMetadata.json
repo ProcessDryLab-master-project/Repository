@@ -256,6 +256,9 @@
         },
         {
           "ResourceId": "4835c423-dd5a-43c6-bf40-078160dea86f"
+        },
+        {
+          "ResourceId": "78fccc1a-1daf-4c45-b0a0-716b44be41e0"
         }
       ]
     }
@@ -350,7 +353,11 @@
       "Dynamic": false
     },
     "GenerationTree": {
-      "GeneratedFrom": null,
+      "GeneratedFrom": {
+        "MinerHost": "http://localhost:5000",
+        "MinerId": "1",
+        "MinerLabel": "Alpha Miner"
+      },
       "Parents": [
         {
           "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
@@ -361,7 +368,11 @@
           "From": "InputLog2"
         }
       ],
-      "Children": null
+      "Children": [
+        {
+          "ResourceId": "01a5aebe-42c6-42f1-87cf-c8de11779d8b"
+        }
+      ]
     }
   },
   "4835c423-dd5a-43c6-bf40-078160dea86f": {
@@ -381,6 +392,54 @@
         {
           "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
           "From": "InputLog"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "01a5aebe-42c6-42f1-87cf-c8de11779d8b": {
+    "CreationDate": "29-03-2023 09:45:48",
+    "ResourceInfo": {
+      "ResourceLabel": "ML5 Great Grandchild",
+      "ResourceType": "Image",
+      "Host": "https://localhost:4000/resources/",
+      "FileExtension": "jpg",
+      "StreamTopic": null,
+      "Description": "Some image of a petri net",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": null,
+      "Parents": [
+        {
+          "ResourceId": "1321d984-17b6-4ec1-93c7-26ad4cedc85d",
+          "From": "ProcessModel1"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "78fccc1a-1daf-4c45-b0a0-716b44be41e0": {
+    "CreationDate": "29-03-2023 10:11:22",
+    "ResourceInfo": {
+      "ResourceLabel": "Test Petri Net",
+      "ResourceType": "ProcessModel",
+      "Host": "https://localhost:4000/resources/",
+      "FileExtension": "pnml",
+      "StreamTopic": null,
+      "Description": "Some Petri Net, probably with a wrong parent",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": {
+        "MinerHost": "http://localhost:5000",
+        "MinerId": "1",
+        "MinerLabel": "Alpha Miner"
+      },
+      "Parents": [
+        {
+          "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
+          "From": "InputLog1"
         }
       ],
       "Children": null
