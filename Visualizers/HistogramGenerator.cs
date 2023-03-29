@@ -28,7 +28,6 @@ namespace Repository.Visualizers
             List<string>? childrenIds = metadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
             foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
             {
-                Console.WriteLine("Child id: " + childId);
                 var childMetadata = DBManager.GetMetadataObjectById(childId);
                 if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram") return ResourceRetriever.GetResourceById(childId);
             }

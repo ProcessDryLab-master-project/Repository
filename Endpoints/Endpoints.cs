@@ -52,12 +52,18 @@ namespace Repository.Endpoints
             // To retrieve/output a list of available resources (metadata list)
             app.MapGet("/resources/metadata", (HttpContext httpContext) =>
             {
-                return ResourceRetriever.GetResourceList();
+                return DBManager.GetResourceList();
             });
             // To retrieve metadata object for given resourceId
             app.MapGet("/resources/metadata/{resourceId}", (string resourceId) =>
             {
                 return DBManager.GetMetadataObjectStringById(resourceId);
+            });
+
+            // To retrieve children for given resourceId
+            app.MapGet("/resources/metadata/{resourceId}/children", (string resourceId) =>
+            {
+                return DBManager.GetChildrenMetadataList(resourceId);
             });
 
             // To retrieve/output a list of available Visualization resources
@@ -77,11 +83,13 @@ namespace Repository.Endpoints
             {
                 return ResourceRetriever.GetResourceById(resourceId);
             });
+
             // To retrieve graph for given resourceId
             app.MapGet("/resources/graphs/{resourceId}", (string resourceId) =>
             {
                 return ResourceConnector.GetGraphForResource(resourceId);
             });
+
             // To retrieve histogram for given resourceId
             app.MapGet("/resources/histograms/{resourceId}", (string resourceId) =>
             {

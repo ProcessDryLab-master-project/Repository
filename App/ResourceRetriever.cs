@@ -10,12 +10,12 @@ namespace Repository.App
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
 
-        public static IResult GetResourceList()
-        {
-            var resourceList = DBManager.GetMetadataAsList();
-            var json = JsonConvert.SerializeObject(resourceList);
-            return Results.Text(json, contentType: "application/json");
-        }
+        //public static IResult GetResourceList()
+        //{
+        //    var resourceList = DBManager.GetMetadataAsList();
+        //    var json = JsonConvert.SerializeObject(resourceList);
+        //    return Results.Text(json, contentType: "application/json");
+        //}
 
         public static async Task<IResult> GetFilteredList(HttpRequest request)
         {

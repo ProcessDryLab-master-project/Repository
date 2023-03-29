@@ -10,19 +10,6 @@ namespace Repository.App
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
-
-        public static List<MetadataObject> GetMetadataAsList()
-        {
-            Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            List<MetadataObject> metadataAsList = new();
-            foreach (var metadataObject in metadataDict)
-            {
-                Console.WriteLine($"{metadataObject.Key}: {metadataObject.Value}");
-                metadataObject.Value.ResourceId = metadataObject.Key;
-                metadataAsList.Add(metadataObject.Value);
-            }
-            return metadataAsList;
-        }
         
         // Should only ever be called by HistogramGenerator and by the overload function below
         public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom generatedFrom, List<Parent> parents, string? description = null, string? fileExtension = null, string? streamTopic = null)
@@ -80,7 +67,45 @@ namespace Repository.App
             return updatedMetadataJsonString;
         }
 
-        
+        public static IResult GetChildrenMetadataList(string resourceId)
+        {
+            var metadataObject = GetMetadataObjectById(resourceId);
+            List<MetadataObject> childrenMetadataList = new();
+            List<string>? childrenIds = metadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
+            foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
+            {
+                Console.WriteLine("Child id: " + childId);
+                var childMetadata = GetMetadataObjectById(childId);
+                if (childMetadata != null) // TODO: Consider if this is needed? Children should always exist in same repo
+                {
+                    childMetadata.ResourceId = childId;
+                    childrenMetadataList.Add(childMetadata);
+                }
+            }
+            var jsonList = JsonConvert.SerializeObject(childrenMetadataList);
+            return Results.Text(jsonList, contentType: "application/json");
+        }
+        public static List<MetadataObject> GetMetadataAsList()
+        {
+            Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+            List<MetadataObject> metadataAsList = new();
+            foreach (var metadataObject in metadataDict)
+            {
+                Console.WriteLine($"{metadataObject.Key}: {metadataObject.Value}");
+                metadataObject.Value.ResourceId = metadataObject.Key;
+                metadataAsList.Add(metadataObject.Value);
+            }
+            return metadataAsList;
+        }
+
+        public static IResult GetResourceList()
+        {
+            var resourceList = GetMetadataAsList();
+            var json = JsonConvert.SerializeObject(resourceList);
+            return Results.Text(json, contentType: "application/json");
+        }
+
+
         private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null)
         {
             return new MetadataObject
