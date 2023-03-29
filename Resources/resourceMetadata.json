@@ -253,6 +253,9 @@
         },
         {
           "ResourceId": "58bf0b63-4597-4d17-b57b-9003e4db936a"
+        },
+        {
+          "ResourceId": "4835c423-dd5a-43c6-bf40-078160dea86f"
         }
       ]
     }
@@ -356,6 +359,28 @@
         {
           "ResourceId": "db9bb61c-f9a9-4d0f-ad3d-f2b5d881581e",
           "From": "InputLog2"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "4835c423-dd5a-43c6-bf40-078160dea86f": {
+    "CreationDate": "24-03-2023 14:44:03",
+    "ResourceInfo": {
+      "ResourceLabel": "ML5 Great Grandchild",
+      "ResourceType": "Image",
+      "Host": "https://localhost:4000/resources/",
+      "FileExtension": "jpg",
+      "StreamTopic": null,
+      "Description": "Some image of a petri net",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": null,
+      "Parents": [
+        {
+          "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
+          "From": "InputLog"
         }
       ],
       "Children": null

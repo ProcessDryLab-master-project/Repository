@@ -10,7 +10,7 @@
   <global scope="event">
     <string key="concept:name" value="name"/>
     <string key="org:resource" value="resource"/>
-    <date key="time:timestamp" value="2011-04-13T14:02:31.199+02:00"/>
+    <date key="time: timestamp" value="2011-04-13T14:02:31.199+02:00"/>
     <string key="Activity" value="string"/>
     <string key="Resource" value="string"/>
     <string key="Costs" value="string"/>

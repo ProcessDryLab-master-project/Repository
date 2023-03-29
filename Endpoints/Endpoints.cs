@@ -78,9 +78,14 @@ namespace Repository.Endpoints
                 return ResourceRetriever.GetResourceById(resourceId);
             });
             // To retrieve graph for given resourceId
-            app.MapGet("/resources/graph/{resourceId}", (string resourceId) =>
+            app.MapGet("/resources/graphs/{resourceId}", (string resourceId) =>
             {
                 return ResourceConnector.GetGraphForResource(resourceId);
+            });
+            // To retrieve histogram for given resourceId
+            app.MapGet("/resources/histograms/{resourceId}", (string resourceId) =>
+            {
+                return HistogramGenerator.GetHistogram(resourceId);
             });
 
         }

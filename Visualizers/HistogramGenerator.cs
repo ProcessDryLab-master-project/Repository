@@ -1,6 +1,9 @@
-﻿using Repository.App;
+﻿using Newtonsoft.Json;
+using Repository.App;
 using System.Data.SqlTypes;
+using System.Reflection.PortableExecutable;
 using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Repository.Visualizers
 {
@@ -9,6 +12,7 @@ namespace Repository.Visualizers
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         public static IResult GetHistogram(string resourceId)
         {
+            Dictionary<string, int> histogramDict = new Dictionary<string, int>();
             // TODO: Check if a histogram already exists for this file
             Console.WriteLine("Creating histogram for requested object: " + resourceId);
             MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);
@@ -21,50 +25,82 @@ namespace Repository.Visualizers
                 return Results.BadRequest(badResponse);
             }
 
-            XmlTextReader reader = new XmlTextReader(pathToFile);
-
-            while(reader.Read())
+            XmlDocument doc = new XmlDocument();
+            doc.Load(pathToFile);
+            foreach (XmlNode traceNode in doc.DocumentElement.ChildNodes)
             {
-                switch (reader.NodeType)
+                if (traceNode.Name == "trace")
                 {
-                    case XmlNodeType.Element: // The node is an element.
-                        Console.Write("<" + reader.Name);
-
-                        while (reader.MoveToNextAttribute()) // Read the attributes.
-                            Console.Write(" " + reader.Name + "='" + reader.Value + "'");
-                        Console.Write(">");
-                        Console.WriteLine(">");
-                        break;
-                    case XmlNodeType.Text: //Display the text in each element.
-                        Console.WriteLine(reader.Value);
-                        break;
-                    case XmlNodeType.EndElement: //Display the end of the element.
-                        Console.Write("</" + reader.Name);
-                        Console.WriteLine(">");
-                        break;
+                    Console.WriteLine($"\n\nNew Trace:");
+                    foreach (XmlNode eventNode in traceNode.ChildNodes)
+                    {
+                        if (eventNode.Name == "event")
+                        {
+                            foreach (XmlNode eventAttribute in eventNode.ChildNodes)
+                            {
+                                string eventKey = eventAttribute.Attributes["key"].Value;
+                                if(eventKey == "concept:name")
+                                {
+                                    string eventValue = eventAttribute.Attributes["value"].Value;
+                                    Console.WriteLine("EventKey: " + eventKey);
+                                    Console.WriteLine("Attribute value: " + eventValue);
+                                    if (histogramDict.ContainsKey(eventValue))
+                                    {
+                                        histogramDict[eventValue] += 1;
+                                    }
+                                    else
+                                    {
+                                        histogramDict[eventValue] = 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-                //if (reader.NodeType )
-                //switch (reader.NodeType)
-                //{
-                //    case XmlNodeType.Element: // The node is an element.
-                //        Console.Write("<" + reader.Name);
-                //        Console.WriteLine(">");
-                //        break;
-
-                //    case XmlNodeType.Text: //Display the text in each element.
-                //        Console.WriteLine(reader.Value);
-                //        break;
-
-                //    case XmlNodeType.EndElement: //Display the end of the element.
-                //        Console.Write("</" + reader.Name);
-                //        Console.WriteLine(">");
-                //        break;
-                //}
             }
-            //XmlDocument doc = new XmlDocument();
-            //doc.Load("c:\\temp.xml");
+            //[
+            //    ["event1", 1000],
+            //    ["event2", 1170],
+            //    ["event3", 660],
+            //    ["event4", 1030],
+            //]
+            List<List<dynamic>> histogramList = new();
+            foreach (var eventDict in histogramDict)
+            {
+                Console.WriteLine($"{eventDict.Key}: {eventDict.Value}");
+                //eventDict.Value.ResourceId = eventDict.Key;
+                List<dynamic> tmpList = new()
+                {
+                    eventDict.Key,
+                    eventDict.Value,
+                };
+                histogramList.Add(tmpList);
+            }
+            var jsonList = JsonConvert.SerializeObject(histogramList, Newtonsoft.Json.Formatting.Indented);
+            Console.WriteLine(jsonList);
+            return Results.Text(jsonList, contentType: "application/json");
+            //histogramList;
 
-            return Results.File(pathToFile, resourceId);
+            //XmlTextReader reader = new XmlTextReader(pathToFile);
+            //while (reader.Read())
+            //{
+            //    if (reader.NodeType == XmlNodeType.Element) // If it's start of an element
+            //    {
+            //        if (reader.Name == "trace")
+            //        {
+            //            Console.WriteLine("Trace?");
+            //        }
+            //        //Console.WriteLine("\nOuter: " + reader.Name + "='" + reader.Value + "'");
+            //            //Console.WriteLine("\n\nNEW TRACE");
+            //        while (reader.MoveToNextAttribute()) // Read the attributes.
+            //        {
+            //            //if(reader.Name.Contains("concept:name"))
+            //                Console.WriteLine("Is a name: " + reader.Name + "='" + reader.Value + "'");
+            //        }
+            //    }
+            //}
+
+            //return Results.File(pathToFile, resourceId);
         }
     }
 }
