@@ -32,7 +32,7 @@ namespace Repository.Visualizers
             {
                 if (traceNode.Name == "trace")
                 {
-                    Console.WriteLine($"\n\nNew Trace:");
+                    //Console.WriteLine($"\n\nNew Trace:");
                     foreach (XmlNode eventNode in traceNode.ChildNodes)
                     {
                         if (eventNode.Name == "event")
@@ -43,8 +43,8 @@ namespace Repository.Visualizers
                                 if(eventKey == "concept:name")
                                 {
                                     string eventValue = eventAttribute.Attributes["value"].Value;
-                                    Console.WriteLine("EventKey: " + eventKey);
-                                    Console.WriteLine("Attribute value: " + eventValue);
+                                    //Console.WriteLine("EventKey: " + eventKey);
+                                    //Console.WriteLine("Attribute value: " + eventValue);
                                     if (histogramDict.ContainsKey(eventValue))
                                     {
                                         histogramDict[eventValue] += 1;
@@ -76,14 +76,12 @@ namespace Repository.Visualizers
                 histogramList.Add(tmpList);
             }
             var jsonList = JsonConvert.SerializeObject(histogramList, Newtonsoft.Json.Formatting.Indented);
+            Console.WriteLine(jsonList);
 
             string resourceLabel = $"Histogram from log: {metadataObject.ResourceInfo.ResourceLabel}";
-            string resourceType;
             string GUID = Guid.NewGuid().ToString();
             string host = $"{appUrl}/resources/";
-            string description = $"Histogram generated from log with label \"{metadataObject.ResourceInfo.ResourceLabel}\" and ID: \"{metadataObject.ResourceId}\"";
-            string? fileExtension = null;
-            string? streamTopic = null;
+            string description = $"Histogram generated from log with label {metadataObject.ResourceInfo.ResourceLabel} and ID: {metadataObject.ResourceId}";
             GeneratedFrom generatedFrom = new()
             {
                 SourceHost = host,
@@ -98,33 +96,11 @@ namespace Repository.Visualizers
                 }
             };
             string parentsString = JsonConvert.SerializeObject(parents, Newtonsoft.Json.Formatting.Indented);
-            //string? parents = null;
-            //string? children = null;
             DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, description, fileExtension: "json", generatedFrom: generatedFromString, parents: parentsString);
-            File.WriteAllText(pathToJson, jsonList);
+            string pathToSave = Path.Combine(pathToJson, $"{GUID}.json");
+            File.WriteAllText(pathToSave, jsonList);
             return Results.Text(jsonList, contentType: "application/json");
-            //histogramList;
-
-            //XmlTextReader reader = new XmlTextReader(pathToFile);
-            //while (reader.Read())
-            //{
-            //    if (reader.NodeType == XmlNodeType.Element) // If it's start of an element
-            //    {
-            //        if (reader.Name == "trace")
-            //        {
-            //            Console.WriteLine("Trace?");
-            //        }
-            //        //Console.WriteLine("\nOuter: " + reader.Name + "='" + reader.Value + "'");
-            //            //Console.WriteLine("\n\nNEW TRACE");
-            //        while (reader.MoveToNextAttribute()) // Read the attributes.
-            //        {
-            //            //if(reader.Name.Contains("concept:name"))
-            //                Console.WriteLine("Is a name: " + reader.Name + "='" + reader.Value + "'");
-            //        }
-            //    }
-            //}
-
-            //return Results.File(pathToFile, resourceId);
+            //return Results.File(pathToSave, GUID);
         }
     }
 }
