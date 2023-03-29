@@ -85,7 +85,8 @@ namespace Repository.Endpoints
             // To retrieve histogram for given resourceId
             app.MapGet("/resources/histograms/{resourceId}", (string resourceId) =>
             {
-                return HistogramGenerator.GetHistogram(resourceId);
+                var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+                return HistogramGenerator.GetHistogram(resourceId, appUrl);
             });
 
         }

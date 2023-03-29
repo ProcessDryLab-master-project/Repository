@@ -27,11 +27,14 @@ namespace Repository.App
         public List<Parent>? Parents { get; set; }
         public List<Child>? Children { get; set; }
     }
+    // TODO: Consider if this should be an object instead, since some of the input may vary and it would be easier when used through Histogram.
     public class GeneratedFrom
     {
-        public string MinerHost { get; set; }
-        public string MinerId { get; set; }
-        public string MinerLabel { get; set; }
+        public string SourceHost { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string? SourceId { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string? SourceLabel { get; set; }
     }
     public class Parent
     {

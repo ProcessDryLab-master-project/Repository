@@ -354,9 +354,9 @@
     },
     "GenerationTree": {
       "GeneratedFrom": {
-        "MinerHost": "http://localhost:5000",
-        "MinerId": "1",
-        "MinerLabel": "Alpha Miner"
+        "SourceHost": "http://localhost:5000",
+        "SourceId": "1",
+        "SourceLabel": "Alpha Miner"
       },
       "Parents": [
         {
@@ -432,9 +432,9 @@
     },
     "GenerationTree": {
       "GeneratedFrom": {
-        "MinerHost": "http://localhost:5000",
-        "MinerId": "1",
-        "MinerLabel": "Alpha Miner"
+        "SourceHost": "http://localhost:5000",
+        "SourceId": "1",
+        "SourceLabel": "Alpha Miner"
       },
       "Parents": [
         {

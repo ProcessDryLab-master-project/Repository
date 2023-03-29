@@ -10,7 +10,8 @@ namespace Repository.Visualizers
     public class HistogramGenerator
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-        public static IResult GetHistogram(string resourceId)
+        static readonly string pathToJson = Path.Combine(pathToResources, "JSON");
+        public static IResult GetHistogram(string resourceId, string appUrl)
         {
             Dictionary<string, int> histogramDict = new Dictionary<string, int>();
             // TODO: Check if a histogram already exists for this file
@@ -67,8 +68,6 @@ namespace Repository.Visualizers
             List<List<dynamic>> histogramList = new();
             foreach (var eventDict in histogramDict)
             {
-                Console.WriteLine($"{eventDict.Key}: {eventDict.Value}");
-                //eventDict.Value.ResourceId = eventDict.Key;
                 List<dynamic> tmpList = new()
                 {
                     eventDict.Key,
@@ -77,7 +76,32 @@ namespace Repository.Visualizers
                 histogramList.Add(tmpList);
             }
             var jsonList = JsonConvert.SerializeObject(histogramList, Newtonsoft.Json.Formatting.Indented);
-            Console.WriteLine(jsonList);
+
+            string resourceLabel = $"Histogram from log: {metadataObject.ResourceInfo.ResourceLabel}";
+            string resourceType;
+            string GUID = Guid.NewGuid().ToString();
+            string host = $"{appUrl}/resources/";
+            string description = $"Histogram generated from log with label \"{metadataObject.ResourceInfo.ResourceLabel}\" and ID: \"{metadataObject.ResourceId}\"";
+            string? fileExtension = null;
+            string? streamTopic = null;
+            GeneratedFrom generatedFrom = new()
+            {
+                SourceHost = host,
+            };
+            string generatedFromString = JsonConvert.SerializeObject(generatedFrom, Newtonsoft.Json.Formatting.Indented);
+            List<Parent> parents = new()
+            {
+                new Parent()
+                {
+                    ResourceId = resourceId,
+                    From = "Log",
+                }
+            };
+            string parentsString = JsonConvert.SerializeObject(parents, Newtonsoft.Json.Formatting.Indented);
+            //string? parents = null;
+            //string? children = null;
+            DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, description, fileExtension: "json", generatedFrom: generatedFromString, parents: parentsString);
+            File.WriteAllText(pathToJson, jsonList);
             return Results.Text(jsonList, contentType: "application/json");
             //histogramList;
 
