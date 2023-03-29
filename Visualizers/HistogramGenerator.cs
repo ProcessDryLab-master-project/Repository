@@ -92,11 +92,7 @@ namespace Repository.Visualizers
             string GUID = Guid.NewGuid().ToString();
             string host = $"{appUrl}/resources/";
             string description = $"Histogram generated from log with label {metadataObject.ResourceInfo.ResourceLabel} and ID: {metadataObject.ResourceId}";
-            GeneratedFrom generatedFrom = new()
-            {
-                SourceHost = host,
-            };
-            string generatedFromString = JsonConvert.SerializeObject(generatedFrom, Newtonsoft.Json.Formatting.Indented);
+            GeneratedFrom generatedFrom = new() { SourceHost = host };
             List<Parent> parents = new()
             {
                 new Parent()
@@ -105,8 +101,10 @@ namespace Repository.Visualizers
                     From = "Log",
                 }
             };
-            string parentsString = JsonConvert.SerializeObject(parents, Newtonsoft.Json.Formatting.Indented);
-            DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, description, fileExtension: "json", generatedFrom: generatedFromString, parents: parentsString);
+            //string generatedFromString = JsonConvert.SerializeObject(generatedFrom, Newtonsoft.Json.Formatting.Indented);
+            //string parentsString = JsonConvert.SerializeObject(parents, Newtonsoft.Json.Formatting.Indented);
+            //DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, generatedFrom: generatedFromString, parents: parentsString, description, fileExtension: "json");
+            DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension: "json");
             string pathToSave = Path.Combine(pathToJson, $"{GUID}.json");
             File.WriteAllText(pathToSave, jsonList);
             return Results.Text(jsonList, contentType: "application/json");

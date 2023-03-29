@@ -23,26 +23,31 @@ namespace Repository.App
             }
             return metadataAsList;
         }
-
-        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, string? generatedFrom = null, string? parents = null, string? children = null)
+        
+        // Should only ever be called by HistogramGenerator and by the overload function below
+        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom generatedFrom, List<Parent> parents, string? description = null, string? fileExtension = null, string? streamTopic = null)
         {
-            bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
-            bool providedChildren = children.TryParseJson(out List<Child> childrenList);
-            bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList, childrenList);
+            var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFrom, parents);
 
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            UpdateParentResource(GUID, providedParents, parentsList, metadataDict);
+            UpdateParentResource(GUID, false, parents, metadataDict);
 
             metadataDict[GUID] = newMetadataObj;
             string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
 
             File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
-
+        // Overload of function above that takes strings instead of objects.
+        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? generatedFrom = null, string? parents = null, string? description = null, string? fileExtension = null, string? streamTopic = null)
+        {
+            bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
+            bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
+            AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFromObj, parentsList, description, fileExtension);
+        }
         private static void UpdateParentResource(string GUID, bool providedParents, List<Parent> parentsList, Dictionary<string, MetadataObject> metadataDict)
         {
-            if (providedParents)
+            if(parentsList != null)
+            //if (providedParents)
             {   // Add own ID as child to parent resource
                 foreach (var parent in parentsList)
                 {
@@ -76,7 +81,7 @@ namespace Repository.App
         }
 
         
-        private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null, List<Child>? children = null)
+        private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null)
         {
             return new MetadataObject
             {
@@ -94,7 +99,6 @@ namespace Repository.App
                 {
                     GeneratedFrom = generatedFrom,
                     Parents = parents,
-                    Children = children,
                 }
             };
         }
@@ -146,7 +150,7 @@ namespace Repository.App
                     counter++;
                     //string fileId = fileName;
                     //fileId = ChangeFileNames(file, fileName, fileExtension); // Should not be called unless you want to change all file names to include the extension
-                    AddToMetadata($"Some label {counter}", resourceType, fileNameGuid.ToString(), "https://localhost:4000/resources", "Some file description", fileExtension);
+                    AddToMetadata(resourceLabel: $"Some label {counter}", resourceType: resourceType, GUID: fileNameGuid.ToString(), host: "https://localhost:4000/resources", description: "Some file description", fileExtension: fileExtension);
                 }
             }
         }

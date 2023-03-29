@@ -16,10 +16,8 @@ namespace Repository.App
             string GUID = Guid.NewGuid().ToString();
             string? generatedFrom = request.Form["GeneratedFrom"];
             string? parents = request.Form["Parents"];
-            string? children = request.Form["Children"];
             generatedFrom = string.IsNullOrWhiteSpace(generatedFrom) ? null : generatedFrom.ToString();
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
-            children = string.IsNullOrWhiteSpace(children) ? null : children.ToString();
             string? overwriteId = request.Form["OverwriteId"];
             if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
 
@@ -35,7 +33,7 @@ namespace Repository.App
             using var stream = new FileStream(pathToSaveFile, FileMode.Create);
             file.CopyTo(stream);
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension, generatedFrom: generatedFrom, parents: parents, children: children);
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension);
 
             Console.WriteLine($"Saved file: {nameToSaveFile}");
             return Results.Ok(GUID);
@@ -56,14 +54,14 @@ namespace Repository.App
             fileExtension = string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension.ToString().Replace(".", "");
             string? host = request.Form["Host"];
             host = string.IsNullOrWhiteSpace(host) ? $"{appUrl}/resources/" : host.ToString(); // Host is only NOT null when adding streams. Otherwise it should always be null.
+            string? generatedFrom = request.Form["GeneratedFrom"];
+            generatedFrom = string.IsNullOrWhiteSpace(generatedFrom) ? null : generatedFrom.ToString(); 
             string? parents = request.Form["Parents"];
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
-            string? children = request.Form["Children"];
-            children = string.IsNullOrWhiteSpace(children) ? null : children.ToString();
             string? overwriteId = request.Form["OverwriteId"];
             if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, description, fileExtension: fileExtension, streamTopic: streamTopic, parents: parents, children: children);
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description: description, fileExtension: fileExtension, streamTopic: streamTopic);
             return Results.Ok(GUID);
         }
 
