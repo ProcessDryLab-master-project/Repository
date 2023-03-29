@@ -26,6 +26,16 @@ namespace Repository.Visualizers
                 return Results.BadRequest(badResponse);
             }
 
+            //List<Child> children = metadataObject.GenerationTree.Children;
+            List<string> childrenIds = metadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
+            foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
+            {
+                Console.WriteLine("Child id: " + childId);
+                var childMetadata = DBManager.GetMetadataObjectById(childId);
+                if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram") return ResourceRetriever.GetResourceById(childId);
+            }
+            //var hist = children.Select(child => child.r filters.Any(filter => resource.ResourceInfo.ResourceType.Equals(filter, StringComparison.OrdinalIgnoreCase)));
+
             XmlDocument doc = new XmlDocument();
             doc.Load(pathToFile);
             foreach (XmlNode traceNode in doc.DocumentElement.ChildNodes)
