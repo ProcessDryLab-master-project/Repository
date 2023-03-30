@@ -12,7 +12,7 @@ namespace Repository.App
         static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
         
         // Should only ever be called by HistogramGenerator and by the overload function below
-        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom generatedFrom, List<Parent> parents, string? description = null, string? fileExtension = null, string? streamTopic = null)
+        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom? generatedFrom, List<Parent>? parents, string? description = null, string? fileExtension = null, string? streamTopic = null)
         {
             var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFrom, parents);
 
@@ -31,10 +31,9 @@ namespace Repository.App
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
             AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFromObj, parentsList, description, fileExtension);
         }
-        private static void UpdateParentResource(string GUID, bool providedParents, List<Parent> parentsList, Dictionary<string, MetadataObject> metadataDict)
+        private static void UpdateParentResource(string GUID, bool providedParents, List<Parent>? parentsList, Dictionary<string, MetadataObject> metadataDict)
         {
             if(parentsList != null)
-            //if (providedParents)
             {   // Add own ID as child to parent resource
                 foreach (var parent in parentsList)
                 {

@@ -27,6 +27,7 @@ namespace Repository.Endpoints
             // To retrieve configuration for the registrationprocess in ServiceRegistry
             app.MapGet("/configurations", (HttpContext httpContext) =>
             {
+                Console.WriteLine("Received GET request for configurations");
                 return Registration.GetConfiguration();
             });
 
@@ -35,6 +36,7 @@ namespace Repository.Endpoints
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
             app.MapPost("/resources", (HttpRequest request) =>
             {
+                Console.WriteLine("Received POST request to save file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return ResourceReceiver.SaveFile(request, appUrl);
             })
@@ -43,6 +45,7 @@ namespace Repository.Endpoints
 
             app.MapPost("/resources/metadata", (HttpRequest request) =>
             {
+                Console.WriteLine("Received POST request to create metadata object without a file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return ResourceReceiver.SaveMetadataOnly(request, appUrl);
             })
@@ -52,23 +55,27 @@ namespace Repository.Endpoints
             // To retrieve/output a list of available resources (metadata list)
             app.MapGet("/resources/metadata", (HttpContext httpContext) =>
             {
+                Console.WriteLine("Received GET request for full metadata list");
                 return DBManager.GetResourceList();
             });
             // To retrieve metadata object for given resourceId
             app.MapGet("/resources/metadata/{resourceId}", (string resourceId) =>
             {
+                Console.WriteLine("Received GET request for metadata object on resource id: " + resourceId);
                 return DBManager.GetMetadataObjectStringById(resourceId);
             });
 
             // To retrieve children for given resourceId
             app.MapGet("/resources/metadata/{resourceId}/children", (string resourceId) =>
             {
+                Console.WriteLine("Received GET request for list of children metadata on resource id: " + resourceId);
                 return DBManager.GetChildrenMetadataList(resourceId);
             });
 
             // To retrieve/output a list of available Visualization resources
             app.MapPost("/resources/metadata/filters", (HttpRequest request) =>
             {
+                Console.WriteLine("Received POST request to get a filtered list of metadata objects");
                 return ResourceRetriever.GetFilteredList(request);
             });
 
@@ -81,18 +88,21 @@ namespace Repository.Endpoints
             // To retrieve file for given resourceId
             app.MapGet("/resources/{resourceId}", (string resourceId) =>
             {
+                Console.WriteLine("Received GET request for file on resource id: " + resourceId);
                 return ResourceRetriever.GetResourceById(resourceId);
             });
 
             // To retrieve graph for given resourceId
             app.MapGet("/resources/graphs/{resourceId}", (string resourceId) =>
             {
+                Console.WriteLine("Received GET request for relation graph on resource id: " + resourceId);
                 return ResourceConnector.GetGraphForResource(resourceId);
             });
 
             // To retrieve histogram for given resourceId
-            app.MapGet("/resources/histograms/{resourceId}", (string resourceId) =>
+            app.MapPost("/resources/histograms/{resourceId}", (string resourceId) =>
             {
+                Console.WriteLine("Received POST request for histogram on resource id: " + resourceId);
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return HistogramGenerator.GetHistogram(resourceId, appUrl);
             });

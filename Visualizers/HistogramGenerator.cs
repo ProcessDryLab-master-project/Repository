@@ -13,7 +13,6 @@ namespace Repository.Visualizers
         static readonly string pathToJson = Path.Combine(pathToResources, "JSON");
         public static IResult GetHistogram(string resourceId, string appUrl)
         {
-            Console.WriteLine("Creating histogram for requested object: " + resourceId);
             MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null || metadataObject.ResourceInfo?.FileExtension == null) return Results.BadRequest("Invalid resource ID. No reference to resource could be found.");
             
@@ -53,15 +52,15 @@ namespace Repository.Visualizers
             string host = $"{appUrl}/resources/";
             string description = $"Histogram generated from log with label {metadataObject.ResourceInfo.ResourceLabel} and ID: {metadataObject.ResourceId}";
             //GeneratedFrom generatedFrom = new() { SourceHost = host };
-            //List<Parent> parents = new()
-            //{
-            //    new Parent()
-            //    {
-            //        ResourceId = resourceId,
-            //        UsedAs = "Log",
-            //    }
-            //};
-            DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, description, fileExtension: "json");
+            List<Parent> parents = new()
+            {
+                new Parent()
+                {
+                    ResourceId = resourceId,
+                    UsedAs = "Log",
+                }
+            };
+            DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, null, parents: parents, description: description, fileExtension: "json");
             //DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension: "json");
             string pathToSave = Path.Combine(pathToJson, $"{GUID}.json");
             return pathToSave;
