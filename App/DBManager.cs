@@ -22,7 +22,7 @@ namespace Repository.App
             metadataDict[GUID] = newMetadataObj;
             string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
 
-            File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+            File.WriteAllTextAsync(pathToMetadata, updatedMetadataJsonString);
         }
         // Overload of function above that takes strings instead of objects.
         public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? generatedFrom = null, string? parents = null, string? description = null, string? fileExtension = null, string? streamTopic = null)
