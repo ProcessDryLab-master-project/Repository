@@ -319,7 +319,7 @@
       "Parents": [
         {
           "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
-          "From": "InputLog"
+          "UsedAs": "InputLog"
         }
       ],
       "Children": null
@@ -341,7 +341,7 @@
       "Parents": [
         {
           "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
-          "From": "InputLog"
+          "UsedAs": "InputLog"
         }
       ],
       "Children": null
@@ -363,7 +363,7 @@
       "Parents": [
         {
           "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
-          "From": "InputLog"
+          "UsedAs": "InputLog"
         }
       ],
       "Children": null
@@ -389,11 +389,11 @@
       "Parents": [
         {
           "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
-          "From": "InputLog1"
+          "UsedAs": "InputLog1"
         },
         {
           "ResourceId": "db9bb61c-f9a9-4d0f-ad3d-f2b5d881581e",
-          "From": "InputLog2"
+          "UsedAs": "InputLog2"
         }
       ],
       "Children": [
@@ -419,7 +419,7 @@
       "Parents": [
         {
           "ResourceId": "1321d984-17b6-4ec1-93c7-26ad4cedc85d",
-          "From": "ProcessModel1"
+          "UsedAs": "ProcessModel1"
         }
       ],
       "Children": [
@@ -452,7 +452,7 @@
       "Parents": [
         {
           "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
-          "From": "InputLog1"
+          "UsedAs": "InputLog1"
         }
       ],
       "Children": null
@@ -474,11 +474,11 @@
       "Parents": [
         {
           "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
-          "From": "InputLog1"
+          "UsedAs": "InputLog1"
         },
         {
           "ResourceId": "01a5aebe-42c6-42f1-87cf-c8de11779d8b",
-          "From": "InputLog2"
+          "UsedAs": "InputLog2"
         }
       ],
       "Children": null
@@ -496,15 +496,19 @@
       "Dynamic": false
     },
     "GenerationTree": {
-      "GeneratedFrom": null,
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000",
+        "SourceId": "4",
+        "SourceLabel": "Inductive Miner to BPMN"
+      },
       "Parents": [
         {
           "ResourceId": "fe960d94-5928-4463-b0f8-c59072b5d449",
-          "From": "InputLog1"
+          "UsedAs": "InputLog1"
         },
         {
           "ResourceId": "01a5aebe-42c6-42f1-87cf-c8de11779d8b",
-          "From": "InputLog2"
+          "UsedAs": "InputLog2"
         }
       ],
       "Children": null

@@ -39,7 +39,7 @@ namespace Repository.App
     public class Parent
     {
         public string ResourceId { get; set; }
-        public string From { get; set; }
+        public string UsedAs { get; set; }  // Relates to the "Name" key from Miner config (in key "ResourceInput"). Useful for Miners that take multiple input files to differentiate how it was used.
     }
     public class Child
     {

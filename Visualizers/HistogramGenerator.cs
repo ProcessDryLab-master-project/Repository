@@ -29,9 +29,14 @@ namespace Repository.Visualizers
             foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
             {
                 var childMetadata = DBManager.GetMetadataObjectById(childId);
-                if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram") return ResourceRetriever.GetResourceById(childId);
+                if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram")
+                {
+                    Console.WriteLine("Histogram already exist, returning this");
+                    return ResourceRetriever.GetResourceById(childId);
+                }
             }
 
+            Console.WriteLine("No Histogram exist for resource, generating new one");
             var histogramDict = GenerateHistogramDict(pathToFile);
             string jsonList = ConvertToJsonList(histogramDict);
             string pathToSave = AddHistogramToMetadata(resourceId, appUrl, metadataObject);
@@ -47,19 +52,17 @@ namespace Repository.Visualizers
             string GUID = Guid.NewGuid().ToString();
             string host = $"{appUrl}/resources/";
             string description = $"Histogram generated from log with label {metadataObject.ResourceInfo.ResourceLabel} and ID: {metadataObject.ResourceId}";
-            GeneratedFrom generatedFrom = new() { SourceHost = host };
-            List<Parent> parents = new()
-            {
-                new Parent()
-                {
-                    ResourceId = resourceId,
-                    From = "Log",
-                }
-            };
-            //string generatedFromString = JsonConvert.SerializeObject(generatedFrom, Newtonsoft.Json.Formatting.Indented);
-            //string parentsString = JsonConvert.SerializeObject(parents, Newtonsoft.Json.Formatting.Indented);
-            //DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, generatedFrom: generatedFromString, parents: parentsString, description, fileExtension: "json");
-            DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension: "json");
+            //GeneratedFrom generatedFrom = new() { SourceHost = host };
+            //List<Parent> parents = new()
+            //{
+            //    new Parent()
+            //    {
+            //        ResourceId = resourceId,
+            //        UsedAs = "Log",
+            //    }
+            //};
+            DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, description, fileExtension: "json");
+            //DBManager.AddToMetadata(resourceLabel, resourceType: "Histogram", GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension: "json");
             string pathToSave = Path.Combine(pathToJson, $"{GUID}.json");
             return pathToSave;
         }

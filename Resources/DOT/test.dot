@@ -1,14 +1,17 @@
-digraph "da282422-c412-4ec3-bc96-34d34e5bb65e"
+digraph "6129a64c-5164-4abc-a447-182e9356a358"
 {
-	"08ac06ea-4005-4e31-ae69-7ffc0447b332" [ color = "blue", fontcolor = "blue", fontsize = 35, label = "Test BPMN" ]
-	"fe960d94-5928-4463-b0f8-c59072b5d449" [ fontsize = 30, label = "Some label 13" ]
+	fontsize = 35
+label = "Parent resources to id: 08ac06ea-4005-4e31-ae69-7ffc0447b332"
+labelloc = "t"
+	"08ac06ea-4005-4e31-ae69-7ffc0447b332" [ color = "blue", fontcolor = "blue", fontsize = 20, label = "Label: Test BPMN\nGenerated from: Inductive Miner to BPMN" ]
+	"fe960d94-5928-4463-b0f8-c59072b5d449" [ fontsize = 15, label = "Label: Some label 13" ]
 	"fe960d94-5928-4463-b0f8-c59072b5d449" -> "08ac06ea-4005-4e31-ae69-7ffc0447b332" [ label = "InputLog1", labelfontsize = 5 ]
-	"01a5aebe-42c6-42f1-87cf-c8de11779d8b" [ fontsize = 30, label = "ML5 Great Grandchild" ]
+	"01a5aebe-42c6-42f1-87cf-c8de11779d8b" [ fontsize = 15, label = "Label: ML5 Great Grandchild" ]
 	"01a5aebe-42c6-42f1-87cf-c8de11779d8b" -> "08ac06ea-4005-4e31-ae69-7ffc0447b332" [ label = "InputLog2", labelfontsize = 5 ]
-	"1321d984-17b6-4ec1-93c7-26ad4cedc85d" [ fontsize = 30, label = "credit-scoreBPMN" ]
+	"1321d984-17b6-4ec1-93c7-26ad4cedc85d" [ fontsize = 15, label = "Label: credit-scoreBPMN\nGenerated from: Alpha Miner" ]
 	"1321d984-17b6-4ec1-93c7-26ad4cedc85d" -> "01a5aebe-42c6-42f1-87cf-c8de11779d8b" [ label = "ProcessModel1", labelfontsize = 5 ]
-	"fe960d94-5928-4463-b0f8-c59072b5d449" [ fontsize = 30, label = "Some label 13" ]
+	"fe960d94-5928-4463-b0f8-c59072b5d449" [ fontsize = 15, label = "Label: Some label 13" ]
 	"fe960d94-5928-4463-b0f8-c59072b5d449" -> "1321d984-17b6-4ec1-93c7-26ad4cedc85d" [ label = "InputLog1", labelfontsize = 5 ]
-	"db9bb61c-f9a9-4d0f-ad3d-f2b5d881581e" [ fontsize = 30, label = "Some label 11" ]
+	"db9bb61c-f9a9-4d0f-ad3d-f2b5d881581e" [ fontsize = 15, label = "Label: Some label 11" ]
 	"db9bb61c-f9a9-4d0f-ad3d-f2b5d881581e" -> "1321d984-17b6-4ec1-93c7-26ad4cedc85d" [ label = "InputLog2", labelfontsize = 5 ]
 }

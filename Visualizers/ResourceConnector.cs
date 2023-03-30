@@ -1,6 +1,7 @@
 ﻿using csdot;
 using csdot.Attributes.DataTypes;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Repository.App;
 
 namespace Repository.Visualizers
@@ -19,11 +20,16 @@ namespace Repository.Visualizers
             string graphId = Guid.NewGuid().ToString();
             Graph graph = new Graph($"\"{graphId}\"");
             graph.type = "digraph";
+            graph.Attribute.labelloc.Value = "t";
+            graph.Attribute.label.Value = $"Parent resources to id: {resourceId}";
+            graph.Attribute.fontsize.Value = 35;
 
             Node centerNode = new Node($"\"{resourceId}\"");
             centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's the requested node.
-            centerNode.Attribute.label.Value = requestedMdObject.ResourceInfo.ResourceLabel;// "Center label";
-            centerNode.Attribute.fontsize.Value = 35;
+            centerNode.Attribute.label.Value = "Label: " + requestedMdObject.ResourceInfo.ResourceLabel;// "Center label";
+            string? sourceLabel = requestedMdObject?.GenerationTree?.GeneratedFrom?.SourceLabel;
+            if (!string.IsNullOrWhiteSpace(sourceLabel)) centerNode.Attribute.label.Value += $"\\nGenerated from: {sourceLabel}";
+            centerNode.Attribute.fontsize.Value = 20;
             centerNode.Attribute.fontcolor.Value = Color.X11.blue;
             graph.AddElement(centerNode);
 
@@ -40,17 +46,15 @@ namespace Repository.Visualizers
         public static void RecursiveInsert(Graph graph, Node node, MetadataObject? mdObject, string resourceId, HashSet<string> exploredNodes)
         {
             if (mdObject == null) { return; } // The node is not part of this repository.
-
             var parentList = mdObject.GenerationTree.Parents;
             foreach (var relative in parentList ?? Enumerable.Empty<Parent>())
             {
                 string relativeId = relative.ResourceId;
-                string parentFrom = relative.From;
-                //string source = GeneratedFrom ???? How?
+                string parentUsedAs = relative.UsedAs;
                 if (!exploredNodes.Contains(relativeId + resourceId))
                 {
                     exploredNodes.Add(relativeId + resourceId);
-                    CreateNodeAndEdge(graph, node, relativeId, false, exploredNodes, parentFrom);
+                    CreateNodeAndEdge(graph, node, relativeId, false, exploredNodes, parentUsedAs);
                 }
             }
             // Code if we're interested in children.
@@ -66,23 +70,28 @@ namespace Repository.Visualizers
             //}
         }
 
-        private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeFrom = null)
+        private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeUsedAs = null)
         {
             Node relativeNode = new Node($"\"{relativeId}\"");
-            //relativeNode.Attribute.fontsize.Value = 30;
+            relativeNode.Attribute.fontsize.Value = 15;
 
             MetadataObject? relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
             if (relativeMdObject == null) relativeNode.Attribute.color.Value = Color.X11.red; // Red because it's not part of this repository
-            else relativeNode.Attribute.label.Value = relativeMdObject.ResourceInfo.ResourceLabel;   // Can only use label if it's part of this repo
-
-            relativeNode.Attribute.label.Value = "<\r\n<FONT POINT-SIZE=\"20\">Bigger</FONT>\r\nand\r\n<FONT POINT-SIZE=\"10\">Smaller</FONT>\r\n>";
-
+            else
+            {
+                //relativeNode.Attribute.label.TranslateToValue("<<FONT POINT-SIZE=\"20\">Bigger</FONT>and<FONT POINT-SIZE=\"10\">Smaller</FONT>>");
+                relativeNode.Attribute.label.Value = "Label: " + relativeMdObject.ResourceInfo.ResourceLabel;
+                string ? sourceLabel = relativeMdObject?.GenerationTree?.GeneratedFrom?.SourceLabel;
+                if (!string.IsNullOrWhiteSpace(sourceLabel))
+                    relativeNode.Attribute.label.Value += $"\\nGenerated from: {sourceLabel}";// Can only use label if it's part of this repo
+                
+            }
             Edge edge;
             if (isChild) { edge = DirectedEdge(currentNode, relativeNode); }
             else { edge = DirectedEdge(relativeNode, currentNode); }
-            if (!string.IsNullOrWhiteSpace(relativeFrom))
+            if (!string.IsNullOrWhiteSpace(relativeUsedAs))
             {
-                edge.Attribute.label.Value = relativeFrom;
+                edge.Attribute.label.Value = relativeUsedAs;
                 edge.Attribute.labelfontsize.Value = 5;
             }
             graph.AddElements(relativeNode, edge);

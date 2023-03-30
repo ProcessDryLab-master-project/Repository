@@ -50,7 +50,6 @@ namespace Repository
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-            //ResourceConnector.GetGraphForResource("988366f1-6bce-4d7b-9859-86b7e77ac244");
             //ResourceConnector.GetGraphForResource("08ac06ea-4005-4e31-ae69-7ffc0447b332");
             //HistogramGenerator.GetHistogram("21514961-4208-41ab-8c7a-3b549e22e3e3");
 
