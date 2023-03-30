@@ -70,6 +70,7 @@ namespace Repository.App
         public static IResult GetChildrenMetadataList(string resourceId)
         {
             var metadataObject = GetMetadataObjectById(resourceId);
+            if(metadataObject == null) return Results.BadRequest($"No such resource for id: {resourceId}");
             List<MetadataObject> childrenMetadataList = new();
             List<string>? childrenIds = metadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
             foreach (var childId in childrenIds ?? Enumerable.Empty<string>())

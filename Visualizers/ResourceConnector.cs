@@ -23,12 +23,14 @@ namespace Repository.Visualizers
             Node centerNode = new Node($"\"{resourceId}\"");
             centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's the requested node.
             centerNode.Attribute.label.Value = requestedMdObject.ResourceInfo.ResourceLabel;// "Center label";
+            centerNode.Attribute.fontsize.Value = 35;
+            centerNode.Attribute.fontcolor.Value = Color.X11.blue;
             graph.AddElement(centerNode);
 
             RecursiveInsert(graph, centerNode, requestedMdObject, resourceId, exploredNodes);
 
             // This if we want to save as a file and send it as IResult instead. Can convert the dot file to svg with this command: dot -Tsvg test.dot > test.svg
-            //string pathToFile = Path.Combine(pathToDot, "test1" + ".dot");
+            //string pathToFile = Path.Combine(pathToDot, "test" + ".dot");
             //DotDocument dotDocument = new DotDocument();
             //dotDocument.SaveToFile(graph, pathToFile);
             //return Results.File(pathToFile, resourceId);
@@ -43,11 +45,12 @@ namespace Repository.Visualizers
             foreach (var relative in parentList ?? Enumerable.Empty<Parent>())
             {
                 string relativeId = relative.ResourceId;
-                string relativeFrom = relative.From;
+                string parentFrom = relative.From;
+                //string source = GeneratedFrom ???? How?
                 if (!exploredNodes.Contains(relativeId + resourceId))
                 {
                     exploredNodes.Add(relativeId + resourceId);
-                    CreateNodeAndEdge(graph, node, relativeId, false, exploredNodes, relativeFrom);
+                    CreateNodeAndEdge(graph, node, relativeId, false, exploredNodes, parentFrom);
                 }
             }
             // Code if we're interested in children.
@@ -66,15 +69,22 @@ namespace Repository.Visualizers
         private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeFrom = null)
         {
             Node relativeNode = new Node($"\"{relativeId}\"");
+            //relativeNode.Attribute.fontsize.Value = 30;
 
             MetadataObject? relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
             if (relativeMdObject == null) relativeNode.Attribute.color.Value = Color.X11.red; // Red because it's not part of this repository
             else relativeNode.Attribute.label.Value = relativeMdObject.ResourceInfo.ResourceLabel;   // Can only use label if it's part of this repo
 
+            relativeNode.Attribute.label.Value = "<\r\n<FONT POINT-SIZE=\"20\">Bigger</FONT>\r\nand\r\n<FONT POINT-SIZE=\"10\">Smaller</FONT>\r\n>";
+
             Edge edge;
             if (isChild) { edge = DirectedEdge(currentNode, relativeNode); }
             else { edge = DirectedEdge(relativeNode, currentNode); }
-            if(!string.IsNullOrWhiteSpace(relativeFrom)) edge.Attribute.label.Value = relativeFrom;
+            if (!string.IsNullOrWhiteSpace(relativeFrom))
+            {
+                edge.Attribute.label.Value = relativeFrom;
+                edge.Attribute.labelfontsize.Value = 5;
+            }
             graph.AddElements(relativeNode, edge);
             RecursiveInsert(graph, relativeNode, relativeMdObject, relativeId, exploredNodes);
         }
