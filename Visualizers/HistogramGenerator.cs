@@ -17,11 +17,11 @@ namespace Repository.Visualizers
             MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null || metadataObject.ResourceInfo?.FileExtension == null) return Results.BadRequest("Invalid resource ID. No reference to resource could be found.");
             
-            string pathToFileExtension = Path.Combine(pathToResources, metadataObject.ResourceInfo.FileExtension.ToUpper());
-            string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.ResourceInfo.FileExtension);
-            if (!File.Exists(pathToFile) || metadataObject.ResourceInfo?.ResourceType != "EventLog")
+            string pathToRequestFileExtension = Path.Combine(pathToResources, metadataObject.ResourceInfo.FileExtension.ToUpper());
+            string pathToRequestFile = Path.Combine(pathToRequestFileExtension, resourceId + "." + metadataObject.ResourceInfo.FileExtension);
+            if (!File.Exists(pathToRequestFile) || metadataObject.ResourceInfo?.ResourceType != "EventLog")
             {
-                string badResponse = "No file of type EventLog exists for path " + pathToFile; // TODO: Should not return the entire path, just easier like this for now
+                string badResponse = "No file of type EventLog exists for path " + pathToRequestFile; // TODO: Should not return the entire path, just easier like this for now
                 return Results.BadRequest(badResponse);
             }
 
@@ -37,21 +37,16 @@ namespace Repository.Visualizers
             }
 
             Console.WriteLine("No Histogram exist for resource, generating new one");
-            var histogramDict = GenerateHistogramDict(pathToFile);
+            var histogramDict = GenerateHistogramDict(pathToRequestFile);
             string jsonList = ConvertToJsonList(histogramDict);
             string pathToSave = AddHistogramToMetadata(resourceId, appUrl, metadataObject);
 
-            //using var stream = new FileStream(pathToSave, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); 
-            using (var stream = new FileStream(pathToSave, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)) // TODO: Consider if FileShare.ReadWrite makes sense
+            if (!Directory.Exists(pathToJson))
             {
-                // writing data in string
-                byte[] info = new UTF8Encoding(true).GetBytes(jsonList);
-                stream.Write(info, 0, info.Length);
-                // writing data in bytes already
-                byte[] data = new byte[] { 0x0 };
-                stream.Write(data, 0, data.Length);
-            };
-            //File.WriteAllText(pathToSave, jsonList);
+                Console.WriteLine("No folder exists for JSON, creating " + pathToRequestFileExtension);
+                Directory.CreateDirectory(pathToJson);
+            }
+            File.WriteAllText(pathToSave, jsonList);
             return Results.Text(jsonList, contentType: "application/json");
             //return Results.File(pathToSave, GUID); // If we would want to return the file instead?
         }
