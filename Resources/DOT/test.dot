@@ -1,0 +1,16 @@
+digraph "683cf312-efdc-4f65-a37e-1410be9500ed"
+{
+	"b5c8d896-45c8-4054-8620-6570184d1b0c" [ color = "blue", fontcolor = "blue", fontsize = 20, label = "Label: A3E1\nGenerated from: Inductive Miner", tooltip = "\nCreationDate: 31-03-2023 11:05:54\nResourceType: ProcessModel\nResourceType: bpmn\nDescription: Some BPMN with 2 parents somehow (probably wrong parents too)" ]
+	"c9187211-ed4f-4604-96e3-d1e34c2b026f" [ fontsize = 15, label = "Label: Create Content\nGenerated from: Inductive Miner", tooltip = "\nCreationDate: 31-03-2023 11:04:19\nResourceType: ProcessModel\nResourceType: bpmn\nDescription: Probably not the right parent, just for testing" ]
+	"c9187211-ed4f-4604-96e3-d1e34c2b026f" -> "b5c8d896-45c8-4054-8620-6570184d1b0c" [ label = "InputLog1", labelfontsize = 5 ]
+	"ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8" [ fontsize = 15, label = "Label: Custom Conformant Long", tooltip = "\nCreationDate: 31-03-2023 10:49:18\nResourceType: EventLog\nResourceType: xes\nDescription: A log designed to be conformant with some reference model" ]
+	"ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8" -> "c9187211-ed4f-4604-96e3-d1e34c2b026f" [ label = "InputLog", labelfontsize = 5 ]
+	"2277f2f6-de91-43bd-a9d6-3bcf3dda46a7" [ fontsize = 15, label = "Label: Custom Conformant Small", tooltip = "\nCreationDate: 31-03-2023 10:52:07\nResourceType: EventLog\nResourceType: xes\nDescription: A filtered log, based on 2 other logs." ]
+	"2277f2f6-de91-43bd-a9d6-3bcf3dda46a7" -> "b5c8d896-45c8-4054-8620-6570184d1b0c" [ label = "InputLog2", labelfontsize = 5 ]
+	"ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8" [ fontsize = 15, label = "Label: Custom Conformant Long", tooltip = "\nCreationDate: 31-03-2023 10:49:18\nResourceType: EventLog\nResourceType: xes\nDescription: A log designed to be conformant with some reference model" ]
+	"ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8" -> "2277f2f6-de91-43bd-a9d6-3bcf3dda46a7" [ label = "InputLog1", labelfontsize = 5 ]
+	"33405ce3-7265-4015-8d82-0d2d4cf89952" [ fontsize = 15, label = "Label: Custom Conformant", tooltip = "\nCreationDate: 31-03-2023 10:51:02\nResourceType: EventLog\nResourceType: xes\nDescription: A filtered log of Custom Conformant Long" ]
+	"33405ce3-7265-4015-8d82-0d2d4cf89952" -> "2277f2f6-de91-43bd-a9d6-3bcf3dda46a7" [ label = "InputLog2", labelfontsize = 5 ]
+	"ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8" [ fontsize = 15, label = "Label: Custom Conformant Long", tooltip = "\nCreationDate: 31-03-2023 10:49:18\nResourceType: EventLog\nResourceType: xes\nDescription: A log designed to be conformant with some reference model" ]
+	"ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8" -> "33405ce3-7265-4015-8d82-0d2d4cf89952" [ label = "LogToFilter", labelfontsize = 5 ]
+}

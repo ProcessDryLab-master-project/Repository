@@ -193,7 +193,11 @@
       "Dynamic": false
     },
     "GenerationTree": {
-      "GeneratedFrom": null,
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000",
+        "SourceId": "4",
+        "SourceLabel": "Inductive Miner"
+      },
       "Parents": [
         {
           "ResourceId": "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8",
@@ -219,7 +223,11 @@
       "Dynamic": false
     },
     "GenerationTree": {
-      "GeneratedFrom": null,
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000",
+        "SourceId": "4",
+        "SourceLabel": "Inductive Miner"
+      },
       "Parents": [
         {
           "ResourceId": "c9187211-ed4f-4604-96e3-d1e34c2b026f",

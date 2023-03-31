@@ -2,6 +2,7 @@
 using csdot.Attributes.DataTypes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Repository.App;
 
 namespace Repository.Visualizers
@@ -20,9 +21,6 @@ namespace Repository.Visualizers
             string graphId = Guid.NewGuid().ToString();
             Graph graph = new Graph($"\"{graphId}\"");
             graph.type = "digraph";
-            graph.Attribute.labelloc.Value = "t";
-            graph.Attribute.label.Value = $"Parent resources to id: {resourceId}";
-            graph.Attribute.fontsize.Value = 35;
 
             Node centerNode = new Node($"\"{resourceId}\"");
             centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's the requested node.
@@ -31,14 +29,15 @@ namespace Repository.Visualizers
             if (!string.IsNullOrWhiteSpace(sourceLabel)) centerNode.Attribute.label.Value += $"\\nGenerated from: {sourceLabel}";
             centerNode.Attribute.fontsize.Value = 20;
             centerNode.Attribute.fontcolor.Value = Color.X11.blue;
+            FillToolTip(requestedMdObject, centerNode);
             graph.AddElement(centerNode);
 
             RecursiveInsert(graph, centerNode, requestedMdObject, resourceId, exploredNodes);
 
             // This if we want to save as a file and send it as IResult instead. Can convert the dot file to svg with this command: dot -Tsvg test.dot > test.svg
-            //string pathToFile = Path.Combine(pathToDot, "test" + ".dot");
-            //DotDocument dotDocument = new DotDocument();
-            //dotDocument.SaveToFile(graph, pathToFile);
+            string pathToFile = Path.Combine(pathToDot, "test" + ".dot");
+            DotDocument dotDocument = new DotDocument();
+            dotDocument.SaveToFile(graph, pathToFile);
             //return Results.File(pathToFile, resourceId);
 
             return Results.Ok(graph.ElementToString());
@@ -72,19 +71,22 @@ namespace Repository.Visualizers
 
         private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeUsedAs = null)
         {
+            MetadataObject? relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
+            //string relativeInfo = JsonConvert.SerializeObject(relativeMdObject.ResourceInfo, Formatting.Indented);
+            //Node relativeNode = new Node($"\"{relativeInfo}\"");
             Node relativeNode = new Node($"\"{relativeId}\"");
             relativeNode.Attribute.fontsize.Value = 15;
 
-            MetadataObject? relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
             if (relativeMdObject == null) relativeNode.Attribute.color.Value = Color.X11.red; // Red because it's not part of this repository
             else
             {
                 //relativeNode.Attribute.label.TranslateToValue("<<FONT POINT-SIZE=\"20\">Bigger</FONT>and<FONT POINT-SIZE=\"10\">Smaller</FONT>>");
                 relativeNode.Attribute.label.Value = "Label: " + relativeMdObject.ResourceInfo.ResourceLabel;
-                string ? sourceLabel = relativeMdObject?.GenerationTree?.GeneratedFrom?.SourceLabel;
+                string? sourceLabel = relativeMdObject.GenerationTree?.GeneratedFrom?.SourceLabel;
                 if (!string.IsNullOrWhiteSpace(sourceLabel))
                     relativeNode.Attribute.label.Value += $"\\nGenerated from: {sourceLabel}";// Can only use label if it's part of this repo
-                
+
+                FillToolTip(relativeMdObject, relativeNode);
             }
             Edge edge;
             if (isChild) { edge = DirectedEdge(currentNode, relativeNode); }
@@ -96,6 +98,16 @@ namespace Repository.Visualizers
             }
             graph.AddElements(relativeNode, edge);
             RecursiveInsert(graph, relativeNode, relativeMdObject, relativeId, exploredNodes);
+        }
+
+        private static void FillToolTip(MetadataObject relativeMdObject, Node relativeNode)
+        {
+            ResourceInfo relativeInfo = relativeMdObject.ResourceInfo;
+            relativeNode.Attribute.tooltip.Value = $"ResourceId: {relativeMdObject.ResourceId}";
+            relativeNode.Attribute.tooltip.Value = $"\\nCreationDate: {relativeMdObject.CreationDate}";
+            relativeNode.Attribute.tooltip.Value += $"\\nResourceType: {relativeInfo.ResourceType}";
+            if (!string.IsNullOrEmpty(relativeInfo.FileExtension)) relativeNode.Attribute.tooltip.Value += $"\\nResourceType: {relativeInfo.FileExtension}";
+            if (!string.IsNullOrEmpty(relativeInfo.Description)) relativeNode.Attribute.tooltip.Value += $"\\nDescription: {relativeInfo.Description}";
         }
 
         private static Edge DirectedEdge(Node parent, Node child)
