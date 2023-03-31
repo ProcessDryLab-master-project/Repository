@@ -23,18 +23,17 @@ namespace Repository.App
             metadataDict[GUID] = newMetadataObj;
             string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
 
-            using (var stream = new FileStream(pathToMetadata, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
-            {
-                // writing data in string
-                byte[] info = new UTF8Encoding(true).GetBytes(updatedMetadataJsonString);
-                stream.Write(info, 0, info.Length);
+            //using (var stream = new FileStream(pathToMetadata, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+            //{
+            //    // writing data in string
+            //    byte[] info = new UTF8Encoding(true).GetBytes(updatedMetadataJsonString);
+            //    stream.Write(info, 0, info.Length);
+            //    // writing data in bytes already
+            //    byte[] data = new byte[] { 0x0 };
+            //    stream.Write(data, 0, data.Length);
+            //};
 
-                // writing data in bytes already
-                byte[] data = new byte[] { 0x0 };
-                stream.Write(data, 0, data.Length);
-            };
-
-            //File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+            File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
         // Overload of function above that takes strings instead of objects.
         public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? generatedFrom = null, string? parents = null, string? description = null, string? fileExtension = null, string? streamTopic = null)
@@ -142,6 +141,18 @@ namespace Repository.App
 
         private static Dictionary<string, MetadataObject> GetMetadataDict()
         {
+            //string metadataJsonString = "";
+            //using (var stream = new FileStream(pathToMetadata, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            //{
+            //    byte[] b = new byte[1024];
+            //    UTF8Encoding temp = new UTF8Encoding(true);
+            //    int readLen;
+            //    while ((readLen = stream.Read(b, 0, b.Length)) > 0)
+            //    {
+            //        metadataJsonString += temp.GetString(b, 0, readLen);
+            //        //Console.WriteLine(temp.GetString(b, 0, readLen));
+            //    }
+            //}
             string metadataJsonString = File.ReadAllText(pathToMetadata);
             Dictionary<string, MetadataObject>? metadataDict = JsonConvert.DeserializeObject<Dictionary<string, MetadataObject>>(metadataJsonString);
             metadataDict ??= new Dictionary<string, MetadataObject>();

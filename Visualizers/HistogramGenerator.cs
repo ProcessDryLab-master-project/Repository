@@ -2,6 +2,7 @@
 using Repository.App;
 using System.Data.SqlTypes;
 using System.Reflection.PortableExecutable;
+using System.Text;
 using System.Xml;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -31,7 +32,7 @@ namespace Repository.Visualizers
                 if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram")
                 {
                     Console.WriteLine("Histogram already exist, returning this");
-                    return ResourceRetriever.GetResourceById(childId);
+                    return ResourceRetriever.GetResourceById(childId); // TODO: If a resource says it has a Histogram, but no such histogram actually exists, create one anyway, and delete this child
                 }
             }
 
@@ -40,7 +41,17 @@ namespace Repository.Visualizers
             string jsonList = ConvertToJsonList(histogramDict);
             string pathToSave = AddHistogramToMetadata(resourceId, appUrl, metadataObject);
 
-            File.WriteAllText(pathToSave, jsonList);
+            //using var stream = new FileStream(pathToSave, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); 
+            using (var stream = new FileStream(pathToSave, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)) // TODO: Consider if FileShare.ReadWrite makes sense
+            {
+                // writing data in string
+                byte[] info = new UTF8Encoding(true).GetBytes(jsonList);
+                stream.Write(info, 0, info.Length);
+                // writing data in bytes already
+                byte[] data = new byte[] { 0x0 };
+                stream.Write(data, 0, data.Length);
+            };
+            //File.WriteAllText(pathToSave, jsonList);
             return Results.Text(jsonList, contentType: "application/json");
             //return Results.File(pathToSave, GUID); // If we would want to return the file instead?
         }

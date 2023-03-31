@@ -19,7 +19,8 @@ namespace Repository.Visualizers
             if (requestedMdObject == null) return Results.BadRequest("No resource exist for that ID");
 
             string graphId = Guid.NewGuid().ToString();
-            Graph graph = new Graph($"\"{graphId}\"");
+            //Graph graph = new Graph($"\"{graphId}\"");
+            Graph graph = new Graph($"\"Relations Graph\"");
             graph.type = "digraph";
 
             Node centerNode = new Node($"\"{resourceId}\"");

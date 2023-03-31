@@ -30,7 +30,7 @@ namespace Repository.App
             string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
             string nameToSaveFile = GUID + "." + fileExtension;
             string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
-            using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+            using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
             file.CopyTo(stream);
 
             DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension);
