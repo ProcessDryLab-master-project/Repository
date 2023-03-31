@@ -259,6 +259,7 @@
     }
   },
   "1780591b-b2e6-466a-9de2-9b0fedfb7a8e": {
+    "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
     "CreationDate": "31-03-2023 11:09:21",
     "ResourceInfo": {
       "ResourceLabel": "Running Example",
@@ -278,6 +279,9 @@
         },
         {
           "ResourceId": "e94aea38-7ec3-4eef-9bc7-ed4d9ec1c96b"
+        },
+        {
+          "ResourceId": "78330164-4a8f-4855-b142-f262607b55db"
         }
       ]
     }
@@ -359,6 +363,72 @@
         {
           "ResourceId": "e94aea38-7ec3-4eef-9bc7-ed4d9ec1c96b",
           "UsedAs": "FileToConvert"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "e40ae370-3509-4869-8b77-ecade2bd253c": {
+    "CreationDate": "31-03-2023 14:13:51",
+    "ResourceInfo": {
+      "ResourceLabel": "Histogram from log: Running Example",
+      "ResourceType": "Histogram",
+      "Host": "https://localhost:4000/resources/",
+      "FileExtension": "json",
+      "StreamTopic": null,
+      "Description": "Histogram generated from log with label Running Example and ID: 1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": null,
+      "Parents": [
+        {
+          "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
+          "UsedAs": "Log"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "060d4965-5abc-40dc-8cad-ad936db9e6ed": {
+    "CreationDate": "31-03-2023 15:07:45",
+    "ResourceInfo": {
+      "ResourceLabel": "Histogram from log: Running Example",
+      "ResourceType": "Histogram",
+      "Host": "https://localhost:4000/resources/",
+      "FileExtension": "json",
+      "StreamTopic": null,
+      "Description": "Histogram generated from log with label Running Example and ID: 1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": null,
+      "Parents": [
+        {
+          "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
+          "UsedAs": "Log"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "78330164-4a8f-4855-b142-f262607b55db": {
+    "CreationDate": "31-03-2023 15:10:23",
+    "ResourceInfo": {
+      "ResourceLabel": "Histogram from log: Running Example",
+      "ResourceType": "Histogram",
+      "Host": "https://localhost:4000/resources/",
+      "FileExtension": "json",
+      "StreamTopic": null,
+      "Description": "Histogram generated from log with label Running Example and ID: 1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": null,
+      "Parents": [
+        {
+          "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
+          "UsedAs": "Log"
         }
       ],
       "Children": null

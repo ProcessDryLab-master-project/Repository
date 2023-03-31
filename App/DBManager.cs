@@ -12,6 +12,19 @@ namespace Repository.App
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
         
+        public static void UpdateMetadata(MetadataObject metadataObject)
+        {
+            string? id = metadataObject.ResourceId;
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                Console.WriteLine("UpdateMetadata called on invalid metadata object. Doing nothing");
+                return;
+            }
+            Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+            metadataDict[id] = metadataObject;
+            string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
+            File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+        }
         // Should only ever be called by HistogramGenerator and by the overload function below
         public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom? generatedFrom, List<Parent>? parents, string? description = null, string? fileExtension = null, string? streamTopic = null)
         {

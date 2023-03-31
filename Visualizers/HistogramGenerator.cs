@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Repository.App;
 using System.Data.SqlTypes;
+using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Xml;
@@ -31,8 +32,16 @@ namespace Repository.Visualizers
                 var childMetadata = DBManager.GetMetadataObjectById(childId);
                 if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram")
                 {
-                    Console.WriteLine("Histogram already exist, returning this");
-                    return ResourceRetriever.GetResourceById(childId); // TODO: If a resource says it has a Histogram, but no such histogram actually exists, create one anyway, and delete this child
+                    var result = ResourceRetriever.GetResourceById(childId);
+                    if (!result.GetType().IsInstanceOfType(Results.BadRequest()))
+                    {
+                        Console.WriteLine("Histogram already exist, returning this");
+                        return ResourceRetriever.GetResourceById(childId);
+                    }
+                    Console.WriteLine("Resource has child Histogram that does not exist in the repository. This should not happen, removing as child and creating a new one");
+                    List<Child>? mdChildren = metadataObject.GenerationTree?.Children;
+                    mdChildren?.Remove(mdChildren.First(child => child.ResourceId == childId));
+                    DBManager.UpdateMetadata(metadataObject);
                 }
             }
 
