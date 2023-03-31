@@ -2,6 +2,7 @@
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Specialized;
 using System.IO;
+using System.Text;
 using System.Xml.Linq;
 
 namespace Repository.App
@@ -22,7 +23,18 @@ namespace Repository.App
             metadataDict[GUID] = newMetadataObj;
             string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
 
-            File.WriteAllTextAsync(pathToMetadata, updatedMetadataJsonString);
+            using (var stream = new FileStream(pathToMetadata, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+            {
+                // writing data in string
+                byte[] info = new UTF8Encoding(true).GetBytes(updatedMetadataJsonString);
+                stream.Write(info, 0, info.Length);
+
+                // writing data in bytes already
+                byte[] data = new byte[] { 0x0 };
+                stream.Write(data, 0, data.Length);
+            };
+
+            //File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
         // Overload of function above that takes strings instead of objects.
         public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? generatedFrom = null, string? parents = null, string? description = null, string? fileExtension = null, string? streamTopic = null)
