@@ -25,7 +25,7 @@ namespace Repository.Visualizers
             Node centerNode = new Node($"\"{resourceId}\"");
             centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's the requested node.
             centerNode.Attribute.label.Value = "Label: " + requestedMdObject.ResourceInfo.ResourceLabel;// "Center label";
-            string? sourceLabel = requestedMdObject?.GenerationTree?.GeneratedFrom?.SourceLabel;
+            string? sourceLabel = requestedMdObject.GenerationTree?.GeneratedFrom?.SourceLabel;
             if (!string.IsNullOrWhiteSpace(sourceLabel)) centerNode.Attribute.label.Value += $"\\nGenerated from: {sourceLabel}";
             centerNode.Attribute.fontsize.Value = 20;
             centerNode.Attribute.fontcolor.Value = Color.X11.blue;
