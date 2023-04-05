@@ -18,7 +18,7 @@ namespace Repository.App
         public string Host { get; set; }
         public string? FileExtension { get; set; }
         public string? StreamTopic { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public bool Dynamic { get; set; }
     }
     public class GenerationTree

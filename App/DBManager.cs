@@ -7,6 +7,12 @@ using System.Xml.Linq;
 
 namespace Repository.App
 {
+    // Consider making a singleton: https://csharpindepth.com/articles/singleton
+    /* From JOHN:
+     * I kunne lave en ConcurrentQueue som gemmer et par af værdier som en tuple (string id, string metadata) og så har i en tråd som læser fra den der kø og skriver til filerne, det kunne måske virke. I har en tråd som bare lytter på køen og skriver når der kommer noget nyt og der kan ikke skrives til den samme fil samtidig
+     * https://briancaos.wordpress.com/2021/01/12/write-to-file-from-multiple-threads-async-with-c-and-net-core/
+     * Ja, måske have en statisk tråd som lytter på en concurrentqueue hvor i lægger det data der skal skrives
+     */
     public class DBManager
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
@@ -25,10 +31,19 @@ namespace Repository.App
             string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
             File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
+        /* John: Jeg tror jeg ville forsøge at pakke den her ind i et DTO, det er måske lidt pænere og nemmere at tilføje argumenter til. I kan også gøre det at i laver alle jeres nullchecks ind i objektets konstruktør måske
+         * Og så ville jeg utrække et interface hos db manager og se om det er muligt at bruge Program.cs app builder til at sende implementeringen med?
+         * Måske lave et simpelt interface der kun har UpdateMetadata som både opdater/tilføjer hvis ikke findes, getKeys() som returnerer navnene på alle filer, en containsKey() og GetMetadata(string key), og så give den med til jeres DBManager, som får en konstruktør der tager IDatabase, som er implementeret af FileDatabase, som kun har de 4 metoder?
+         * Og så kan jeres DBManager have alle de der hjælpemetoder, men kun kommunikere med filsystemet gennem FileDatabase, hvis I, i fremtiden vil bruge SQL så kunne i lave en SQLDatabase fil, som implementerer samme interface og sende det med
+         * Omkring ZIP filen: Har ikke testet om det virker, men hvis alt fil kommunikation kan flyttes til FileDatabase, så er i rimelig good to go, I kan forsøge med bare at have en dictionary InMemoryDatabase
+         * 
+         * 
+         * 
+         */
         // Should only ever be called by HistogramGenerator and by the overload function below
-        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom? generatedFrom, List<Parent>? parents, string? description = null, string? fileExtension = null, string? streamTopic = null)
+        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom? generatedFrom, List<Parent>? parents, string? description = null, string? fileExtension = null, string? streamTopic = null, bool isDynamic = false)
         {
-            var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFrom, parents);
+            var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFrom, parents, isDynamic);
 
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
             UpdateParentResource(GUID, false, parents, metadataDict);
@@ -49,11 +64,11 @@ namespace Repository.App
             File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
         // Overload of function above that takes strings instead of objects.
-        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? generatedFrom = null, string? parents = null, string? description = null, string? fileExtension = null, string? streamTopic = null)
+        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? generatedFrom = null, string? parents = null, string? description = null, string? fileExtension = null, string? streamTopic = null, bool isDynamic = false)
         {
             bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFromObj, parentsList, description, fileExtension);
+            AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFromObj, parentsList, description, fileExtension, streamTopic, isDynamic);
         }
         private static void UpdateParentResource(string GUID, bool providedParents, List<Parent>? parentsList, Dictionary<string, MetadataObject> metadataDict)
         {
@@ -130,7 +145,7 @@ namespace Repository.App
         }
 
 
-        private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null)
+        private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null, bool isDynamic = false)
         {
             return new MetadataObject
             {
@@ -139,10 +154,11 @@ namespace Repository.App
                 {
                     ResourceLabel = resourceLabel,
                     ResourceType = resourceType,
-                    Host = host,  // TODO: Should probably read this from somewhere to make it dynamic.
+                    Host = host,
                     Description = description,
                     FileExtension = fileExtension,
-                    StreamTopic = streamTopic
+                    StreamTopic = streamTopic,
+                    Dynamic = isDynamic,
                 },
                 GenerationTree = new GenerationTree
                 {

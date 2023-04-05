@@ -20,6 +20,8 @@ namespace Repository.App
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
             string? overwriteId = request.Form["OverwriteId"];
             if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
+            string? isDynamicString = request.Form["Dynamic"];
+            bool isDynamic = string.Equals(isDynamicString, "true", StringComparison.OrdinalIgnoreCase);
 
             if (!request.Form.Files.Any())
             {
@@ -33,7 +35,7 @@ namespace Repository.App
             using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
             file.CopyTo(stream);
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension);
+            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension, streamTopic: null, isDynamic);
 
             Console.WriteLine($"Saved file: {nameToSaveFile}");
             return Results.Ok(GUID);
