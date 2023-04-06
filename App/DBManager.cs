@@ -48,7 +48,7 @@ namespace Repository.App
 
 
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            MetadataObject? currentMetadataObject = metadataDict[GUID];
+            MetadataObject? currentMetadataObject = metadataDict.GetValue(GUID);
             if (newMetadataObj.Equals(currentMetadataObject))
             {
                 Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
@@ -143,9 +143,10 @@ namespace Repository.App
 
         private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null, bool isDynamic = false)
         {
+            var dateInSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
             return new MetadataObject
             {
-                CreationDate = DateTime.Now.ToString(),
+                CreationDate = dateInSeconds.ToString(),// DateTimeOffset.Now.ToString(),
                 ResourceInfo = new ResourceInfo
                 {
                     ResourceLabel = resourceLabel,

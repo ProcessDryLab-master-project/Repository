@@ -1,6 +1,6 @@
 {
   "8b8ceaae-1425-4bf6-8316-cd432c007638": {
-    "CreationDate": "16-03-2023 14:30:48",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Alphabet Stream",
       "ResourceType": "EventStream",
@@ -17,7 +17,7 @@
     }
   },
   "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8": {
-    "CreationDate": "31-03-2023 10:49:18",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Custom Conformant Long",
       "ResourceType": "EventLog",
@@ -44,7 +44,7 @@
     }
   },
   "33405ce3-7265-4015-8d82-0d2d4cf89952": {
-    "CreationDate": "31-03-2023 10:51:02",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Custom Conformant",
       "ResourceType": "EventLog",
@@ -70,7 +70,7 @@
     }
   },
   "2277f2f6-de91-43bd-a9d6-3bcf3dda46a7": {
-    "CreationDate": "31-03-2023 10:52:07",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Custom Conformant Small",
       "ResourceType": "EventLog",
@@ -100,7 +100,7 @@
     }
   },
   "8e8741e6-471f-48a9-8060-6a7ca4de82c1": {
-    "CreationDate": "31-03-2023 10:54:38",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "ML1 Large Log",
       "ResourceType": "EventLog",
@@ -121,7 +121,7 @@
     }
   },
   "58da665d-ce6d-495f-baed-9a3437dac590": {
-    "CreationDate": "31-03-2023 10:56:10",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Large Petri Net",
       "ResourceType": "PetriNet",
@@ -143,7 +143,7 @@
     }
   },
   "5dd1a19f-919a-4d46-8ea2-ab34eb98adb0": {
-    "CreationDate": "31-03-2023 10:59:47",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Weird Petri Net",
       "ResourceType": "PetriNet",
@@ -165,7 +165,7 @@
     }
   },
   "77d0e9a4-e315-4be1-a387-e5d4f18c787a": {
-    "CreationDate": "31-03-2023 11:01:38",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Test Petri Net",
       "ResourceType": "PetriNet",
@@ -182,7 +182,7 @@
     }
   },
   "c9187211-ed4f-4604-96e3-d1e34c2b026f": {
-    "CreationDate": "31-03-2023 11:04:19",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Create Content",
       "ResourceType": "ProcessModel",
@@ -212,7 +212,7 @@
     }
   },
   "b5c8d896-45c8-4054-8620-6570184d1b0c": {
-    "CreationDate": "31-03-2023 11:05:54",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "A3E1",
       "ResourceType": "ProcessModel",
@@ -242,7 +242,7 @@
     }
   },
   "dd12e950-73eb-4064-941e-bfeb56f73f8f": {
-    "CreationDate": "31-03-2023 11:07:45",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Custom Ref Model",
       "ResourceType": "PetriNet",
@@ -260,7 +260,7 @@
   },
   "1780591b-b2e6-466a-9de2-9b0fedfb7a8e": {
     "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
-    "CreationDate": "31-03-2023 11:09:21",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Running Example",
       "ResourceType": "EventLog",
@@ -287,7 +287,7 @@
     }
   },
   "76d042dd-81d7-4a44-889f-5814bd9c97e9": {
-    "CreationDate": "31-03-2023 11:10:02",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Running Example",
       "ResourceType": "PetriNet",
@@ -313,7 +313,7 @@
     }
   },
   "e94aea38-7ec3-4eef-9bc7-ed4d9ec1c96b": {
-    "CreationDate": "31-03-2023 11:13:38",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Pretend Petri Net",
       "ResourceType": "PetriNet",
@@ -343,7 +343,7 @@
     }
   },
   "b85b7d07-2007-483e-8c7e-9d1cf9ddea88": {
-    "CreationDate": "31-03-2023 11:15:45",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "SVG Pretend Petri Net",
       "ResourceType": "PetriNet",
@@ -369,7 +369,7 @@
     }
   },
   "e40ae370-3509-4869-8b77-ecade2bd253c": {
-    "CreationDate": "31-03-2023 14:13:51",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Histogram from log: Running Example",
       "ResourceType": "Histogram",
@@ -391,7 +391,7 @@
     }
   },
   "060d4965-5abc-40dc-8cad-ad936db9e6ed": {
-    "CreationDate": "31-03-2023 15:07:45",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Histogram from log: Running Example",
       "ResourceType": "Histogram",
@@ -413,7 +413,7 @@
     }
   },
   "78330164-4a8f-4855-b142-f262607b55db": {
-    "CreationDate": "31-03-2023 15:10:23",
+    "CreationDate": "1680777783668",
     "ResourceInfo": {
       "ResourceLabel": "Histogram from log: Running Example",
       "ResourceType": "Histogram",
