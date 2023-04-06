@@ -1,4 +1,8 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Specialized;
+using System.Linq;
 
 namespace Repository.App
 {
@@ -13,13 +17,16 @@ namespace Repository.App
             string description = request.Form["Description"].ToString();
             string? fileExtension = request.Form["FileExtension"];
             fileExtension = string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension.ToString().Replace(".", "");
-            string GUID = Guid.NewGuid().ToString();
+
+            string? overwriteId = request.Form["OverwriteId"];
+            string GUID = string.IsNullOrWhiteSpace(overwriteId) ? Guid.NewGuid().ToString() : overwriteId.ToString();
+            //string GUID = Guid.NewGuid().ToString();
+            //if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
+
             string? generatedFrom = request.Form["GeneratedFrom"];
             string? parents = request.Form["Parents"];
             generatedFrom = string.IsNullOrWhiteSpace(generatedFrom) ? null : generatedFrom.ToString();
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
-            string? overwriteId = request.Form["OverwriteId"];
-            if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
             string? isDynamicString = request.Form["Dynamic"];
             bool isDynamic = string.Equals(isDynamicString, "true", StringComparison.OrdinalIgnoreCase);
 
@@ -35,7 +42,11 @@ namespace Repository.App
             using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
             file.CopyTo(stream);
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension, streamTopic: null, isDynamic);
+            //DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension, streamTopic: null, isDynamic);
+            
+            bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
+            bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
+            DBManager.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
 
             Console.WriteLine($"Saved file: {nameToSaveFile}");
             return Results.Ok(GUID);
@@ -44,12 +55,16 @@ namespace Repository.App
         // Assuming this is only relevant for streaming?
         public static IResult SaveMetadataOnly(HttpRequest request, string appUrl)
         {
+            string? overwriteId = request.Form["OverwriteId"];
+            string GUID = string.IsNullOrWhiteSpace(overwriteId) ? Guid.NewGuid().ToString() : overwriteId.ToString();
+            //string GUID = Guid.NewGuid().ToString();
+            //if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
+
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
-            //if (resourceType != "EventStream") return Results.BadRequest("On-ly ResourceType: EventStream can be added to metadata like this");
+            //if (resourceType != "EventStream") return Results.BadRequest("Only ResourceType: EventStream can be added to metadata like this");
 
             string description = request.Form["Description"].ToString();
-            string GUID = Guid.NewGuid().ToString();
             string? streamTopic = request.Form["StreamTopic"];
             streamTopic = string.IsNullOrWhiteSpace(streamTopic) ? null : streamTopic.ToString();
             string? fileExtension = request.Form["FileExtension"];
@@ -60,11 +75,20 @@ namespace Repository.App
             generatedFrom = string.IsNullOrWhiteSpace(generatedFrom) ? null : generatedFrom.ToString(); 
             string? parents = request.Form["Parents"];
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
-            string? overwriteId = request.Form["OverwriteId"];
-            if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
 
-            DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description: description, fileExtension: fileExtension, streamTopic: streamTopic);
+            bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
+            bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
+            DBManager.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
+
+            //DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description: description, fileExtension: fileExtension, streamTopic: streamTopic);
             return Results.Ok(GUID);
+        }
+
+        public static IResult UpdateMetadata(HttpRequest request, string appUrl, string resourceId)
+        {
+            var formAsDict = request.Form.ToDictionary();
+            DBManager.UpdateSingleMetadata(formAsDict, resourceId);
+            return Results.Ok(resourceId);
         }
 
         // This function is to write metadata based on the file that was sent, in case some metadata is missing.

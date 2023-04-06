@@ -31,7 +31,19 @@ namespace Repository.App
         //    var json = JsonConvert.SerializeObject(eventLogList);
         //    return Results.Text(json, contentType: "application/json");
         //}
-
+        public static IResult GetResourceList()
+        {
+            var resourceList = DBManager.GetMetadataAsList();
+            var json = JsonConvert.SerializeObject(resourceList);
+            return Results.Text(json, contentType: "application/json");
+        }
+        public static IResult GetMetadataObjectStringById(string resourceId)
+        {
+            MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);
+            if (metadataObject == null) return Results.BadRequest("No such object");
+            string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataObject, Formatting.Indented);
+            return Results.Text(updatedMetadataJsonString);
+        }
         public static IResult GetResourceById(string resourceId)
         {
             MetadataObject? metadataObject = DBManager.GetMetadataObjectById(resourceId);

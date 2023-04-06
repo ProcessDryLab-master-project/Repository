@@ -49,20 +49,27 @@ namespace Repository.Endpoints
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return ResourceReceiver.SaveMetadataOnly(request, appUrl);
             })
-            //.Accepts<IFormFile>("multipart/form-data")
+            .Produces(200);
+
+            app.MapPut("/resources/metadata/{resourceId}", (HttpRequest request, string resourceId) =>
+            {
+                Console.WriteLine("Received PUT request to update metadata object without a file");
+                var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+                return ResourceReceiver.UpdateMetadata(request, appUrl, resourceId);
+            })
             .Produces(200);
 
             // To retrieve/output a list of available resources (metadata list)
             app.MapGet("/resources/metadata", (HttpContext httpContext) =>
             {
                 Console.WriteLine("Received GET request for full metadata list");
-                return DBManager.GetResourceList();
+                return ResourceRetriever.GetResourceList();
             });
             // To retrieve metadata object for given resourceId
             app.MapGet("/resources/metadata/{resourceId}", (string resourceId) =>
             {
                 Console.WriteLine("Received GET request for metadata object on resource id: " + resourceId);
-                return DBManager.GetMetadataObjectStringById(resourceId);
+                return ResourceRetriever.GetMetadataObjectStringById(resourceId);
             });
 
             // To retrieve children for given resourceId

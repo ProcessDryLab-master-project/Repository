@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
@@ -17,17 +18,75 @@ namespace Repository.App
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
-        
-        public static void UpdateMetadata(MetadataObject metadataObject)
+
+        // Shouldn't take an object? Rework.
+        public static IResult UpdateSingleMetadata(IDictionary<string, string> keyValuePairs, string resourceId)
         {
-            string? id = metadataObject.ResourceId;
-            if (string.IsNullOrWhiteSpace(id))
+            var metadatObject = GetMetadataObjectById(resourceId);
+            if(metadatObject == null) { return Results.BadRequest("No such metadata object exist"); }
+            foreach(var keyValuePair in keyValuePairs)
             {
-                Console.WriteLine("UpdateMetadata called on invalid metadata object. Doing nothing");
+                Console.WriteLine($"Overwriting key {keyValuePair.Key} with value {keyValuePair.Value}");
+                if(!UpdateSingleMetadataValue(keyValuePair, metadatObject)) 
+                { 
+                    return Results.BadRequest($"Invalid Key {keyValuePair.Key} or Value {keyValuePair.Value}"); 
+                }
+            }
+            UpdateMetadataFile(metadatObject, resourceId);
+            return Results.Ok(resourceId);
+        }
+        private static bool UpdateSingleMetadataValue(KeyValuePair<string, string> keyValuePair, MetadataObject metadataObject)
+        {
+            try
+            {
+                switch (keyValuePair.Key)
+                {
+                    case "ResourceLabel":
+                        metadataObject.ResourceInfo.ResourceLabel = keyValuePair.Value;
+                        break;
+                    case "Description":
+                        metadataObject.ResourceInfo.Description = keyValuePair.Value;
+                        break;
+                    case "Children":
+                        metadataObject.GenerationTree.Children ??= new List<Child>();  // If children are null, initialize
+                        metadataObject.GenerationTree.Children.Add(new Child
+                        {
+                            ResourceId = keyValuePair.Value,
+                        });
+                        break;
+                    case "Dynamic":
+                        metadataObject.ResourceInfo.Dynamic = Convert.ToBoolean(keyValuePair.Value);
+                        break;
+                    //case "GeneratedFrom":
+                    //    break;
+                    //case "Parents":
+                    //    break;
+                    default: return false;
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Invalid arguments exception.");
+                return false;
+            }
+
+        }
+        // ONLY place that should ever write to the metadata file
+        private static void UpdateMetadataFile(MetadataObject metadataObject, string resourceId)
+        {
+            metadataObject.ResourceId = null; // Set to null before writing to file
+            Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+            MetadataObject? currentMetadataObject = metadataDict.GetValue(resourceId);
+            if (metadataObject.Equals(currentMetadataObject))
+            {
+                Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
                 return;
             }
-            Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            metadataDict[id] = metadataObject;
+
+            metadataDict[resourceId] = metadataObject;
+            UpdateParentResource(metadataDict, resourceId);
+
             string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
             File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
@@ -40,49 +99,50 @@ namespace Repository.App
          * 
          * 
          */
-        // Should only ever be called by HistogramGenerator and by the overload function below
-        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom? generatedFrom, List<Parent>? parents, string? description = null, string? fileExtension = null, string? streamTopic = null, bool isDynamic = false)
-        {
-            Console.WriteLine("Adding to metadata");
-            MetadataObject newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFrom, parents, isDynamic);
+        
+        // TODO: Remove comment when refactor is done. No longer valid: Should only ever be called by HistogramGenerator and by the overload function below
+        //public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom? generatedFrom, List<Parent>? parents, string? description = null, string? fileExtension = null, string? streamTopic = null, bool isDynamic = false)
+        //{
+            //Console.WriteLine("Adding to metadata");
+            //MetadataObject newMetadataObj = BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFrom, parents, isDynamic);
+            //UpdateMetadataFile(newMetadataObj, GUID);
 
-
-            Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            MetadataObject? currentMetadataObject = metadataDict.GetValue(GUID);
-            if (newMetadataObj.Equals(currentMetadataObject))
-            {
-                Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
-                return;
-            }
-            UpdateParentResource(GUID, false, parents, metadataDict);
-            metadataDict[GUID] = newMetadataObj;
-            string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
-            File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
-        }
+            //Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+            //MetadataObject? currentMetadataObject = metadataDict.GetValue(GUID);
+            //if (newMetadataObj.Equals(currentMetadataObject))
+            //{
+            //    Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
+            //    return;
+            //}
+            //UpdateParentResource(GUID, false, parents, metadataDict);
+            //metadataDict[GUID] = newMetadataObj;
+            //string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
+            //File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+        //}
         // Overload of function above that takes strings instead of objects.
-        public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? generatedFrom = null, string? parents = null, string? description = null, string? fileExtension = null, string? streamTopic = null, bool isDynamic = false)
+        //public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? generatedFrom = null, string? parents = null, string? description = null, string? fileExtension = null, string? streamTopic = null, bool isDynamic = false)
+        //{
+        //    bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
+        //    bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
+        //    AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFromObj, parentsList, description, fileExtension, streamTopic, isDynamic);
+        //}
+        private static void UpdateParentResource(Dictionary<string, MetadataObject> metadataDict, string resourceId)
         {
-            bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
-            bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFromObj, parentsList, description, fileExtension, streamTopic, isDynamic);
-        }
-        private static void UpdateParentResource(string GUID, bool providedParents, List<Parent>? parentsList, Dictionary<string, MetadataObject> metadataDict)
-        {
-            if(parentsList != null)
-            {   // Add own ID as child to parent resource
-                foreach (var parent in parentsList)
+            List<Parent> parents = metadataDict.GetValue(resourceId)?.GenerationTree?.Parents;
+            // Add own ID as child to parent resource
+            foreach (var parent in parents ?? Enumerable.Empty<Parent>())
+            {
+                string parentId = parent.ResourceId;
+                var parentObj = metadataDict.GetValue(parentId);
+                if (parentObj == null) return;              // If we can't find parentObj in metadata, do nothing (likely means it exists in another repo or has been deleted).
+                parentObj.GenerationTree.Children ??= new List<Child>();  // If children are null, initialize
+                parentObj.GenerationTree.Children.Add(new Child
                 {
-                    string parentId = parent.ResourceId;
-                    var parentObj = metadataDict.GetValue(parentId);
-                    if (parentObj == null) return;              // If we can't find parentObj in metadata, do nothing (likely means it exists in another repo or has been deleted).
-                    parentObj.GenerationTree.Children ??= new List<Child>();  // If children are null, initialize
-                    parentObj.GenerationTree.Children.Add(new Child
-                    {
-                        ResourceId = GUID,
-                    });
-                    metadataDict[parentId] = parentObj;           // Overwrite with updated parentObj
-                }
+                    ResourceId = resourceId,
+                });
+                metadataDict[parentId] = parentObj;           // Overwrite with updated parentObj
             }
+            
         }
 
         public static MetadataObject? GetMetadataObjectById(string resourceId)
@@ -94,12 +154,7 @@ namespace Repository.App
             return metadataObj;
         }
 
-        public static string GetMetadataObjectStringById(string resourceId)
-        {
-            MetadataObject metadataObject = GetMetadataObjectById(resourceId);
-            string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataObject, Formatting.Indented);
-            return updatedMetadataJsonString;
-        }
+
 
         public static IResult GetChildrenMetadataList(string resourceId)
         {
@@ -133,18 +188,13 @@ namespace Repository.App
             return metadataAsList;
         }
 
-        public static IResult GetResourceList()
-        {
-            var resourceList = GetMetadataAsList();
-            var json = JsonConvert.SerializeObject(resourceList);
-            return Results.Text(json, contentType: "application/json");
-        }
 
 
-        private static MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null, bool isDynamic = false)
+
+        public static void BuildAndAddMetadataObject(string resourceId, string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null, bool isDynamic = false)
         {
             var dateInSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
-            return new MetadataObject
+            var metadataObject = new MetadataObject
             {
                 CreationDate = dateInSeconds.ToString(),// DateTimeOffset.Now.ToString(),
                 ResourceInfo = new ResourceInfo
@@ -163,82 +213,71 @@ namespace Repository.App
                     Parents = parents,
                 }
             };
+            UpdateMetadataFile(metadataObject, resourceId);
         }
 
         private static Dictionary<string, MetadataObject> GetMetadataDict()
         {
-            //string metadataJsonString = "";
-            //using (var stream = new FileStream(pathToMetadata, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            //{
-            //    byte[] b = new byte[1024];
-            //    UTF8Encoding temp = new UTF8Encoding(true);
-            //    int readLen;
-            //    while ((readLen = stream.Read(b, 0, b.Length)) > 0)
-            //    {
-            //        metadataJsonString += temp.GetString(b, 0, readLen);
-            //        //Console.WriteLine(temp.GetString(b, 0, readLen));
-            //    }
-            //}
             string metadataJsonString = File.ReadAllText(pathToMetadata);
             Dictionary<string, MetadataObject>? metadataDict = JsonConvert.DeserializeObject<Dictionary<string, MetadataObject>>(metadataJsonString);
             metadataDict ??= new Dictionary<string, MetadataObject>();
             return metadataDict;
         }
 
-        // Helper function to fill metadata file with all resources in the Resources folder:
-        public static void FillMetadata()
-        {
-            // TODO: Maybe add a safe way to recreate the metadata file before running this
-            int counter = 0;
-            string[] files = Directory.GetFiles(pathToResources, "*.*", SearchOption.AllDirectories);
-            foreach (string file in files)
-            {
-                string fileName = Path.GetFileNameWithoutExtension(file);
-                bool isValidGuid = Guid.TryParse(fileName, out var fileNameGuid);
+        //// Helper function to fill metadata file with all resources in the Resources folder:
+        //public static void FillMetadata()
+        //{
+        //    // TODO: Maybe add a safe way to recreate the metadata file before running this
+        //    int counter = 0;
+        //    string[] files = Directory.GetFiles(pathToResources, "*.*", SearchOption.AllDirectories);
+        //    foreach (string file in files)
+        //    {
+        //        string fileName = Path.GetFileNameWithoutExtension(file);
+        //        bool isValidGuid = Guid.TryParse(fileName, out var fileNameGuid);
 
-                string fileExtension = Path.GetExtension(file).Replace(".", ""); // e.g. save "xes", not ".xes". Can also do ToUpper() to save with upper case like the folders
+        //        string fileExtension = Path.GetExtension(file).Replace(".", ""); // e.g. save "xes", not ".xes". Can also do ToUpper() to save with upper case like the folders
 
-                string resourceType;
-                if (fileExtension.Equals("XES", StringComparison.OrdinalIgnoreCase))
-                    resourceType = "EventLog";
-                else if (fileExtension.Equals("BPMN", StringComparison.OrdinalIgnoreCase))
-                    resourceType = "ProcessModel";
-                else if (fileExtension.Equals("DOT", StringComparison.OrdinalIgnoreCase))
-                    resourceType = "Graph";
-                else if (fileExtension.Equals("JPG", StringComparison.OrdinalIgnoreCase))
-                    resourceType = "Image";
-                else if (fileExtension.Equals("PNG", StringComparison.OrdinalIgnoreCase))
-                    resourceType = "Image";
-                else if (fileExtension.Equals("JSON", StringComparison.OrdinalIgnoreCase))
-                    resourceType = "Histogram";
-                else if (fileExtension.Equals("PNML", StringComparison.OrdinalIgnoreCase))
-                    resourceType = "PetriNet";
-                else
-                    resourceType = "Misc";
+        //        string resourceType;
+        //        if (fileExtension.Equals("XES", StringComparison.OrdinalIgnoreCase))
+        //            resourceType = "EventLog";
+        //        else if (fileExtension.Equals("BPMN", StringComparison.OrdinalIgnoreCase))
+        //            resourceType = "ProcessModel";
+        //        else if (fileExtension.Equals("DOT", StringComparison.OrdinalIgnoreCase))
+        //            resourceType = "Graph";
+        //        else if (fileExtension.Equals("JPG", StringComparison.OrdinalIgnoreCase))
+        //            resourceType = "Image";
+        //        else if (fileExtension.Equals("PNG", StringComparison.OrdinalIgnoreCase))
+        //            resourceType = "Image";
+        //        else if (fileExtension.Equals("JSON", StringComparison.OrdinalIgnoreCase))
+        //            resourceType = "Histogram";
+        //        else if (fileExtension.Equals("PNML", StringComparison.OrdinalIgnoreCase))
+        //            resourceType = "PetriNet";
+        //        else
+        //            resourceType = "Misc";
 
                 
 
-                //if(!fileName.Contains("metadata", StringComparison.OrdinalIgnoreCase))
-                if(isValidGuid)
-                {
-                    counter++;
-                    //string fileId = fileName;
-                    //fileId = ChangeFileNames(file, fileName, fileExtension); // Should not be called unless you want to change all file names to include the extension
-                    AddToMetadata(resourceLabel: $"Some label {counter}", resourceType: resourceType, GUID: fileNameGuid.ToString(), host: "https://localhost:4000/resources", description: "Some file description", fileExtension: fileExtension);
-                }
-            }
-        }
+        //        //if(!fileName.Contains("metadata", StringComparison.OrdinalIgnoreCase))
+        //        if(isValidGuid)
+        //        {
+        //            counter++;
+        //            //string fileId = fileName;
+        //            //fileId = ChangeFileNames(file, fileName, fileExtension); // Should not be called unless you want to change all file names to include the extension
+        //            AddToMetadata(resourceLabel: $"Some label {counter}", resourceType: resourceType, GUID: fileNameGuid.ToString(), host: "https://localhost:4000/resources", description: "Some file description", fileExtension: fileExtension);
+        //        }
+        //    }
+        //}
 
 
-        // Should ONLY be called if we want to change all the file names to include the extension
-        private static string ChangeFileNames(string file, string fileName, string fileExtension)
-        {
-            string fileId = fileName + fileExtension.ToUpper();
-            string newFilePath = Path.Combine(Path.GetDirectoryName(file), fileId + Path.GetExtension(file));
-            File.Move(file, newFilePath);
-            Console.WriteLine("New file name: " + fileId);
-            return fileId;
-        }
+        //// Should ONLY be called if we want to change all the file names to include the extension
+        //private static string ChangeFileNames(string file, string fileName, string fileExtension)
+        //{
+        //    string fileId = fileName + fileExtension.ToUpper();
+        //    string newFilePath = Path.Combine(Path.GetDirectoryName(file), fileId + Path.GetExtension(file));
+        //    File.Move(file, newFilePath);
+        //    Console.WriteLine("New file name: " + fileId);
+        //    return fileId;
+        //}
     }
 
     #region extensionMethods
@@ -264,6 +303,17 @@ namespace Repository.App
                 result = default(T);
                 return false;
             }
+        }
+        public static IDictionary<string, string> ToDictionary(this IFormCollection col)
+        {
+            var dict = new Dictionary<string, string>();
+
+            foreach (var key in col.Keys)
+            {
+                dict.Add(key, col[key]);
+            }
+
+            return dict;
         }
     }
     #endregion
