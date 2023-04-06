@@ -43,24 +43,20 @@ namespace Repository.App
         // Should only ever be called by HistogramGenerator and by the overload function below
         public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom? generatedFrom, List<Parent>? parents, string? description = null, string? fileExtension = null, string? streamTopic = null, bool isDynamic = false)
         {
-            var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFrom, parents, isDynamic);
+            Console.WriteLine("Adding to metadata");
+            MetadataObject newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFrom, parents, isDynamic);
+
 
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+            MetadataObject? currentMetadataObject = metadataDict[GUID];
+            if (newMetadataObj.Equals(currentMetadataObject))
+            {
+                Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
+                return;
+            }
             UpdateParentResource(GUID, false, parents, metadataDict);
-
             metadataDict[GUID] = newMetadataObj;
             string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
-
-            //using (var stream = new FileStream(pathToMetadata, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
-            //{
-            //    // writing data in string
-            //    byte[] info = new UTF8Encoding(true).GetBytes(updatedMetadataJsonString);
-            //    stream.Write(info, 0, info.Length);
-            //    // writing data in bytes already
-            //    byte[] data = new byte[] { 0x0 };
-            //    stream.Write(data, 0, data.Length);
-            //};
-
             File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
         // Overload of function above that takes strings instead of objects.
