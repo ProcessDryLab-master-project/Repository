@@ -10,13 +10,14 @@ namespace Repository.App.Visualizers
 {
     public class ResourceConnector
     {
+        static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToDot = Path.Combine(pathToResources, "DOT");
         public static IResult GetGraphForResource(string resourceId)
         {
             HashSet<string> exploredNodes = new HashSet<string>();
             Console.WriteLine("Getting graph for requested object: " + resourceId);
-            MetadataObject? requestedMdObject = FileDatabase.GetMetadataObjectById(resourceId);
+            MetadataObject? requestedMdObject = databaseManager.GetMetadataObjectById(resourceId);
             if (requestedMdObject == null) return Results.BadRequest("No resource exist for that ID");
 
             string graphId = Guid.NewGuid().ToString();
@@ -73,7 +74,7 @@ namespace Repository.App.Visualizers
 
         private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeUsedAs = null)
         {
-            MetadataObject? relativeMdObject = FileDatabase.GetMetadataObjectById(relativeId);
+            MetadataObject? relativeMdObject = databaseManager.GetMetadataObjectById(relativeId);
             //string relativeInfo = JsonConvert.SerializeObject(relativeMdObject.ResourceInfo, Formatting.Indented);
             //Node relativeNode = new Node($"\"{relativeInfo}\"");
             Node relativeNode = new Node($"\"{relativeId}\"");

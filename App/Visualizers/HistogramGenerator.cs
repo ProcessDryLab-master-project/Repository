@@ -14,11 +14,12 @@ namespace Repository.App.Visualizers
 {
     public class HistogramGenerator
     {
+        static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToJson = Path.Combine(pathToResources, "JSON");
         public static IResult GetHistogram(string resourceId, string appUrl)
         {
-            MetadataObject? logMetadataObject = FileDatabase.GetMetadataObjectById(resourceId);
+            MetadataObject? logMetadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (logMetadataObject == null || logMetadataObject.ResourceInfo?.FileExtension == null) return Results.BadRequest("Invalid resource ID. No reference to resource could be found.");
 
             string pathToRequestFileExtension = Path.Combine(pathToResources, logMetadataObject.ResourceInfo.FileExtension.ToUpper());
@@ -32,7 +33,7 @@ namespace Repository.App.Visualizers
             List<string>? childrenIds = logMetadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
             foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
             {
-                var childMetadata = FileDatabase.GetMetadataObjectById(childId);
+                var childMetadata = databaseManager.GetMetadataObjectById(childId);
                 if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram")
                 {
                     var result = ResourceRetriever.GetResourceById(childId);
@@ -77,7 +78,7 @@ namespace Repository.App.Visualizers
                     UsedAs = "Log",
                 }
             };
-            FileDatabase.BuildAndAddMetadataObject(histResourceId, histResourceLabel, resourceType: "Histogram", host, histDescription, fileExtension: "json", parents: parents);
+            databaseManager.BuildAndAddMetadataObject(histResourceId, histResourceLabel, resourceType: "Histogram", host, histDescription, fileExtension: "json", parents: parents);
             string pathToSave = Path.Combine(pathToJson, $"{histResourceId}.json");
             return pathToSave;
         }

@@ -14,6 +14,7 @@ namespace Repository.App.API
 {
     public class Endpoints
     {
+        static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
         public Endpoints(WebApplication app)
         {
             var _hostEnvironment = app.Environment;
@@ -76,7 +77,7 @@ namespace Repository.App.API
             app.MapGet("/resources/metadata/{resourceId}/children", (string resourceId) =>
             {
                 Console.WriteLine("Received GET request for list of children metadata on resource id: " + resourceId);
-                return FileDatabase.GetChildrenMetadataList(resourceId);
+                return databaseManager.GetChildrenMetadataList(resourceId);
             });
 
             // To retrieve/output a list of available Visualization resources

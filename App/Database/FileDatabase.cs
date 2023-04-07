@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
@@ -18,88 +19,126 @@ namespace Repository.App.Database
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
-
-        // Shouldn't take an object? Rework.
-        public static IResult UpdateSingleMetadata(IDictionary<string, string> keyValuePairs, string resourceId)
+        ConcurrentQueue<MetadataObject> metadataQueue = new ConcurrentQueue<MetadataObject>();
+        static Thread? Thread;
+        public FileDatabase()
         {
-            var metadatObject = GetMetadataObjectById(resourceId);
-            if (metadatObject == null) { return Results.BadRequest("No such metadata object exist"); }
-            foreach (var keyValuePair in keyValuePairs)
+            if (Thread == null)
             {
-                Console.WriteLine($"Overwriting key {keyValuePair.Key} with value {keyValuePair.Value}");
-                if (!UpdateSingleMetadataValue(keyValuePair, metadatObject))
+                Console.WriteLine("Creating Thread");
+                Thread = new Thread(() =>
                 {
-                    return Results.BadRequest($"Invalid Key {keyValuePair.Key} or Value {keyValuePair.Value}");
-                }
+                    while (true)
+                    {
+                        if (!metadataQueue.IsEmpty)
+                        {
+                            metadataQueue.TryDequeue(out MetadataObject? metadataObject);
+                            UpdateDataFile(metadataObject);
+                        }
+                    }
+                });
+                Thread.Start();
             }
-            UpdateMetadataFile(metadatObject, resourceId);
-            return Results.Ok(resourceId);
         }
-        private static bool UpdateSingleMetadataValue(KeyValuePair<string, string> keyValuePair, MetadataObject metadataObject)
+        public bool ContainsKey(string key)
         {
+            return GetMetadataDict().ContainsKey(key);
+        }
+
+        public MetadataObject? GetMetadataObjectById(string key)
+        {
+            if (ContainsKey(key))
+            {
+                return GetMetadataDict()[key];
+            }
+            else return null;
+        }
+
+        public void UpdateMetadata(MetadataObject metadataObject)
+        {
+            Console.WriteLine("Queuing update to metadata");
+            metadataQueue.Enqueue(metadataObject);
+        }
+        //public Dictionary<string, MetadataObject> GetMetadataKeys()
+        //{
+        //    string metadataJsonString = File.ReadAllText(pathToMetadata);
+        //    Dictionary<string, MetadataObject>? metadataDict = JsonConvert.DeserializeObject<Dictionary<string, MetadataObject>>(metadataJsonString);
+        //    metadataDict ??= new Dictionary<string, MetadataObject>();
+        //    return metadataDict;
+        //}
+        public Dictionary<string, MetadataObject> GetMetadataDict()
+        {
+            string metadataJsonString = File.ReadAllText(pathToMetadata);
+            Dictionary<string, MetadataObject>? metadataDict = JsonConvert.DeserializeObject<Dictionary<string, MetadataObject>>(metadataJsonString);
+            metadataDict ??= new Dictionary<string, MetadataObject>();
+            return metadataDict;
+        }
+
+        // ONLY function that should ever write to the metadata file
+        private void UpdateDataFile(MetadataObject? metadataObject)
+        {
+            Console.WriteLine("Updating data file with metadata for ID: " + metadataObject?.ResourceId);
             try
             {
-                switch (keyValuePair.Key)
+                //Console.WriteLine("Updating data file with metadata for ID: " + metadataObject?.ResourceId);
+                //Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+                //metadataDict[metadataObject.ResourceId] = metadataObject;
+                //string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
+                //// ved ikke om det her er rigtigt hvis den ikke allerede findes, evt. tjekke om resourceID findes i dict?
+                //UpdateParentResource(metadataObject.ResourceId, false, metadataObject.GenerationTree.Parents, metadataDict);
+                //File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+
+                string? resourceId = metadataObject?.ResourceId;
+                if(string.IsNullOrWhiteSpace(resourceId))
                 {
-                    case "ResourceLabel":
-                        metadataObject.ResourceInfo.ResourceLabel = keyValuePair.Value;
-                        break;
-                    case "Description":
-                        metadataObject.ResourceInfo.Description = keyValuePair.Value;
-                        break;
-                    case "Children":
-                        metadataObject.GenerationTree.Children ??= new List<Child>();  // If children are null, initialize
-                        metadataObject.GenerationTree.Children.Add(new Child
-                        {
-                            ResourceId = keyValuePair.Value,
-                        });
-                        break;
-                    case "Dynamic":
-                        metadataObject.ResourceInfo.Dynamic = Convert.ToBoolean(keyValuePair.Value);
-                        break;
-                    //case "GeneratedFrom":
-                    //    break;
-                    //case "Parents":
-                    //    break;
-                    default: return false;
+                    Console.WriteLine("Error, missing resourceId in metadata object. Returning nothing");
+                    return;
                 }
-                return true;
+                metadataObject.ResourceId = null; // Set to null if it isn't already, before writing to file
+                Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+                MetadataObject? currentMetadataObject = metadataDict.GetValue(resourceId);
+                if (metadataObject.Equals(currentMetadataObject))
+                {
+                    Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
+                    return;
+                }
+
+                metadataDict[resourceId] = metadataObject;
+                UpdateParentResource(metadataDict, resourceId);
+
+                string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
+                Console.WriteLine("Writing to metadata for resource id " + resourceId);
+                File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
             }
-            catch (Exception e)
+            catch (IOException ioe)
             {
-                Console.WriteLine("Invalid arguments exception.");
-                return false;
+                Console.WriteLine("IOException: " + ioe);
+                throw new Exception("IOException: " + ioe);
             }
-
-        }
-        // ONLY place that should ever write to the metadata file
-        private static void UpdateMetadataFile(MetadataObject metadataObject, string resourceId)
-        {
-            metadataObject.ResourceId = null; // Set to null before writing to file
-            Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            MetadataObject? currentMetadataObject = metadataDict.GetValue(resourceId);
-            if (metadataObject.Equals(currentMetadataObject))
+            catch (JsonException je)
             {
-                Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
-                return;
+                Console.WriteLine("JsonException: " + je);
+                throw new Exception("Could not serialize object");
             }
-
-            metadataDict[resourceId] = metadataObject;
-            UpdateParentResource(metadataDict, resourceId);
-
-            string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
-            Console.WriteLine("Writing to metadata for resource id " + resourceId);
-            File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
-        /* John: Jeg tror jeg ville forsøge at pakke den her ind i et DTO, det er måske lidt pænere og nemmere at tilføje argumenter til. I kan også gøre det at i laver alle jeres nullchecks ind i objektets konstruktør måske
-         * Og så ville jeg utrække et interface hos db manager og se om det er muligt at bruge Program.cs app builder til at sende implementeringen med?
-         * Måske lave et simpelt interface der kun har UpdateMetadata som både opdater/tilføjer hvis ikke findes, getKeys() som returnerer navnene på alle filer, en containsKey() og GetMetadata(string key), og så give den med til jeres DBManager, som får en konstruktør der tager IDatabase, som er implementeret af FileDatabase, som kun har de 4 metoder?
-         * Og så kan jeres DBManager have alle de der hjælpemetoder, men kun kommunikere med filsystemet gennem FileDatabase, hvis I, i fremtiden vil bruge SQL så kunne i lave en SQLDatabase fil, som implementerer samme interface og sende det med
-         * Omkring ZIP filen: Har ikke testet om det virker, men hvis alt fil kommunikation kan flyttes til FileDatabase, så er i rimelig good to go, I kan forsøge med bare at have en dictionary InMemoryDatabase
-         * 
-         * 
-         * 
-         */
+        //private static void UpdateMetadataFile(MetadataObject metadataObject, string resourceId)
+        //{
+        //    metadataObject.ResourceId = null; // Set to null before writing to file
+        //    Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+        //    MetadataObject? currentMetadataObject = metadataDict.GetValue(resourceId);
+        //    if (metadataObject.Equals(currentMetadataObject))
+        //    {
+        //        Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
+        //        return;
+        //    }
+
+        //    metadataDict[resourceId] = metadataObject;
+        //    UpdateParentResource(metadataDict, resourceId);
+
+        //    string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
+        //    Console.WriteLine("Writing to metadata for resource id " + resourceId);
+        //    File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+        //}
 
         private static void UpdateParentResource(Dictionary<string, MetadataObject> metadataDict, string resourceId)
         {
@@ -117,87 +156,145 @@ namespace Repository.App.Database
                 });
                 metadataDict[parentId] = parentObj;           // Overwrite with updated parentObj
             }
-
-        }
-
-        public static MetadataObject? GetMetadataObjectById(string resourceId)
-        {
-            Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            MetadataObject? metadataObj = metadataDict.GetValue(resourceId);
-            if (metadataObj == null) return null;
-            metadataObj.ResourceId = resourceId;
-            return metadataObj;
         }
 
 
+        // DBManager code
+        //public IResult UpdateMetadataObject(IDictionary<string, string> keyValuePairs, string resourceId)
+        //{
+        //    var metadatObject = GetMetadataObjectById(resourceId);
+        //    if (metadatObject == null) { return Results.BadRequest("No such metadata object exist"); }
+        //    foreach (var keyValuePair in keyValuePairs)
+        //    {
+        //        Console.WriteLine($"Overwriting key {keyValuePair.Key} with value {keyValuePair.Value}");
+        //        if (!UpdateSingleMetadataValue(keyValuePair, metadatObject))
+        //        {
+        //            return Results.BadRequest($"Invalid Key {keyValuePair.Key} or Value {keyValuePair.Value}");
+        //        }
+        //    }
+        //    metadatObject.ResourceId = resourceId;
+        //    UpdateMetadata(metadatObject);
+        //    //UpdateMetadataFile(metadatObject, resourceId);
+        //    return Results.Ok(resourceId);
+        //}
+        //private static bool UpdateSingleMetadataValue(KeyValuePair<string, string> keyValuePair, MetadataObject metadataObject)
+        //{
+        //    try
+        //    {
+        //        switch (keyValuePair.Key)
+        //        {
+        //            case "ResourceLabel":
+        //                metadataObject.ResourceInfo.ResourceLabel = keyValuePair.Value;
+        //                break;
+        //            case "Description":
+        //                metadataObject.ResourceInfo.Description = keyValuePair.Value;
+        //                break;
+        //            case "Children":
+        //                metadataObject.GenerationTree.Children ??= new List<Child>();  // If children are null, initialize
+        //                metadataObject.GenerationTree.Children.Add(new Child
+        //                {
+        //                    ResourceId = keyValuePair.Value,
+        //                });
+        //                break;
+        //            case "Dynamic":
+        //                metadataObject.ResourceInfo.Dynamic = Convert.ToBoolean(keyValuePair.Value);
+        //                break;
+        //            //case "GeneratedFrom":
+        //            //    break;
+        //            //case "Parents":
+        //            //    break;
+        //            default: return false;
+        //        }
+        //        return true;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine("Invalid arguments exception.");
+        //        return false;
+        //    }
+        //}
 
-        public static IResult GetChildrenMetadataList(string resourceId)
-        {
-            var metadataObject = GetMetadataObjectById(resourceId);
-            if (metadataObject == null) return Results.BadRequest($"No such resource for id: {resourceId}");
-            List<MetadataObject> childrenMetadataList = new();
-            List<string>? childrenIds = metadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
-            foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
-            {
-                Console.WriteLine("Child id: " + childId);
-                var childMetadata = GetMetadataObjectById(childId);
-                if (childMetadata != null) // TODO: Consider if this is needed? Children should always exist in same repo
-                {
-                    childMetadata.ResourceId = childId;
-                    childrenMetadataList.Add(childMetadata);
-                }
-            }
-            var jsonList = JsonConvert.SerializeObject(childrenMetadataList);
-            return Results.Text(jsonList, contentType: "application/json");
-        }
-        public static List<MetadataObject> GetMetadataAsList()
-        {
-            Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            List<MetadataObject> metadataAsList = new();
-            foreach (var metadataObject in metadataDict)
-            {
-                Console.WriteLine($"{metadataObject.Key}: {metadataObject.Value}");
-                metadataObject.Value.ResourceId = metadataObject.Key;
-                metadataAsList.Add(metadataObject.Value);
-            }
-            return metadataAsList;
-        }
+
+
+        //public MetadataObject? GetMetadataObjectById(string resourceId)
+        //{
+        //    Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+        //    MetadataObject? metadataObj = metadataDict.GetValue(resourceId);
+        //    if (metadataObj == null) return null;
+        //    metadataObj.ResourceId = resourceId;
+        //    return metadataObj;
+        //}
 
 
 
+        //public static IResult GetChildrenMetadataList(string resourceId)
+        //{
+        //    var metadataObject = GetMetadataObjectById(resourceId);
+        //    if (metadataObject == null) return Results.BadRequest($"No such resource for id: {resourceId}");
+        //    List<MetadataObject> childrenMetadataList = new();
+        //    List<string>? childrenIds = metadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
+        //    foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
+        //    {
+        //        Console.WriteLine("Child id: " + childId);
+        //        var childMetadata = GetMetadataObjectById(childId);
+        //        if (childMetadata != null) // TODO: Consider if this is needed? Children should always exist in same repo
+        //        {
+        //            childMetadata.ResourceId = childId;
+        //            childrenMetadataList.Add(childMetadata);
+        //        }
+        //    }
+        //    var jsonList = JsonConvert.SerializeObject(childrenMetadataList);
+        //    return Results.Text(jsonList, contentType: "application/json");
+        //}
+        //public static List<MetadataObject> GetMetadataAsList()
+        //{
+        //    Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+        //    List<MetadataObject> metadataAsList = new();
+        //    foreach (var metadataObject in metadataDict)
+        //    {
+        //        Console.WriteLine($"{metadataObject.Key}: {metadataObject.Value}");
+        //        metadataObject.Value.ResourceId = metadataObject.Key;
+        //        metadataAsList.Add(metadataObject.Value);
+        //    }
+        //    return metadataAsList;
+        //}
 
-        public static void BuildAndAddMetadataObject(string resourceId, string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null, bool isDynamic = false)
-        {
-            var dateInSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
-            var metadataObject = new MetadataObject
-            {
-                CreationDate = dateInSeconds.ToString(),// DateTimeOffset.Now.ToString(),
-                ResourceInfo = new ResourceInfo
-                {
-                    ResourceLabel = resourceLabel,
-                    ResourceType = resourceType,
-                    Host = host,
-                    Description = description,
-                    FileExtension = fileExtension,
-                    StreamTopic = streamTopic,
-                    Dynamic = isDynamic,
-                },
-                GenerationTree = new GenerationTree
-                {
-                    GeneratedFrom = generatedFrom,
-                    Parents = parents,
-                }
-            };
-            UpdateMetadataFile(metadataObject, resourceId);
-        }
 
-        private static Dictionary<string, MetadataObject> GetMetadataDict()
-        {
-            string metadataJsonString = File.ReadAllText(pathToMetadata);
-            Dictionary<string, MetadataObject>? metadataDict = JsonConvert.DeserializeObject<Dictionary<string, MetadataObject>>(metadataJsonString);
-            metadataDict ??= new Dictionary<string, MetadataObject>();
-            return metadataDict;
-        }
+
+        /* John: Jeg tror jeg ville forsøge at pakke den her ind i et DTO, det er måske lidt pænere og nemmere at tilføje argumenter til. I kan også gøre det at i laver alle jeres nullchecks ind i objektets konstruktør måske
+         * Og så ville jeg utrække et interface hos db manager og se om det er muligt at bruge Program.cs app builder til at sende implementeringen med?
+         * Måske lave et simpelt interface der kun har UpdateMetadata som både opdater/tilføjer hvis ikke findes, getKeys() som returnerer navnene på alle filer, en containsKey() og GetMetadata(string key), og så give den med til jeres DBManager, som får en konstruktør der tager IDatabase, som er implementeret af FileDatabase, som kun har de 4 metoder?
+         * Og så kan jeres DBManager have alle de der hjælpemetoder, men kun kommunikere med filsystemet gennem FileDatabase, hvis I, i fremtiden vil bruge SQL så kunne i lave en SQLDatabase fil, som implementerer samme interface og sende det med
+         * Omkring ZIP filen: Har ikke testet om det virker, men hvis alt fil kommunikation kan flyttes til FileDatabase, så er i rimelig good to go, I kan forsøge med bare at have en dictionary InMemoryDatabase
+         */
+
+        //public void BuildAndAddMetadataObject(string resourceId, string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null, bool isDynamic = false)
+        //{
+        //    var dateInSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+        //    var metadataObject = new MetadataObject
+        //    {
+        //        ResourceId = resourceId,
+        //        CreationDate = dateInSeconds.ToString(),// DateTimeOffset.Now.ToString(),
+        //        ResourceInfo = new ResourceInfo
+        //        {
+        //            ResourceLabel = resourceLabel,
+        //            ResourceType = resourceType,
+        //            Host = host,
+        //            Description = description,
+        //            FileExtension = fileExtension,
+        //            StreamTopic = streamTopic,
+        //            Dynamic = isDynamic,
+        //        },
+        //        GenerationTree = new GenerationTree
+        //        {
+        //            GeneratedFrom = generatedFrom,
+        //            Parents = parents,
+        //        }
+        //    };
+        //    UpdateDataFile(metadataObject);
+        //}
+
+
 
         //// Helper function to fill metadata file with all resources in the Resources folder:
         //public static void FillMetadata()
@@ -255,41 +352,41 @@ namespace Repository.App.Database
         //}
     }
 
-    #region extensionMethods
-    public static class ExtensionMethods
-    {
-        public static TV GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default)
-        {
-            TV value;
-            return dict.TryGetValue(key, out value) ? value : defaultValue;
-        }
-        public static bool TryParseJson<T>(this string obj, out T result)
-        {
-            try
-            {
-                JsonSerializerSettings settings = new JsonSerializerSettings();
-                settings.MissingMemberHandling = MissingMemberHandling.Error;
+    //#region extensionMethods
+    //public static class ExtensionMethods
+    //{
+    //    public static TV GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default)
+    //    {
+    //        TV value;
+    //        return dict.TryGetValue(key, out value) ? value : defaultValue;
+    //    }
+    //    public static bool TryParseJson<T>(this string obj, out T result)
+    //    {
+    //        try
+    //        {
+    //            JsonSerializerSettings settings = new JsonSerializerSettings();
+    //            settings.MissingMemberHandling = MissingMemberHandling.Error;
 
-                result = JsonConvert.DeserializeObject<T>(obj, settings);
-                return true;
-            }
-            catch (Exception)
-            {
-                result = default;
-                return false;
-            }
-        }
-        public static IDictionary<string, string> ToDictionary(this IFormCollection col)
-        {
-            var dict = new Dictionary<string, string>();
+    //            result = JsonConvert.DeserializeObject<T>(obj, settings);
+    //            return true;
+    //        }
+    //        catch (Exception)
+    //        {
+    //            result = default;
+    //            return false;
+    //        }
+    //    }
+    //    public static IDictionary<string, string> ToDictionary(this IFormCollection col)
+    //    {
+    //        var dict = new Dictionary<string, string>();
 
-            foreach (var key in col.Keys)
-            {
-                dict.Add(key, col[key]);
-            }
+    //        foreach (var key in col.Keys)
+    //        {
+    //            dict.Add(key, col[key]);
+    //        }
 
-            return dict;
-        }
-    }
-    #endregion
+    //        return dict;
+    //    }
+    //}
+    //#endregion
 }

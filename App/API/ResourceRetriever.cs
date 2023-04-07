@@ -10,7 +10,7 @@ namespace Repository.App.API
     public class ResourceRetriever
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-
+        static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
         public static async Task<IResult> GetFilteredList(HttpRequest request)
         {
             var body = new StreamReader(request.Body);
@@ -19,7 +19,7 @@ namespace Repository.App.API
 
             bool validRequest = bodyString.TryParseJson(out List<string> filters);
             if (!validRequest || filters == null || filters.Count == 0) return Results.BadRequest($"Request body: {bodyString} is not a valid list");
-            var resourceList = FileDatabase.GetMetadataAsList();
+            var resourceList = databaseManager.GetMetadataAsList();
             var filteredList = resourceList.Where(resource => filters.Any(filter => resource.ResourceInfo.ResourceType.Equals(filter, StringComparison.OrdinalIgnoreCase)));
             //var eventLogList = resourceList.Where(resource => !resource.ResourceInfo.ResourceType.Equals("EventLog", StringComparison.OrdinalIgnoreCase) && !!resource.ResourceInfo.ResourceType.Equals("EventStream", StringComparison.OrdinalIgnoreCase));
             var json = JsonConvert.SerializeObject(filteredList);
@@ -34,20 +34,20 @@ namespace Repository.App.API
         //}
         public static IResult GetResourceList()
         {
-            var resourceList = FileDatabase.GetMetadataAsList();
+            var resourceList = databaseManager.GetMetadataAsList();
             var json = JsonConvert.SerializeObject(resourceList);
             return Results.Text(json, contentType: "application/json");
         }
         public static IResult GetMetadataObjectStringById(string resourceId)
         {
-            MetadataObject? metadataObject = FileDatabase.GetMetadataObjectById(resourceId);
+            MetadataObject? metadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null) return Results.BadRequest("No such object");
             string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataObject, Formatting.Indented);
             return Results.Text(updatedMetadataJsonString);
         }
         public static IResult GetResourceById(string resourceId)
         {
-            MetadataObject? metadataObject = FileDatabase.GetMetadataObjectById(resourceId);
+            MetadataObject? metadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null) return Results.BadRequest("Invalid resource ID.");
             string pathToFileExtension = Path.Combine(pathToResources, metadataObject.ResourceInfo.FileExtension.ToUpper()); // TODO: Add null check or try/catch
             string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.ResourceInfo.FileExtension);

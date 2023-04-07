@@ -10,7 +10,7 @@ namespace Repository.App.API
     public class ResourceReceiver
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-
+        static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
         public static IResult SaveFile(HttpRequest request, string appUrl)
         {
             string resourceLabel = request.Form["ResourceLabel"].ToString();
@@ -47,7 +47,7 @@ namespace Repository.App.API
 
             bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            FileDatabase.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
+            databaseManager.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
 
             Console.WriteLine($"Saved file: {nameToSaveFile}");
             return Results.Ok(GUID);
@@ -79,7 +79,7 @@ namespace Repository.App.API
 
             bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            FileDatabase.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
+            databaseManager.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
 
             //DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description: description, fileExtension: fileExtension, streamTopic: streamTopic);
             return Results.Ok(GUID);
@@ -88,7 +88,7 @@ namespace Repository.App.API
         public static IResult UpdateMetadata(HttpRequest request, string appUrl, string resourceId)
         {
             var formAsDict = request.Form.ToDictionary();
-            FileDatabase.UpdateSingleMetadata(formAsDict, resourceId);
+            databaseManager.UpdateMetadataObject(formAsDict, resourceId);
             return Results.Ok(resourceId);
         }
 
