@@ -58,13 +58,8 @@ namespace Repository.App.API
         {
             string? overwriteId = request.Form["OverwriteId"];
             string GUID = string.IsNullOrWhiteSpace(overwriteId) ? Guid.NewGuid().ToString() : overwriteId.ToString();
-            //string GUID = Guid.NewGuid().ToString();
-            //if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
-
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
-            //if (resourceType != "EventStream") return Results.BadRequest("Only ResourceType: EventStream can be added to metadata like this");
-
             string description = request.Form["Description"].ToString();
             string? streamTopic = request.Form["StreamTopic"];
             streamTopic = string.IsNullOrWhiteSpace(streamTopic) ? null : streamTopic.ToString();
@@ -81,15 +76,14 @@ namespace Repository.App.API
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
             databaseManager.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
 
-            //DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description: description, fileExtension: fileExtension, streamTopic: streamTopic);
             return Results.Ok(GUID);
         }
 
         public static IResult UpdateMetadata(HttpRequest request, string appUrl, string resourceId)
         {
             var formAsDict = request.Form.ToDictionary();
-            databaseManager.UpdateMetadataObject(formAsDict, resourceId);
-            return Results.Ok(resourceId);
+            return databaseManager.UpdateMetadataObject(formAsDict, resourceId);
+            //return Results.Ok(resourceId);
         }
 
         // This function is to write metadata based on the file that was sent, in case some metadata is missing.

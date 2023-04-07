@@ -12,24 +12,8 @@ namespace Repository.App.Database
 
         public void UpdateMetadata(MetadataObject metadataObject)
         {
-            fileDatabase.UpdateMetadata(metadataObject);
+            fileDatabase.UpdateMetadataObject(metadataObject);
         }
-        // Should only ever be called by HistogramGenerator and by the overload function below
-        //public void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom? generatedFrom, List<Parent>? parents, string? description = null, string? fileExtension = null, string? streamTopic = null)
-        //{
-        //    var newMetadataObj = BuildResourceObject(resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFrom, parents);
-
-
-        //    DB.UpdateMetadata(newMetadataObj);
-        //}
-        //// Overload of function above that takes strings instead of objects.
-        //public void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? generatedFrom = null, string? parents = null, string? description = null, string? fileExtension = null, string? streamTopic = null)
-        //{
-        //    bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
-        //    bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-        //    AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFromObj, parentsList, description, fileExtension);
-        //}
-
 
         public MetadataObject? GetMetadataObjectById(string resourceId)
         {
@@ -98,7 +82,7 @@ namespace Repository.App.Database
                 }
             }
             metadatObject.ResourceId = resourceId;
-            fileDatabase.UpdateMetadata(metadatObject);
+            fileDatabase.UpdateMetadataObject(metadatObject);
             return Results.Ok(resourceId);
         }
         private static bool UpdateSingleMetadataValue(KeyValuePair<string, string> keyValuePair, MetadataObject metadataObject)
@@ -162,29 +146,8 @@ namespace Repository.App.Database
                     Parents = parents,
                 }
             };
-            fileDatabase.UpdateMetadata(metadataObject);
+            fileDatabase.UpdateMetadataObject(metadataObject);
         }
-        //private MetadataObject BuildResourceObject(string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null)
-        //{
-        //    return new MetadataObject
-        //    {
-        //        CreationDate = DateTime.Now.ToString(),
-        //        ResourceInfo = new ResourceInfo
-        //        {
-        //            ResourceLabel = resourceLabel,
-        //            ResourceType = resourceType,
-        //            Host = host,  // TODO: Should probably read this from somewhere to make it dynamic.
-        //            Description = description,
-        //            FileExtension = fileExtension,
-        //            StreamTopic = streamTopic
-        //        },
-        //        GenerationTree = new GenerationTree
-        //        {
-        //            GeneratedFrom = generatedFrom,
-        //            Parents = parents,
-        //        }
-        //    };
-        //}
 
         private Dictionary<string, MetadataObject> GetMetadataDict()
         {
