@@ -1,5 +1,5 @@
 using Repository.App;
-using Repository.Visualizers;
+using Repository.App.API;
 
 namespace Repository
 {
@@ -55,7 +55,7 @@ namespace Repository
 
             app.MapGet("/", () => "Hello World!");
 
-            new Endpoints.Endpoints(app);
+            new Endpoints(app);
             app.Run();
         }
     }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Repository.App;
 using System.Net;
 using System.Reflection;
 using Newtonsoft.Json;
@@ -8,9 +7,10 @@ using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Hosting;
 using System.IO.Pipelines;
 using Microsoft.AspNetCore.Http;
-using Repository.Visualizers;
+using Repository.App.Database;
+using Repository.App.Visualizers;
 
-namespace Repository.Endpoints
+namespace Repository.App.API
 {
     public class Endpoints
     {
@@ -76,7 +76,7 @@ namespace Repository.Endpoints
             app.MapGet("/resources/metadata/{resourceId}/children", (string resourceId) =>
             {
                 Console.WriteLine("Received GET request for list of children metadata on resource id: " + resourceId);
-                return DBManager.GetChildrenMetadataList(resourceId);
+                return FileDatabase.GetChildrenMetadataList(resourceId);
             });
 
             // To retrieve/output a list of available Visualization resources

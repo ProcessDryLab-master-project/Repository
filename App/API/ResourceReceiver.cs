@@ -1,10 +1,11 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
+using Repository.App.Database;
 using System;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace Repository.App
+namespace Repository.App.API
 {
     public class ResourceReceiver
     {
@@ -43,10 +44,10 @@ namespace Repository.App
             file.CopyTo(stream);
 
             //DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension, streamTopic: null, isDynamic);
-            
+
             bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            DBManager.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
+            FileDatabase.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
 
             Console.WriteLine($"Saved file: {nameToSaveFile}");
             return Results.Ok(GUID);
@@ -72,13 +73,13 @@ namespace Repository.App
             string? host = request.Form["Host"];
             host = string.IsNullOrWhiteSpace(host) ? $"{appUrl}/resources/" : host.ToString(); // Host is only NOT null when adding streams. Otherwise it should always be null.
             string? generatedFrom = request.Form["GeneratedFrom"];
-            generatedFrom = string.IsNullOrWhiteSpace(generatedFrom) ? null : generatedFrom.ToString(); 
+            generatedFrom = string.IsNullOrWhiteSpace(generatedFrom) ? null : generatedFrom.ToString();
             string? parents = request.Form["Parents"];
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
 
             bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            DBManager.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
+            FileDatabase.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
 
             //DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description: description, fileExtension: fileExtension, streamTopic: streamTopic);
             return Results.Ok(GUID);
@@ -87,7 +88,7 @@ namespace Repository.App
         public static IResult UpdateMetadata(HttpRequest request, string appUrl, string resourceId)
         {
             var formAsDict = request.Form.ToDictionary();
-            DBManager.UpdateSingleMetadata(formAsDict, resourceId);
+            FileDatabase.UpdateSingleMetadata(formAsDict, resourceId);
             return Results.Ok(resourceId);
         }
 

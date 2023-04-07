@@ -1,4 +1,4 @@
-﻿namespace Repository.App
+﻿namespace Repository.App.API
 {
     public class Registration
     {

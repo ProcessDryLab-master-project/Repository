@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Repository.App
+namespace Repository.App.Database
 {
     public class MetadataObject : IEquatable<MetadataObject?>
     {
@@ -81,8 +81,8 @@ namespace Repository.App
                    EqualityComparer<GeneratedFrom?>.Default.Equals(GeneratedFrom, other.GeneratedFrom) &&
                    Parents.ListEquals(other.Parents) &&
                    Children.ListEquals(other.Children);
-                //EqualityComparer<List<Parent>?>.Default.Equals(Parents, other.Parents) &&
-                //EqualityComparer<List<Child>?>.Default.Equals(Children, other.Children);
+            //EqualityComparer<List<Parent>?>.Default.Equals(Parents, other.Parents) &&
+            //EqualityComparer<List<Child>?>.Default.Equals(Children, other.Children);
         }
 
         public override int GetHashCode()

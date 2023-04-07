@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Repository.App;
+using Repository.App.API;
+using Repository.App.Database;
 using System.Data.SqlTypes;
 using System.Reflection;
 using System.Reflection.PortableExecutable;
@@ -8,7 +10,7 @@ using System.Text;
 using System.Xml;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace Repository.Visualizers
+namespace Repository.App.Visualizers
 {
     public class HistogramGenerator
     {
@@ -16,9 +18,9 @@ namespace Repository.Visualizers
         static readonly string pathToJson = Path.Combine(pathToResources, "JSON");
         public static IResult GetHistogram(string resourceId, string appUrl)
         {
-            MetadataObject? logMetadataObject = DBManager.GetMetadataObjectById(resourceId);
+            MetadataObject? logMetadataObject = FileDatabase.GetMetadataObjectById(resourceId);
             if (logMetadataObject == null || logMetadataObject.ResourceInfo?.FileExtension == null) return Results.BadRequest("Invalid resource ID. No reference to resource could be found.");
-            
+
             string pathToRequestFileExtension = Path.Combine(pathToResources, logMetadataObject.ResourceInfo.FileExtension.ToUpper());
             string pathToRequestFile = Path.Combine(pathToRequestFileExtension, resourceId + "." + logMetadataObject.ResourceInfo.FileExtension);
             if (!File.Exists(pathToRequestFile) || logMetadataObject.ResourceInfo?.ResourceType != "EventLog")
@@ -30,7 +32,7 @@ namespace Repository.Visualizers
             List<string>? childrenIds = logMetadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
             foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
             {
-                var childMetadata = DBManager.GetMetadataObjectById(childId);
+                var childMetadata = FileDatabase.GetMetadataObjectById(childId);
                 if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram")
                 {
                     var result = ResourceRetriever.GetResourceById(childId);
@@ -75,7 +77,7 @@ namespace Repository.Visualizers
                     UsedAs = "Log",
                 }
             };
-            DBManager.BuildAndAddMetadataObject(histResourceId, histResourceLabel, resourceType: "Histogram", host, histDescription, fileExtension: "json", parents: parents);
+            FileDatabase.BuildAndAddMetadataObject(histResourceId, histResourceLabel, resourceType: "Histogram", host, histDescription, fileExtension: "json", parents: parents);
             string pathToSave = Path.Combine(pathToJson, $"{histResourceId}.json");
             return pathToSave;
         }

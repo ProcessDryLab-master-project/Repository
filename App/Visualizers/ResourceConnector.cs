@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Repository.App;
+using Repository.App.Database;
 
-namespace Repository.Visualizers
+namespace Repository.App.Visualizers
 {
     public class ResourceConnector
     {
@@ -15,7 +16,7 @@ namespace Repository.Visualizers
         {
             HashSet<string> exploredNodes = new HashSet<string>();
             Console.WriteLine("Getting graph for requested object: " + resourceId);
-            MetadataObject? requestedMdObject = DBManager.GetMetadataObjectById(resourceId);
+            MetadataObject? requestedMdObject = FileDatabase.GetMetadataObjectById(resourceId);
             if (requestedMdObject == null) return Results.BadRequest("No resource exist for that ID");
 
             string graphId = Guid.NewGuid().ToString();
@@ -72,7 +73,7 @@ namespace Repository.Visualizers
 
         private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeUsedAs = null)
         {
-            MetadataObject? relativeMdObject = DBManager.GetMetadataObjectById(relativeId);
+            MetadataObject? relativeMdObject = FileDatabase.GetMetadataObjectById(relativeId);
             //string relativeInfo = JsonConvert.SerializeObject(relativeMdObject.ResourceInfo, Formatting.Indented);
             //Node relativeNode = new Node($"\"{relativeInfo}\"");
             Node relativeNode = new Node($"\"{relativeId}\"");
@@ -118,7 +119,7 @@ namespace Repository.Visualizers
                         new Transition(parent, EdgeOp.directed),
                         new Transition(child, EdgeOp.unspecified),
                     };
-            
+
             Edge edge = new Edge(transition);
             return edge;
         }

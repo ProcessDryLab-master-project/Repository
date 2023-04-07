@@ -6,7 +6,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Repository.App
+namespace Repository.App.Database
 {
     // Consider making a singleton: https://csharpindepth.com/articles/singleton
     /* From JOHN:
@@ -14,7 +14,7 @@ namespace Repository.App
      * https://briancaos.wordpress.com/2021/01/12/write-to-file-from-multiple-threads-async-with-c-and-net-core/
      * Ja, måske have en statisk tråd som lytter på en concurrentqueue hvor i lægger det data der skal skrives
      */
-    public class DBManager
+    public class FileDatabase : IFileDatabase
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
@@ -23,13 +23,13 @@ namespace Repository.App
         public static IResult UpdateSingleMetadata(IDictionary<string, string> keyValuePairs, string resourceId)
         {
             var metadatObject = GetMetadataObjectById(resourceId);
-            if(metadatObject == null) { return Results.BadRequest("No such metadata object exist"); }
-            foreach(var keyValuePair in keyValuePairs)
+            if (metadatObject == null) { return Results.BadRequest("No such metadata object exist"); }
+            foreach (var keyValuePair in keyValuePairs)
             {
                 Console.WriteLine($"Overwriting key {keyValuePair.Key} with value {keyValuePair.Value}");
-                if(!UpdateSingleMetadataValue(keyValuePair, metadatObject)) 
-                { 
-                    return Results.BadRequest($"Invalid Key {keyValuePair.Key} or Value {keyValuePair.Value}"); 
+                if (!UpdateSingleMetadataValue(keyValuePair, metadatObject))
+                {
+                    return Results.BadRequest($"Invalid Key {keyValuePair.Key} or Value {keyValuePair.Value}");
                 }
             }
             UpdateMetadataFile(metadatObject, resourceId);
@@ -88,6 +88,7 @@ namespace Repository.App
             UpdateParentResource(metadataDict, resourceId);
 
             string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
+            Console.WriteLine("Writing to metadata for resource id " + resourceId);
             File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
         }
         /* John: Jeg tror jeg ville forsøge at pakke den her ind i et DTO, det er måske lidt pænere og nemmere at tilføje argumenter til. I kan også gøre det at i laver alle jeres nullchecks ind i objektets konstruktør måske
@@ -99,33 +100,7 @@ namespace Repository.App
          * 
          * 
          */
-        
-        // TODO: Remove comment when refactor is done. No longer valid: Should only ever be called by HistogramGenerator and by the overload function below
-        //public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, GeneratedFrom? generatedFrom, List<Parent>? parents, string? description = null, string? fileExtension = null, string? streamTopic = null, bool isDynamic = false)
-        //{
-            //Console.WriteLine("Adding to metadata");
-            //MetadataObject newMetadataObj = BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFrom, parents, isDynamic);
-            //UpdateMetadataFile(newMetadataObj, GUID);
 
-            //Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
-            //MetadataObject? currentMetadataObject = metadataDict.GetValue(GUID);
-            //if (newMetadataObj.Equals(currentMetadataObject))
-            //{
-            //    Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
-            //    return;
-            //}
-            //UpdateParentResource(GUID, false, parents, metadataDict);
-            //metadataDict[GUID] = newMetadataObj;
-            //string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
-            //File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
-        //}
-        // Overload of function above that takes strings instead of objects.
-        //public static void AddToMetadata(string resourceLabel, string resourceType, string GUID, string host, string? generatedFrom = null, string? parents = null, string? description = null, string? fileExtension = null, string? streamTopic = null, bool isDynamic = false)
-        //{
-        //    bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
-        //    bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-        //    AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFromObj, parentsList, description, fileExtension, streamTopic, isDynamic);
-        //}
         private static void UpdateParentResource(Dictionary<string, MetadataObject> metadataDict, string resourceId)
         {
             List<Parent> parents = metadataDict.GetValue(resourceId)?.GenerationTree?.Parents;
@@ -142,14 +117,14 @@ namespace Repository.App
                 });
                 metadataDict[parentId] = parentObj;           // Overwrite with updated parentObj
             }
-            
+
         }
 
         public static MetadataObject? GetMetadataObjectById(string resourceId)
         {
             Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
             MetadataObject? metadataObj = metadataDict.GetValue(resourceId);
-            if(metadataObj == null) return null;
+            if (metadataObj == null) return null;
             metadataObj.ResourceId = resourceId;
             return metadataObj;
         }
@@ -159,7 +134,7 @@ namespace Repository.App
         public static IResult GetChildrenMetadataList(string resourceId)
         {
             var metadataObject = GetMetadataObjectById(resourceId);
-            if(metadataObject == null) return Results.BadRequest($"No such resource for id: {resourceId}");
+            if (metadataObject == null) return Results.BadRequest($"No such resource for id: {resourceId}");
             List<MetadataObject> childrenMetadataList = new();
             List<string>? childrenIds = metadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
             foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
@@ -255,7 +230,7 @@ namespace Repository.App
         //        else
         //            resourceType = "Misc";
 
-                
+
 
         //        //if(!fileName.Contains("metadata", StringComparison.OrdinalIgnoreCase))
         //        if(isValidGuid)
@@ -283,7 +258,7 @@ namespace Repository.App
     #region extensionMethods
     public static class ExtensionMethods
     {
-        public static TV GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default(TV))
+        public static TV GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default)
         {
             TV value;
             return dict.TryGetValue(key, out value) ? value : defaultValue;
@@ -300,7 +275,7 @@ namespace Repository.App
             }
             catch (Exception)
             {
-                result = default(T);
+                result = default;
                 return false;
             }
         }
