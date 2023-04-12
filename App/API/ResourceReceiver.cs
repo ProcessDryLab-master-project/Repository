@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Repository.App.Database;
 using System;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 
 namespace Repository.App.API
@@ -40,8 +41,19 @@ namespace Repository.App.API
             string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
             string nameToSaveFile = GUID + "." + fileExtension;
             string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
-            using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
-            file.CopyTo(stream);
+
+            using (var fileStream = File.Open(pathToSaveFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+            {
+                // read from the file
+
+                fileStream.SetLength(0); // truncate the file
+
+                // write to the file
+                file.CopyTo(fileStream);
+            }
+
+            //using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
+            //file.CopyTo(stream);
 
             //DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension, streamTopic: null, isDynamic);
 
