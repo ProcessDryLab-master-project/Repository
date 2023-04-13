@@ -12,6 +12,8 @@ namespace Repository.App.API
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
+        //TODO: fix error: 'Unexpected end of Stream, the content may have already been read by another component. '
+        // Potential solution to this and to reading file type: https://github.com/dotnet/AspNetCore.Docs/blob/5f362035992cc3b997903dda521a01ed59058dec/aspnetcore/mvc/models/file-uploads/samples/5.x/LargeFilesSample/Controllers/FileUploadController.cs#L49
         public static IResult SaveFile(HttpRequest request, string appUrl)
         {
             string resourceLabel = request.Form["ResourceLabel"].ToString();
@@ -42,20 +44,19 @@ namespace Repository.App.API
             string nameToSaveFile = GUID + "." + fileExtension;
             string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
 
+            //databaseManager.WriteToFile(pathToSaveFile, file);
+            // TODO: error: The process cannot access the file because it is being used by another process.
+            // Can sometimes write to this multiple times at the same time. It doesn't seem related to reading at the same time, as it can happen with POST requests alone.
             using (var fileStream = File.Open(pathToSaveFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
-                // read from the file
-
+                // read from the file ????
                 fileStream.SetLength(0); // truncate the file
-
                 // write to the file
                 file.CopyTo(fileStream);
             }
 
             //using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
             //file.CopyTo(stream);
-
-            //DBManager.AddToMetadata(resourceLabel, resourceType, GUID, host, generatedFrom: generatedFrom, parents: parents, description, fileExtension, streamTopic: null, isDynamic);
 
             bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);

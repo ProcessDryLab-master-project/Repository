@@ -1,4 +1,6 @@
-﻿namespace Repository.App.Database
+﻿using System.Collections.Concurrent;
+
+namespace Repository.App.Database
 {
     public interface IFileDatabase
     {
@@ -10,5 +12,9 @@
         Dictionary<string, MetadataObject> GetMetadataDict();
         MetadataObject? GetMetadataObjectById(string key);
         bool ContainsKey(string key);
+
+        //void WriteFile(string path, IFormFile file);
+        //StreamContent ReadFile(string path);
+        //ConcurrentDictionary<string, object> activeFiles { get; set; }
     }
 }

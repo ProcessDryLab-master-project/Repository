@@ -56,7 +56,7 @@ namespace Repository.App.Database
             List<MetadataObject> metadataAsList = new();
             foreach (var metadataObject in metadataDict)
             {
-                Console.WriteLine($"{metadataObject.Key}: {metadataObject.Value}");
+                //Console.WriteLine($"{metadataObject.Key}: {metadataObject.Value}");
                 metadataObject.Value.ResourceId = metadataObject.Key;
                 metadataAsList.Add(metadataObject.Value);
             }
@@ -125,6 +125,7 @@ namespace Repository.App.Database
 
         public void BuildAndAddMetadataObject(string resourceId, string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null, bool isDynamic = false)
         {
+            Console.WriteLine("Building metadata object");
             var dateInSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
             var metadataObject = new MetadataObject
             {
@@ -153,6 +154,11 @@ namespace Repository.App.Database
         {
             return fileDatabase.GetMetadataDict();
         }
+
+        //public void WriteToFile(string path, IFormFile file)
+        //{
+        //    fileDatabase.WriteFile(path, file);
+        //}
     }
 
     #region extensionMethods

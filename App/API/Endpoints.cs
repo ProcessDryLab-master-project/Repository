@@ -17,6 +17,13 @@ namespace Repository.App.API
         static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
         public Endpoints(WebApplication app)
         {
+            // Rate limiting is added to some endpoints only, as it will keep the program stable.
+            // The endpoints without rate limiting, such as ping, are endpoints we don't expect to break anything from a large amount of requests, and rate limiting would only be to prevent ddos attacks.
+            // If we add rate limiting to these endpoints, we need to add another policy that allows a higher request rate than the one used for files.
+            // Metadata already has an internal queue for writing updates, which means rate limiting isn't required.
+            // TODO: metadata queue only applies when writing to the file, not reading from. This hasn't been an issue so far, but maybe rate limiting on metadata read requests could be useful.
+            var ratePolicy = "fixed";
+
             var _hostEnvironment = app.Environment;
             // ----------------- CONNECTION ----------------- //
             // To maintain connection
@@ -32,7 +39,6 @@ namespace Repository.App.API
                 return Registration.GetConfiguration();
             });
 
-
             // ----------------- DATA ----------------- //
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
             app.MapPost("/resources", (HttpRequest request) =>
@@ -41,24 +47,27 @@ namespace Repository.App.API
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return ResourceReceiver.SaveFile(request, appUrl);
             })
+            //.Produces(200)
             //.Accepts<IFormFile>("multipart/form-data")
-            .Produces(200);
+            .RequireRateLimiting(ratePolicy);
 
             app.MapPost("/resources/metadata", (HttpRequest request) =>
             {
                 Console.WriteLine("Received POST request to create metadata object without a file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return ResourceReceiver.SaveMetadataOnly(request, appUrl);
-            })
-            .Produces(200);
+            });
+            //.Produces(200)
+            //.RequireRateLimiting(ratePolicy);
 
             app.MapPut("/resources/metadata/{resourceId}", (HttpRequest request, string resourceId) =>
             {
                 Console.WriteLine("Received PUT request to update metadata object without a file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return ResourceReceiver.UpdateMetadata(request, appUrl, resourceId);
-            })
-            .Produces(200);
+            });
+            //.Produces(200)
+            //.RequireRateLimiting(ratePolicy);
 
             // To retrieve/output a list of available resources (metadata list)
             app.MapGet("/resources/metadata", (HttpContext httpContext) =>
@@ -66,12 +75,15 @@ namespace Repository.App.API
                 Console.WriteLine("Received GET request for full metadata list");
                 return ResourceRetriever.GetResourceList();
             });
+            //.RequireRateLimiting(ratePolicy);
+
             // To retrieve metadata object for given resourceId
             app.MapGet("/resources/metadata/{resourceId}", (string resourceId) =>
             {
                 Console.WriteLine("Received GET request for metadata object on resource id: " + resourceId);
                 return ResourceRetriever.GetMetadataObjectStringById(resourceId);
             });
+            //.RequireRateLimiting(ratePolicy);
 
             // To retrieve children for given resourceId
             app.MapGet("/resources/metadata/{resourceId}/children", (string resourceId) =>
@@ -79,6 +91,7 @@ namespace Repository.App.API
                 Console.WriteLine("Received GET request for list of children metadata on resource id: " + resourceId);
                 return databaseManager.GetChildrenMetadataList(resourceId);
             });
+            //.RequireRateLimiting(ratePolicy);
 
             // To retrieve/output a list of available Visualization resources
             app.MapPost("/resources/metadata/filters", (HttpRequest request) =>
@@ -86,12 +99,7 @@ namespace Repository.App.API
                 Console.WriteLine("Received POST request to get a filtered list of metadata objects");
                 return ResourceRetriever.GetFilteredList(request);
             });
-
-            //// To retrieve/output a list of available EventLog resources
-            //app.MapGet("/resources/eventlogs", (HttpContext httpContext) =>
-            //{
-            //    return ResourceRetriever.GetEventLogList();
-            //});
+            //.RequireRateLimiting(ratePolicy);
 
             // To retrieve file for given resourceId
             app.MapGet("/resources/{resourceId}", (string resourceId) =>
@@ -99,6 +107,7 @@ namespace Repository.App.API
                 Console.WriteLine("Received GET request for file on resource id: " + resourceId);
                 return ResourceRetriever.GetResourceById(resourceId);
             });
+            //.RequireRateLimiting(ratePolicy); // TODO: Find out if retrieving files without rate limiter can be an issue (especially with streaming)
 
             // To retrieve graph for given resourceId
             app.MapGet("/resources/graphs/{resourceId}", (string resourceId) =>
@@ -106,6 +115,7 @@ namespace Repository.App.API
                 Console.WriteLine("Received GET request for relation graph on resource id: " + resourceId);
                 return ResourceConnector.GetGraphForResource(resourceId);
             });
+            //.RequireRateLimiting(ratePolicy);
 
             // To retrieve histogram for given resourceId
             app.MapPost("/resources/histograms/{resourceId}", (string resourceId) =>
@@ -114,6 +124,7 @@ namespace Repository.App.API
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return HistogramGenerator.GetHistogram(resourceId, appUrl);
             });
+            //.RequireRateLimiting(ratePolicy);
 
         }
     }

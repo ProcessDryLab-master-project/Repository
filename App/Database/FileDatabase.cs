@@ -15,18 +15,21 @@ namespace Repository.App.Database
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
-        ConcurrentQueue<MetadataObject> metadataQueue = new ConcurrentQueue<MetadataObject>();
+        static ConcurrentQueue<MetadataObject> metadataQueue = new ConcurrentQueue<MetadataObject>();
         static Thread? Thread;
+        //static Thread? FileThread;
         public FileDatabase()
         {
             if (Thread == null)
             {
+                Console.WriteLine("Creating thread");
                 Thread = new Thread(() =>
                 {
                     while (true)
                     {
                         if (!metadataQueue.IsEmpty)
                         {
+                            Console.WriteLine("Dequeue");
                             metadataQueue.TryDequeue(out MetadataObject? metadataObject);
                             UpdateMetadataFile(metadataObject);
                         }
@@ -34,6 +37,21 @@ namespace Repository.App.Database
                 });
                 Thread.Start();
             }
+            //if (FileThread == null)
+            //{
+            //    FileThread = new Thread(() =>
+            //    {
+            //        while (true)
+            //        {
+            //            if (!fileQueue.IsEmpty)
+            //            {
+            //                fileQueue.TryDequeue(out KeyValuePair<string, IFormFile> filePair);
+            //                WriteAction(filePair.Key, filePair.Value);
+            //            }
+            //        }
+            //    });
+            //    FileThread.Start();
+            //}
         }
         public bool ContainsKey(string key)
         {
@@ -51,6 +69,7 @@ namespace Repository.App.Database
 
         public void UpdateMetadataObject(MetadataObject metadataObject)
         {
+            Console.WriteLine("Adding metadata object to queue");
             metadataQueue.Enqueue(metadataObject);
         }
 
@@ -65,7 +84,7 @@ namespace Repository.App.Database
         // ONLY function that should ever write to the metadata file
         private void UpdateMetadataFile(MetadataObject? metadataObject)
         {
-            Console.WriteLine("Updating data file with metadata for ID: " + metadataObject?.ResourceId);
+            Console.WriteLine("Dequeuing, updating metadata file with object for ID: " + metadataObject?.ResourceId);
             try
             {
                 string? resourceId = metadataObject?.ResourceId;
@@ -119,5 +138,31 @@ namespace Repository.App.Database
                 metadataDict[parentId] = parentObj;           // Overwrite with updated parentObj
             }
         }
+
+
+        //static ConcurrentDictionary<string, object> activeFiles = new();
+        //static ConcurrentQueue<KeyValuePair<string, IFormFile>> fileQueue = new();
+        //ConcurrentQueue<Action> actionQueue = new();
+        //public void WriteFile(string path, IFormFile file)
+        //{
+        //    if (fileQueue.Any(pair => pair.Key == path))
+        //    {
+        //        Console.WriteLine("File is already being used, queuing write request");
+        //        fileQueue.Enqueue(new(path, file));
+        //    }
+        //    fileQueue.Enqueue(new(path, file));
+        //    //actionQueue.Enqueue(() => WriteAction(path, file));
+        //    //fileQueue.Enqueue(new(path, () => WriteFile(path, file)));
+        //}
+        //private void WriteAction(string path, IFormFile file)
+        //{
+        //    using (var fileStream = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+        //    {
+        //        // read from the file ????
+        //        fileStream.SetLength(0); // truncate the file
+        //        // write to the file
+        //        file.CopyTo(fileStream);
+        //    }
+        //}
     }
 }
