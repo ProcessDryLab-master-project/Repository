@@ -29,12 +29,12 @@ namespace Repository.App.Database
                     {
                         if (!metadataQueue.IsEmpty)
                         {
-                            Console.WriteLine("Dequeue");
                             metadataQueue.TryDequeue(out MetadataObject? metadataObject);
                             UpdateMetadataFile(metadataObject);
                         }
                     }
                 });
+                Thread.Name = Guid.NewGuid().ToString();
                 Thread.Start();
             }
             //if (FileThread == null)
@@ -69,8 +69,8 @@ namespace Repository.App.Database
 
         public void UpdateMetadataObject(MetadataObject metadataObject)
         {
-            Console.WriteLine("Adding metadata object to queue");
             metadataQueue.Enqueue(metadataObject);
+            Console.WriteLine($"Adding metadata object to queue with length {metadataQueue.Count()} on Thread: {Thread.Name}");      
         }
 
         public Dictionary<string, MetadataObject> GetMetadataDict()
@@ -107,6 +107,7 @@ namespace Repository.App.Database
 
                 string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
                 Console.WriteLine("Writing to metadata for resource id " + resourceId);
+                // TODO: Following error can still occur despite queue: The process cannot access the file because it is being used by another process
                 File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
             }
             catch (IOException ioe)

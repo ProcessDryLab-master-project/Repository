@@ -51,6 +51,16 @@ namespace Repository.App.API
             //.Accepts<IFormFile>("multipart/form-data")
             .RequireRateLimiting(ratePolicy);
 
+            app.MapPut("/resources/{resourceId}", (HttpRequest request, string resourceId) =>
+            {
+                Console.WriteLine("Received PUT request to update file");
+                var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+                return ResourceReceiver.UpdateFile(request, resourceId);
+            })
+            //.Produces(200)
+            //.Accepts<IFormFile>("multipart/form-data")
+            .RequireRateLimiting(ratePolicy);
+
             app.MapPost("/resources/metadata", (HttpRequest request) =>
             {
                 Console.WriteLine("Received POST request to create metadata object without a file");

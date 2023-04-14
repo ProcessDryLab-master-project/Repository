@@ -43,11 +43,10 @@ namespace Repository.App.API
             string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
             string nameToSaveFile = GUID + "." + fileExtension;
             string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
+            if (File.Exists(pathToSaveFile)) return Results.BadRequest("File with that ID already exists. This should not be possible. Did you mean PUT?");
 
-            //databaseManager.WriteToFile(pathToSaveFile, file);
-            // TODO: error: The process cannot access the file because it is being used by another process.
-            // Can sometimes write to this multiple times at the same time. It doesn't seem related to reading at the same time, as it can happen with POST requests alone.
-            using (var fileStream = File.Open(pathToSaveFile, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+            // Might cause issues with the UpdateFile function below
+            using (var fileStream = File.Open(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
                 // read from the file ????
                 fileStream.SetLength(0); // truncate the file
@@ -63,7 +62,35 @@ namespace Repository.App.API
             databaseManager.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
 
             Console.WriteLine($"Saved file: {nameToSaveFile}");
-            return Results.Ok(GUID);
+            return Results.Ok(GUID); // TODO: Beware that we're returning resourceId, before we know that the metadata file has been updated. The update to metadata is being put on a queue, which we currently can't return anything from. 
+        }
+
+        // TODO: Consider that people can potentially update files with a new file type, since no file extension is specified.
+        // Consider implementing this to check file types: https://stackoverflow.com/questions/11547654/determine-the-file-type-using-c-sharp
+        public static IResult UpdateFile(HttpRequest request, string resourceId)
+        {
+            MetadataObject? metadataObject = databaseManager.GetMetadataObjectById(resourceId);
+            if (metadataObject == null) return Results.BadRequest("No metadata object exist for resourceId: " + resourceId);
+            if (!request.Form.Files.Any()) return Results.BadRequest("Exactly one file is required");
+            var file = request.Form.Files[0];
+            string fileExtension = metadataObject.ResourceInfo.FileExtension!;
+
+            string pathToFileExtension = Path.Combine(pathToResources, fileExtension.ToUpper());
+            string nameToSaveFile = resourceId + "." + fileExtension;
+            string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
+
+            // TODO: error: The process cannot access the file because it is being used by another process.
+            // Can sometimes write to this multiple times at the same time. It doesn't seem related to reading at the same time, as it can happen with POST requests alone.
+            using (var fileStream = File.Open(pathToSaveFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            {
+                // read from the file ????
+                fileStream.SetLength(0); // truncate the file
+                // write to the file
+                file.CopyTo(fileStream);
+            }
+
+            Console.WriteLine($"Updated file: {nameToSaveFile}");
+            return Results.Ok(resourceId); 
         }
 
         // Assuming this is only relevant for streaming?
