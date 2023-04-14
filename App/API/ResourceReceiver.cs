@@ -16,17 +16,12 @@ namespace Repository.App.API
         // Potential solution to this and to reading file type: https://github.com/dotnet/AspNetCore.Docs/blob/5f362035992cc3b997903dda521a01ed59058dec/aspnetcore/mvc/models/file-uploads/samples/5.x/LargeFilesSample/Controllers/FileUploadController.cs#L49
         public static IResult SaveFile(HttpRequest request, string appUrl)
         {
+            string resourceId = Guid.NewGuid().ToString();
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
             string description = request.Form["Description"].ToString();
             string? fileExtension = request.Form["FileExtension"];
             fileExtension = string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension.ToString().Replace(".", "");
-
-            string? overwriteId = request.Form["OverwriteId"];
-            string GUID = string.IsNullOrWhiteSpace(overwriteId) ? Guid.NewGuid().ToString() : overwriteId.ToString();
-            //string GUID = Guid.NewGuid().ToString();
-            //if (!string.IsNullOrWhiteSpace(overwriteId)) GUID = overwriteId.ToString(); // If overwriteId is provided, save file as that.
-
             string? generatedFrom = request.Form["GeneratedFrom"];
             string? parents = request.Form["Parents"];
             generatedFrom = string.IsNullOrWhiteSpace(generatedFrom) ? null : generatedFrom.ToString();
@@ -41,7 +36,7 @@ namespace Repository.App.API
             var file = request.Form.Files[0];
             string host = $"{appUrl}/resources/";
             string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
-            string nameToSaveFile = GUID + "." + fileExtension;
+            string nameToSaveFile = resourceId + "." + fileExtension;
             string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
             if (File.Exists(pathToSaveFile)) return Results.BadRequest("File with that ID already exists. This should not be possible. Did you mean PUT?");
 
@@ -59,10 +54,10 @@ namespace Repository.App.API
 
             bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            databaseManager.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
+            databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
 
             Console.WriteLine($"Saved file: {nameToSaveFile}");
-            return Results.Ok(GUID); // TODO: Beware that we're returning resourceId, before we know that the metadata file has been updated. The update to metadata is being put on a queue, which we currently can't return anything from. 
+            return Results.Ok(resourceId); // TODO: Beware that we're returning resourceId, before we know that the metadata file has been updated. The update to metadata is being put on a queue, which we currently can't return anything from. 
         }
 
         // TODO: Consider that people can potentially update files with a new file type, since no file extension is specified.
@@ -74,7 +69,6 @@ namespace Repository.App.API
             if (!request.Form.Files.Any()) return Results.BadRequest("Exactly one file is required");
             var file = request.Form.Files[0];
             string fileExtension = metadataObject.ResourceInfo.FileExtension!;
-
             string pathToFileExtension = Path.Combine(pathToResources, fileExtension.ToUpper());
             string nameToSaveFile = resourceId + "." + fileExtension;
             string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
@@ -96,8 +90,7 @@ namespace Repository.App.API
         // Assuming this is only relevant for streaming?
         public static IResult SaveMetadataOnly(HttpRequest request, string appUrl)
         {
-            string? overwriteId = request.Form["OverwriteId"];
-            string GUID = string.IsNullOrWhiteSpace(overwriteId) ? Guid.NewGuid().ToString() : overwriteId.ToString();
+            string resourceId = Guid.NewGuid().ToString();
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
             string description = request.Form["Description"].ToString();
@@ -114,9 +107,9 @@ namespace Repository.App.API
 
             bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            databaseManager.BuildAndAddMetadataObject(GUID, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
+            databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
 
-            return Results.Ok(GUID);
+            return Results.Ok(resourceId);
         }
 
         public static IResult UpdateMetadata(HttpRequest request, string appUrl, string resourceId)
