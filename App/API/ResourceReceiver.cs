@@ -40,6 +40,15 @@ namespace Repository.App.API
             string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
             if (File.Exists(pathToSaveFile)) return Results.BadRequest("File with that ID already exists. This should not be possible. Did you mean PUT?");
 
+
+            bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
+            bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
+            databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
+
+            //// Alternate way of saving file?
+            //using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
+            //file.CopyTo(stream);
+
             // Might cause issues with the UpdateFile function below
             using (var fileStream = File.Open(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
@@ -47,17 +56,16 @@ namespace Repository.App.API
                 fileStream.SetLength(0); // truncate the file
                 // write to the file
                 file.CopyTo(fileStream);
+                Console.WriteLine($"Saved file: {nameToSaveFile}");
+                return Results.Ok(resourceId);
             }
 
-            //using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
-            //file.CopyTo(stream);
+            //bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
+            //bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
+            //databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
 
-            bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
-            bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
-
-            Console.WriteLine($"Saved file: {nameToSaveFile}");
-            return Results.Ok(resourceId); // TODO: Beware that we're returning resourceId, before we know that the metadata file has been updated. The update to metadata is being put on a queue, which we currently can't return anything from. 
+            //Console.WriteLine($"Saved file: {nameToSaveFile}");
+            //return Results.Ok(resourceId); // TODO: Beware that we're returning resourceId, before we know that the metadata file has been updated. The update to metadata is being put on a queue, which we currently can't return anything from. 
         }
 
         // TODO: Consider that people can potentially update files with a new file type, since no file extension is specified.
