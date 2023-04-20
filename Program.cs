@@ -1,6 +1,7 @@
 using Repository.App.API;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using System.Net;
 
 namespace Repository
 {
@@ -36,6 +37,8 @@ namespace Repository
                     options.QueueLimit = 10;
                 }
             ));
+
+            //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             // Streaming? Register a third party API with the HttpClient instance in the DI services. From here: https://www.learmoreseekmore.com/2021/12/minimal-api-Result-stream-return-type.html
             //builder.Services.AddScoped(httpClient => new HttpClient

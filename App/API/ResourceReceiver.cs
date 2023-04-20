@@ -12,10 +12,13 @@ namespace Repository.App.API
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
+
         //TODO: fix error: 'Unexpected end of Stream, the content may have already been read by another component. '
         // Potential solution to this and to reading file type: https://github.com/dotnet/AspNetCore.Docs/blob/5f362035992cc3b997903dda521a01ed59058dec/aspnetcore/mvc/models/file-uploads/samples/5.x/LargeFilesSample/Controllers/FileUploadController.cs#L49
+        // Another post with a lot of useful information: https://stackoverflow.com/questions/63403921/process-incoming-filestream-asynchronously
         public static IResult SaveFile(HttpRequest request, string appUrl)
         {
+            request.EnableBuffering();
             string resourceId = Guid.NewGuid().ToString();
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
@@ -29,11 +32,10 @@ namespace Repository.App.API
             string? isDynamicString = request.Form["Dynamic"];
             bool isDynamic = string.Equals(isDynamicString, "true", StringComparison.OrdinalIgnoreCase);
 
-            if (!request.Form.Files.Any())
-            {
-                return Results.BadRequest("Exactly one file is required");
-            }
-            var file = request.Form.Files[0];
+            var requestFile = request.Form.Files;
+            if (!requestFile.Any()) return Results.BadRequest("Exactly one file is required");
+            var file = requestFile[0];
+
             string host = $"{appUrl}/resources/";
             string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
             string nameToSaveFile = resourceId + "." + fileExtension;
@@ -74,25 +76,37 @@ namespace Repository.App.API
         {
             MetadataObject? metadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null) return Results.BadRequest("No metadata object exist for resourceId: " + resourceId);
-            if (!request.Form.Files.Any()) return Results.BadRequest("Exactly one file is required");
-            var file = request.Form.Files[0];
-            string fileExtension = metadataObject.ResourceInfo.FileExtension!;
-            string pathToFileExtension = Path.Combine(pathToResources, fileExtension.ToUpper());
-            string nameToSaveFile = resourceId + "." + fileExtension;
-            string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
-
-            // TODO: error: The process cannot access the file because it is being used by another process.
-            // Can sometimes write to this multiple times at the same time. It doesn't seem related to reading at the same time, as it can happen with POST requests alone.
-            using (var fileStream = File.Open(pathToSaveFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            try
             {
-                // read from the file ????
-                fileStream.SetLength(0); // truncate the file
-                // write to the file
-                file.CopyTo(fileStream);
-            }
+                if (request == null) Console.WriteLine("Request is null somehow?");
+                if (request.Form == null) Console.WriteLine("Request.Form is null somehow?");
+                request.EnableBuffering();
+                var requestFile = request.Form.Files;
+                if (!requestFile.Any()) return Results.BadRequest("Exactly one file is required");
+                var file = requestFile[0];
+                string fileExtension = metadataObject.ResourceInfo.FileExtension!;
+                string pathToFileExtension = Path.Combine(pathToResources, fileExtension.ToUpper());
+                string nameToSaveFile = resourceId + "." + fileExtension;
+                string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
 
-            Console.WriteLine($"Updated file: {nameToSaveFile}");
-            return Results.Ok(resourceId); 
+                // TODO: error: The process cannot access the file because it is being used by another process.
+                // Can sometimes write to this multiple times at the same time. It doesn't seem related to reading at the same time, as it can happen with POST requests alone.
+                using (var fileStream = File.Open(pathToSaveFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    // read from the file ????
+                    fileStream.SetLength(0); // truncate the file
+                                             // write to the file
+                    file.CopyTo(fileStream);
+                }
+
+                Console.WriteLine($"Updated file: {nameToSaveFile}");
+                return Results.Ok(resourceId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return Results.Problem(ex.ToString());
+            }
         }
 
         // Assuming this is only relevant for streaming?
