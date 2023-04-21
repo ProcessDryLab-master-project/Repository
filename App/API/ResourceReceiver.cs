@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Repository.App.Database;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -36,6 +37,12 @@ namespace Repository.App.API
             if (!requestFile.Any()) return Results.BadRequest("Exactly one file is required");
             var file = requestFile[0];
 
+
+            if (isDynamic)
+            {
+                databaseManager.UpdateDynamicResource(resourceId);
+            }
+
             string host = $"{appUrl}/resources/";
             string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
             string nameToSaveFile = resourceId + "." + fileExtension;
@@ -47,27 +54,19 @@ namespace Repository.App.API
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
             databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
 
-            //// Alternate way of saving file?
-            //using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
-            //file.CopyTo(stream);
-
-            // Might cause issues with the UpdateFile function below
-            using (var fileStream = File.Open(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+            lock (Globals.FileAccessLock) // Lock added, which should queue writes from multiple threads.
             {
-                // read from the file ????
-                fileStream.SetLength(0); // truncate the file
-                // write to the file
-                file.CopyTo(fileStream);
-                Console.WriteLine($"Saved file: {nameToSaveFile}");
-                return Results.Ok(resourceId);
-            }
-
-            //bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
-            //bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            //databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
-
-            //Console.WriteLine($"Saved file: {nameToSaveFile}");
-            //return Results.Ok(resourceId); // TODO: Beware that we're returning resourceId, before we know that the metadata file has been updated. The update to metadata is being put on a queue, which we currently can't return anything from. 
+                //// Alternate way of saving file?
+                //using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
+                //file.CopyTo(stream);
+                using (var fileStream = File.Open(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    fileStream.SetLength(0); // truncate the file
+                    file.CopyTo(fileStream); // write to the file
+                    Console.WriteLine($"Saved file: {nameToSaveFile}");
+                    return Results.Ok(resourceId); // TODO: Beware that we're returning resourceId, before we know that the metadata file has been updated. The update to metadata is being put on a queue, which we currently can't return anything from. 
+                }
+            }            
         }
 
         // TODO: Consider that people can potentially update files with a new file type, since no file extension is specified.
@@ -76,10 +75,14 @@ namespace Repository.App.API
         {
             MetadataObject? metadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null) return Results.BadRequest("No metadata object exist for resourceId: " + resourceId);
+            if (!metadataObject.ResourceInfo.Dynamic) return Results.BadRequest("You can only update dynamic resources. Invalid request for resourceId: " + resourceId);
             try
             {
-                if (request == null) Console.WriteLine("Request is null somehow?");
-                if (request.Form == null) Console.WriteLine("Request.Form is null somehow?");
+                if (request == null) 
+                    Console.WriteLine("Request is null somehow?");
+                if (request.Form == null)
+                    Console.WriteLine("Request.Form is null somehow?");
+
                 request.EnableBuffering();
                 var requestFile = request.Form.Files;
                 if (!requestFile.Any()) return Results.BadRequest("Exactly one file is required");
@@ -89,16 +92,19 @@ namespace Repository.App.API
                 string nameToSaveFile = resourceId + "." + fileExtension;
                 string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
 
+                databaseManager.UpdateDynamicResource(resourceId);
                 // TODO: error: The process cannot access the file because it is being used by another process.
                 // Can sometimes write to this multiple times at the same time. It doesn't seem related to reading at the same time, as it can happen with POST requests alone.
-                using (var fileStream = File.Open(pathToSaveFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                lock (Globals.FileAccessLock) // Lock added, which should queue writes from multiple threads.
                 {
-                    // read from the file ????
-                    fileStream.SetLength(0); // truncate the file
-                                             // write to the file
-                    file.CopyTo(fileStream);
+                    //using var stream = new FileStream(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite); // TODO: Consider if FileShare.ReadWrite makes sense
+                    //file.CopyTo(stream);
+                    using (var fileStream = File.Open(pathToSaveFile, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                    {
+                        fileStream.SetLength(0); // truncate the file
+                        file.CopyTo(fileStream); // write to the file
+                    }
                 }
-
                 Console.WriteLine($"Updated file: {nameToSaveFile}");
                 return Results.Ok(resourceId);
             }

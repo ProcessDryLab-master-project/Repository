@@ -2,6 +2,7 @@ using Repository.App.API;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using System.Net;
+using Repository.App.Database;
 
 namespace Repository
 {
@@ -46,6 +47,7 @@ namespace Repository
             //    BaseAddress = new Uri("https://jsonplaceholder.typicode.com/")
             //});
 
+            //builder.Services.AddSingleton<MultiThreadFileWriter>(); // TODO: Delete if we don't end up using MultiThreadFileWriter
 
             var app = builder.Build();
             app.UseRateLimiter();

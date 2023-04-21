@@ -14,6 +14,26 @@ namespace Repository.App.Database
         {
             fileDatabase.UpdateMetadataObject(metadataObject);
         }
+        public void UpdateDynamicResource(string resourceId)
+        {
+            fileDatabase.UpdateDynamicResourceTime(resourceId);
+        }
+
+        public void TrackAllDynamicResources()
+        {
+            Dictionary<string, MetadataObject> metadataDict = fileDatabase.GetMetadataDict();
+            foreach (var metadataObj in metadataDict)
+            {
+                //metadataObj.Value.ResourceId = metadataObj.Key;
+                //Console.WriteLine($"metadataObj id: {metadataObj.Value.ResourceId}");
+                Console.WriteLine($"metadataObj key: {metadataObj.Key}");
+                Console.WriteLine($"metadataObj Dynamic: {metadataObj.Value.ResourceInfo.Dynamic}");
+                if (metadataObj.Value.ResourceInfo.Dynamic)
+                {
+                    UpdateDynamicResource(metadataObj.Key);
+                }
+            }
+        }
 
         public MetadataObject? GetMetadataObjectById(string resourceId)
         {

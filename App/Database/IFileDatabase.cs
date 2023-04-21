@@ -9,6 +9,7 @@ namespace Repository.App.Database
         /// </summary>
         /// <param name="metadataObject"></param>
         void UpdateMetadataObject(MetadataObject metadataObject);
+        void UpdateDynamicResourceTime(string resourceId);
         Dictionary<string, MetadataObject> GetMetadataDict();
         MetadataObject? GetMetadataObjectById(string key);
         bool ContainsKey(string key);

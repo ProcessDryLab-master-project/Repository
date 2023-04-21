@@ -17,6 +17,12 @@ namespace Repository.App.API
         static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
         public Endpoints(WebApplication app)
         {
+            databaseManager.TrackAllDynamicResources();
+
+            // TODO: Delete if we don't end up using MultiThreadFileWriter
+            //var fileWriter = app.Services.GetRequiredService<MultiThreadFileWriter>();
+            //fileWriter.WriteLine("yo", "c:\\myfile.txt");
+
             // Rate limiting is added to some endpoints only, as it will keep the program stable.
             // The endpoints without rate limiting, such as ping, are endpoints we don't expect to break anything from a large amount of requests, and rate limiting would only be to prevent ddos attacks.
             // If we add rate limiting to these endpoints, we need to add another policy that allows a higher request rate than the one used for files.

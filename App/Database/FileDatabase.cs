@@ -16,14 +16,21 @@ namespace Repository.App.Database
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
         static ConcurrentQueue<MetadataObject> metadataQueue = new ConcurrentQueue<MetadataObject>();
-        static Thread? Thread;
+
+        static ConcurrentDictionary<string, long> dynamicFiles = new();
+        // 1.000ms = 1s. 30.000ms = 30s. 300.000ms = 5min
+        static readonly long millisecondsToWait = 30000; // 30 seconds before dynamic resources are changed
+
+        static Thread? MetadataThread;
+        static Thread? FileThread;
+
         //static Thread? FileThread;
         public FileDatabase()
         {
-            if (Thread == null)
+            if (MetadataThread == null)
             {
                 Console.WriteLine("Creating thread");
-                Thread = new Thread(() =>
+                MetadataThread = new Thread(() =>
                 {
                     while (true)
                     {
@@ -34,24 +41,35 @@ namespace Repository.App.Database
                         }
                     }
                 });
-                Thread.Name = Guid.NewGuid().ToString();
-                Thread.Start();
+                MetadataThread.Name = Guid.NewGuid().ToString();
+                MetadataThread.Start();
             }
-            //if (FileThread == null)
-            //{
-            //    FileThread = new Thread(() =>
-            //    {
-            //        while (true)
-            //        {
-            //            if (!fileQueue.IsEmpty)
-            //            {
-            //                fileQueue.TryDequeue(out KeyValuePair<string, IFormFile> filePair);
-            //                WriteAction(filePair.Key, filePair.Value);
-            //            }
-            //        }
-            //    });
-            //    FileThread.Start();
-            //}
+            if (FileThread == null)
+            {
+                Console.WriteLine("Creating FileThread");
+                FileThread = new Thread(() =>
+                {
+                    Console.WriteLine(dynamicFiles.Count);
+                    while (true)
+                    {
+                        foreach (var dynamicFile in dynamicFiles)
+                        {
+                            var newTime = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds - millisecondsToWait;
+                            //Console.WriteLine($"Dynamicfile key: {dynamicFile.Key} and Dynamicfile value: {dynamicFile.Value} and New time: {newTime}");
+                            if (dynamicFile.Value < newTime)
+                            {
+                                Console.WriteLine($"No update to dynamic in {millisecondsToWait * 1000} seconds. Setting Dynamic to false and removing from dynamicFiles.");
+                                // TODO: Consider that we can technically queue the update to Dynamic in metadata, remove it from "dynamicFiles" and then receive an update in the meantime. Very unlikely, but possible. And does it matter?
+                                SetDynamicToFalse(dynamicFile.Key); 
+                                dynamicFiles.TryRemove(dynamicFile);
+                            }
+                        }
+                        Thread.Sleep(2000); // TODO: We don't really have to sleep here, it's just to make prints more managable.
+                    }
+                });
+                FileThread.Name = Guid.NewGuid().ToString();
+                FileThread.Start();
+            }
         }
         public bool ContainsKey(string key)
         {
@@ -70,7 +88,21 @@ namespace Repository.App.Database
         public void UpdateMetadataObject(MetadataObject metadataObject)
         {
             metadataQueue.Enqueue(metadataObject);
-            Console.WriteLine($"Adding metadata object to queue with length {metadataQueue.Count()} on Thread: {Thread.Name}");      
+            Console.WriteLine($"Adding metadata object to queue with length {metadataQueue.Count()} on Thread: {MetadataThread.Name}");      
+        }
+
+        public void UpdateDynamicResourceTime(string resourceId)
+        {
+            //fileQueue.Enqueue(new(resourceId, file)); // Maybe use this to queue updates to dynamic resources like with metadata.
+            dynamicFiles[resourceId] = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+        }
+
+        private void SetDynamicToFalse(string resourceId)
+        {
+            var metadataObj = GetMetadataDict()!.GetValue(resourceId);
+            metadataObj.ResourceId = resourceId;
+            metadataObj.ResourceInfo.Dynamic = false;
+            UpdateMetadataObject(metadataObj);
         }
 
         public Dictionary<string, MetadataObject> GetMetadataDict()
@@ -107,8 +139,14 @@ namespace Repository.App.Database
 
                 string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
                 Console.WriteLine("Writing to metadata for resource id " + resourceId);
-                // TODO: Following error can still occur despite queue: The process cannot access the file because it is being used by another process
-                File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+
+                // TODO: (Lock might have fixed this) Following error can still occur despite queue: The process cannot access the file because it is being used by another process
+                //File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+                lock (Globals.FileAccessLock)
+                {
+                    File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+                }
+                
             }
             catch (IOException ioe)
             {
@@ -139,31 +177,5 @@ namespace Repository.App.Database
                 metadataDict[parentId] = parentObj;           // Overwrite with updated parentObj
             }
         }
-
-
-        //static ConcurrentDictionary<string, object> activeFiles = new();
-        //static ConcurrentQueue<KeyValuePair<string, IFormFile>> fileQueue = new();
-        //ConcurrentQueue<Action> actionQueue = new();
-        //public void WriteFile(string path, IFormFile file)
-        //{
-        //    if (fileQueue.Any(pair => pair.Key == path))
-        //    {
-        //        Console.WriteLine("File is already being used, queuing write request");
-        //        fileQueue.Enqueue(new(path, file));
-        //    }
-        //    fileQueue.Enqueue(new(path, file));
-        //    //actionQueue.Enqueue(() => WriteAction(path, file));
-        //    //fileQueue.Enqueue(new(path, () => WriteFile(path, file)));
-        //}
-        //private void WriteAction(string path, IFormFile file)
-        //{
-        //    using (var fileStream = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
-        //    {
-        //        // read from the file ????
-        //        fileStream.SetLength(0); // truncate the file
-        //        // write to the file
-        //        file.CopyTo(fileStream);
-        //    }
-        //}
     }
 }
