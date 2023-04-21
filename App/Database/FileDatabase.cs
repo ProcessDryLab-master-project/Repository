@@ -107,7 +107,11 @@ namespace Repository.App.Database
 
         public Dictionary<string, MetadataObject> GetMetadataDict()
         {
-            string metadataJsonString = File.ReadAllText(pathToMetadata);
+            string metadataJsonString;
+            lock (Globals.FileAccessLock)
+            {
+                metadataJsonString = File.ReadAllText(pathToMetadata);
+            }
             Dictionary<string, MetadataObject>? metadataDict = JsonConvert.DeserializeObject<Dictionary<string, MetadataObject>>(metadataJsonString);
             metadataDict ??= new Dictionary<string, MetadataObject>();
             return metadataDict;
