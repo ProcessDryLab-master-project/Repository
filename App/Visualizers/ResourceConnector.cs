@@ -105,9 +105,11 @@ namespace Repository.App.Visualizers
 
         private static void FillToolTip(MetadataObject relativeMdObject, Node relativeNode)
         {
+            var creationDate = new DateTime(1970, 1, 1).AddMilliseconds(double.Parse(relativeMdObject.CreationDate));
+
             ResourceInfo relativeInfo = relativeMdObject.ResourceInfo;
             relativeNode.Attribute.tooltip.Value = $"ResourceId: {relativeMdObject.ResourceId}";
-            relativeNode.Attribute.tooltip.Value = $"\\nCreationDate: {relativeMdObject.CreationDate}";
+            relativeNode.Attribute.tooltip.Value = $"\\nCreationDate: {creationDate}";
             relativeNode.Attribute.tooltip.Value += $"\\nResourceType: {relativeInfo.ResourceType}";
             if (!string.IsNullOrEmpty(relativeInfo.FileExtension)) relativeNode.Attribute.tooltip.Value += $"\\nResourceType: {relativeInfo.FileExtension}";
             if (!string.IsNullOrEmpty(relativeInfo.Description)) relativeNode.Attribute.tooltip.Value += $"\\nDescription: {relativeInfo.Description}";

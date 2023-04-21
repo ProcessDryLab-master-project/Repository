@@ -19,11 +19,6 @@ namespace Repository.App.API
         // Another post with a lot of useful information: https://stackoverflow.com/questions/63403921/process-incoming-filestream-asynchronously
         public static IResult SaveFile(HttpRequest request, string appUrl)
         {
-            request.EnableBuffering();
-            request.Body.Seek(0, SeekOrigin.Begin);
-            if (request.ContentLength == 0) 
-                return Results.BadRequest("Invalid request. Body must have form data.");
-
             string resourceId = Guid.NewGuid().ToString();
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
@@ -76,11 +71,6 @@ namespace Repository.App.API
         // Consider implementing this to check file types: https://stackoverflow.com/questions/11547654/determine-the-file-type-using-c-sharp
         public static IResult UpdateFile(HttpRequest request, string resourceId)
         {
-            request.EnableBuffering();
-            request.Body.Seek(0, SeekOrigin.Begin);
-            if (request.ContentLength == 0) 
-                return Results.BadRequest("Invalid request. Body must have form data.");
-
             MetadataObject? metadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null) return Results.BadRequest("No metadata object exist for resourceId: " + resourceId);
             if (!metadataObject.ResourceInfo.Dynamic) return Results.BadRequest("You can only update dynamic resources. Invalid request for resourceId: " + resourceId);
@@ -125,11 +115,6 @@ namespace Repository.App.API
         // Assuming this is only relevant for streaming?
         public static IResult SaveMetadataOnly(HttpRequest request, string appUrl)
         {
-            request.EnableBuffering();
-            request.Body.Seek(0, SeekOrigin.Begin);
-            if (request.ContentLength == 0) 
-                return Results.BadRequest("Invalid request. Body must have form data.");
-
             string resourceId = Guid.NewGuid().ToString();
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
@@ -154,11 +139,6 @@ namespace Repository.App.API
 
         public static IResult UpdateMetadata(HttpRequest request, string appUrl, string resourceId)
         {
-            request.EnableBuffering();
-            request.Body.Seek(0, SeekOrigin.Begin);
-            if (request.ContentLength == 0) 
-                return Results.BadRequest("Invalid request. Body must have form data.");
-
             var formAsDict = request.Form.ToDictionary();
             return databaseManager.UpdateMetadataObject(formAsDict, resourceId);
             //return Results.Ok(resourceId);

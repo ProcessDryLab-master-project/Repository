@@ -51,16 +51,52 @@ namespace Repository.App.API
             {
                 Console.WriteLine("Received POST request to save file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+
+                request.EnableBuffering();
+                request.Body.Seek(0, SeekOrigin.Begin);
+                if (request.ContentLength == 0)
+                    return Results.BadRequest("Invalid request. Body must have form data.");
+
                 return ResourceReceiver.SaveFile(request, appUrl);
             })
             //.Produces(200)
             //.Accepts<IFormFile>("multipart/form-data")
             .RequireRateLimiting(ratePolicy);
 
+            //app.MapPost("/resources", (HttpRequest request) =>
+            //{
+            //    request.EnableBuffering();
+            //    request.Body.Seek(0, SeekOrigin.Begin);
+            //    string resourceId = Guid.NewGuid().ToString();
+            //    string fileExtension = request.Form["FileExtension"].ToString();
+            //    var requestFile = request.Form.Files;
+            //    if (!requestFile.Any()) return Results.BadRequest("Exactly one file is required");
+            //    string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+            //    string pathToFileExtension = Path.Combine(pathToResources, fileExtension.ToUpper());
+            //    string nameToSaveFile = resourceId + "." + fileExtension;
+            //    string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
+            //    if (File.Exists(pathToSaveFile)) return Results.BadRequest("File with that ID already exists");
+            //    lock (Globals.FileAccessLock)
+            //    {
+            //        using (var fileStream = File.Open(pathToSaveFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+            //        {
+            //            fileStream.SetLength(0);
+            //            requestFile[0].CopyTo(fileStream);
+            //            return Results.Ok(resourceId);
+            //        }
+            //    }
+            //});
+
             app.MapPut("/resources/{resourceId}", (HttpRequest request, string resourceId) =>
             {
                 Console.WriteLine("Received PUT request to update file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+
+                request.EnableBuffering();
+                request.Body.Seek(0, SeekOrigin.Begin);
+                if (request.ContentLength == 0)
+                    return Results.BadRequest("Invalid request. Body must have form data.");
+
                 return ResourceReceiver.UpdateFile(request, resourceId);
             })
             //.Produces(200)
@@ -71,6 +107,12 @@ namespace Repository.App.API
             {
                 Console.WriteLine("Received POST request to create metadata object without a file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+
+                request.EnableBuffering();
+                request.Body.Seek(0, SeekOrigin.Begin);
+                if (request.ContentLength == 0)
+                    return Results.BadRequest("Invalid request. Body must have form data.");
+
                 return ResourceReceiver.SaveMetadataOnly(request, appUrl);
             });
             //.Produces(200)
@@ -80,6 +122,12 @@ namespace Repository.App.API
             {
                 Console.WriteLine("Received PUT request to update metadata object without a file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+
+                request.EnableBuffering();
+                request.Body.Seek(0, SeekOrigin.Begin);
+                if (request.ContentLength == 0)
+                    return Results.BadRequest("Invalid request. Body must have form data.");
+
                 return ResourceReceiver.UpdateMetadata(request, appUrl, resourceId);
             });
             //.Produces(200)

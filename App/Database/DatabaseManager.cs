@@ -144,11 +144,11 @@ namespace Repository.App.Database
         public void BuildAndAddMetadataObject(string resourceId, string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null, bool isDynamic = false)
         {
             Console.WriteLine("Building metadata object");
-            var dateInSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            var dateInMilliSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
             var metadataObject = new MetadataObject
             {
                 ResourceId = resourceId,
-                CreationDate = dateInSeconds.ToString(),// DateTimeOffset.Now.ToString(),
+                CreationDate = dateInMilliSeconds.ToString(),// DateTimeOffset.Now.ToString(),
                 ResourceInfo = new ResourceInfo
                 {
                     ResourceLabel = resourceLabel,
