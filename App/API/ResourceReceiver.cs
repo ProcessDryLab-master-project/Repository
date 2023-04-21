@@ -20,6 +20,10 @@ namespace Repository.App.API
         public static IResult SaveFile(HttpRequest request, string appUrl)
         {
             request.EnableBuffering();
+            request.Body.Seek(0, SeekOrigin.Begin);
+            if (request.ContentLength == 0) 
+                return Results.BadRequest("Invalid request. Body must have form data.");
+
             string resourceId = Guid.NewGuid().ToString();
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
@@ -36,7 +40,6 @@ namespace Repository.App.API
             var requestFile = request.Form.Files;
             if (!requestFile.Any()) return Results.BadRequest("Exactly one file is required");
             var file = requestFile[0];
-
 
             if (isDynamic)
             {
@@ -74,6 +77,10 @@ namespace Repository.App.API
         public static IResult UpdateFile(HttpRequest request, string resourceId)
         {
             request.EnableBuffering();
+            request.Body.Seek(0, SeekOrigin.Begin);
+            if (request.ContentLength == 0) 
+                return Results.BadRequest("Invalid request. Body must have form data.");
+
             MetadataObject? metadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null) return Results.BadRequest("No metadata object exist for resourceId: " + resourceId);
             if (!metadataObject.ResourceInfo.Dynamic) return Results.BadRequest("You can only update dynamic resources. Invalid request for resourceId: " + resourceId);
@@ -84,7 +91,6 @@ namespace Repository.App.API
                 if (request.Form == null)
                     Console.WriteLine("Request.Form is null somehow?");
 
-                request.EnableBuffering();
                 var requestFile = request.Form.Files;
                 if (!requestFile.Any()) return Results.BadRequest("Exactly one file is required");
                 var file = requestFile[0];
@@ -120,6 +126,10 @@ namespace Repository.App.API
         public static IResult SaveMetadataOnly(HttpRequest request, string appUrl)
         {
             request.EnableBuffering();
+            request.Body.Seek(0, SeekOrigin.Begin);
+            if (request.ContentLength == 0) 
+                return Results.BadRequest("Invalid request. Body must have form data.");
+
             string resourceId = Guid.NewGuid().ToString();
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
@@ -145,6 +155,10 @@ namespace Repository.App.API
         public static IResult UpdateMetadata(HttpRequest request, string appUrl, string resourceId)
         {
             request.EnableBuffering();
+            request.Body.Seek(0, SeekOrigin.Begin);
+            if (request.ContentLength == 0) 
+                return Results.BadRequest("Invalid request. Body must have form data.");
+
             var formAsDict = request.Form.ToDictionary();
             return databaseManager.UpdateMetadataObject(formAsDict, resourceId);
             //return Results.Ok(resourceId);

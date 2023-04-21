@@ -71,6 +71,24 @@ namespace Repository
             //ResourceConnector.GetGraphForResource("08ac06ea-4005-4e31-ae69-7ffc0447b332");
             //HistogramGenerator.GetHistogram("21514961-4208-41ab-8c7a-3b549e22e3e3");
 
+            // TODO: Consider if we could/should use EnableBuffering for all endpoints. Code will look something like this:
+            //app.Use(async (context, next) =>
+            //{
+            //    context.Request.EnableBuffering();
+            //    await next();
+            //});
+
+            //app.UseRouting();
+
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapGet("/", async context =>
+            //    {
+            //        await context.Response.WriteAsync("Hello World!");
+            //    });
+            //});
+
+
             app.MapGet("/", () => "Hello World!");
 
             new Endpoints(app);
