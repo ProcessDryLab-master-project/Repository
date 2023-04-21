@@ -29,7 +29,7 @@ namespace Repository.App.Database
         {
             if (MetadataThread == null)
             {
-                Console.WriteLine("Creating thread");
+                Console.WriteLine("Creating MetadataThread");
                 MetadataThread = new Thread(() =>
                 {
                     while (true)
@@ -49,7 +49,6 @@ namespace Repository.App.Database
                 Console.WriteLine("Creating FileThread");
                 FileThread = new Thread(() =>
                 {
-                    Console.WriteLine(dynamicFiles.Count);
                     while (true)
                     {
                         foreach (var dynamicFile in dynamicFiles)

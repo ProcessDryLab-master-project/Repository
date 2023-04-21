@@ -73,6 +73,7 @@ namespace Repository.App.API
         // Consider implementing this to check file types: https://stackoverflow.com/questions/11547654/determine-the-file-type-using-c-sharp
         public static IResult UpdateFile(HttpRequest request, string resourceId)
         {
+            request.EnableBuffering();
             MetadataObject? metadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null) return Results.BadRequest("No metadata object exist for resourceId: " + resourceId);
             if (!metadataObject.ResourceInfo.Dynamic) return Results.BadRequest("You can only update dynamic resources. Invalid request for resourceId: " + resourceId);
@@ -118,6 +119,7 @@ namespace Repository.App.API
         // Assuming this is only relevant for streaming?
         public static IResult SaveMetadataOnly(HttpRequest request, string appUrl)
         {
+            request.EnableBuffering();
             string resourceId = Guid.NewGuid().ToString();
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
@@ -142,6 +144,7 @@ namespace Repository.App.API
 
         public static IResult UpdateMetadata(HttpRequest request, string appUrl, string resourceId)
         {
+            request.EnableBuffering();
             var formAsDict = request.Form.ToDictionary();
             return databaseManager.UpdateMetadataObject(formAsDict, resourceId);
             //return Results.Ok(resourceId);
