@@ -65,6 +65,9 @@
       "Children": [
         {
           "ResourceId": "2277f2f6-de91-43bd-a9d6-3bcf3dda46a7"
+        },
+        {
+          "ResourceId": "c2144ad3-a069-4cac-a1f8-b8c4bf235a91"
         }
       ]
     }
@@ -249,7 +252,7 @@
       "Host": "https://localhost:4000/resources/",
       "FileExtension": "pnml",
       "StreamTopic": null,
-      "Description": "Petri Net designed to be conformant with Custom Conformant Log",
+      "Description": "Petri Net designed to be conformant with Custom Conformant Long",
       "Dynamic": false
     },
     "GenerationTree": {
@@ -429,6 +432,32 @@
         {
           "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
           "UsedAs": "Log"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "c2144ad3-a069-4cac-a1f8-b8c4bf235a91": {
+    "CreationDate": "1682347423406",
+    "ResourceInfo": {
+      "ResourceLabel": "Alpha PNML",
+      "ResourceType": "PetriNet",
+      "Host": "https://localhost:4000/resources/",
+      "FileExtension": "pnml",
+      "StreamTopic": null,
+      "Description": "Miner result from some miner",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000/miner",
+        "SourceId": "1",
+        "SourceLabel": "Alpha Miner"
+      },
+      "Parents": [
+        {
+          "ResourceId": "33405ce3-7265-4015-8d82-0d2d4cf89952",
+          "UsedAs": "LogToRun"
         }
       ],
       "Children": null
