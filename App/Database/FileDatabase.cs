@@ -99,6 +99,7 @@ namespace Repository.App.Database
         private void SetDynamicToFalse(string resourceId)
         {
             var metadataObj = GetMetadataDict()!.GetValue(resourceId);
+            if(metadataObj == null ) { return; }
             metadataObj.ResourceId = resourceId;
             metadataObj.ResourceInfo.Dynamic = false;
             UpdateMetadataObject(metadataObj);
