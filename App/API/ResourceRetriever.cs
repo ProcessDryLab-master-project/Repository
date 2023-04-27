@@ -41,8 +41,14 @@ namespace Repository.App.API
         {
             MetadataObject? metadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null) return Results.BadRequest("Invalid resource ID.");
-            string pathToFileExtension = Path.Combine(pathToResources, metadataObject.ResourceInfo.FileExtension.ToUpper()); // TODO: Add null check or try/catch
-            string pathToFile = Path.Combine(pathToFileExtension, resourceId + "." + metadataObject.ResourceInfo.FileExtension);
+
+
+            string? fileExtension = metadataObject.ResourceInfo.FileExtension;
+            string nameOfFile = string.IsNullOrWhiteSpace(fileExtension) ? resourceId : resourceId + "." + fileExtension;
+
+            string pathToResourceType = Path.Combine(pathToResources, metadataObject.ResourceInfo.ResourceType);
+            string pathToFile = Path.Combine(pathToResourceType, nameOfFile);
+
             if (!File.Exists(pathToFile))
             {
                 string badResponse = "No such file exists for path " + pathToFile; // TODO: Should not return the entire path, just easier like this for now
@@ -52,23 +58,23 @@ namespace Repository.App.API
         }
 
         // Alternative way. Might be better for streaming a file
-        public static HttpResponseMessage StreamResponse(string resourceName)
-        {
-            string resourceType = Path.GetExtension(resourceName).Replace(".", "").ToUpper();
-            string pathToResourceType = Path.Combine(pathToResources, resourceType);
-            string pathToFile = Path.Combine(pathToResourceType, resourceName);
-            if (!File.Exists(pathToFile))
-            {
-                string badResponse = "No such file exists for path " + pathToResourceType;
-                return new HttpResponseMessage(HttpStatusCode.BadRequest);
-            }
-            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StreamContent(new FileStream(pathToFile, FileMode.Open, FileAccess.Read));
-            response.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
-            response.Content.Headers.ContentDisposition.FileName = resourceName;
-            //response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/xes");
+        //public static HttpResponseMessage StreamResponse(string resourceName)
+        //{
+        //    string resourceType = Path.GetExtension(resourceName).Replace(".", "").ToUpper();
+        //    string pathToResourceType = Path.Combine(pathToResources, resourceType);
+        //    string pathToFile = Path.Combine(pathToResourceType, resourceName);
+        //    if (!File.Exists(pathToFile))
+        //    {
+        //        string badResponse = "No such file exists for path " + pathToResourceType;
+        //        return new HttpResponseMessage(HttpStatusCode.BadRequest);
+        //    }
+        //    HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+        //    response.Content = new StreamContent(new FileStream(pathToFile, FileMode.Open, FileAccess.Read));
+        //    response.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+        //    response.Content.Headers.ContentDisposition.FileName = resourceName;
+        //    //response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/xes");
 
-            return response;
-        }
+        //    return response;
+        //}
     }
 }

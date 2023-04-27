@@ -3,6 +3,7 @@ using Repository.App;
 using Repository.App.API;
 using Repository.App.Database;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Security.AccessControl;
@@ -16,15 +17,18 @@ namespace Repository.App.Visualizers
     {
         static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-        static readonly string pathToJson = Path.Combine(pathToResources, "JSON");
+        static readonly string pathToHistogram = Path.Combine(pathToResources, "Histogram");
+        static readonly string pathToEventLog = Path.Combine(pathToResources, "EventLog");
         public static IResult GetHistogram(string resourceId, string appUrl)
         {
             MetadataObject? logMetadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (logMetadataObject == null || logMetadataObject.ResourceInfo?.FileExtension == null) return Results.BadRequest("Invalid resource ID. No reference to resource could be found.");
 
-            string pathToRequestFileExtension = Path.Combine(pathToResources, logMetadataObject.ResourceInfo.FileExtension.ToUpper());
-            string pathToRequestFile = Path.Combine(pathToRequestFileExtension, resourceId + "." + logMetadataObject.ResourceInfo.FileExtension);
-            if (!File.Exists(pathToRequestFile) || logMetadataObject.ResourceInfo?.ResourceType != "EventLog")
+
+            string? requestedFileExtension = logMetadataObject.ResourceInfo.FileExtension;
+            string nameOfFile = string.IsNullOrWhiteSpace(requestedFileExtension) ? resourceId : resourceId + "." + requestedFileExtension;
+            string pathToRequestFile = Path.Combine(pathToEventLog, nameOfFile);
+            if (!File.Exists(pathToRequestFile))
             {
                 string badResponse = "No file of type EventLog exists for path " + pathToRequestFile; // TODO: Should not return the entire path, just easier like this for now
                 return Results.BadRequest(badResponse);
@@ -54,10 +58,10 @@ namespace Repository.App.Visualizers
             string jsonList = ConvertToJsonList(histogramDict);
             string pathToSave = AddHistogramToMetadata(resourceId, appUrl, logMetadataObject);
 
-            if (!Directory.Exists(pathToJson))
+            if (!Directory.Exists(pathToHistogram))
             {
-                Console.WriteLine("No folder exists for JSON, creating " + pathToRequestFileExtension);
-                Directory.CreateDirectory(pathToJson);
+                Console.WriteLine("No folder exists for JSON, creating " + pathToHistogram);
+                Directory.CreateDirectory(pathToHistogram);
             }
             File.WriteAllText(pathToSave, jsonList);
             return Results.Text(jsonList, contentType: "application/json");
@@ -79,7 +83,7 @@ namespace Repository.App.Visualizers
                 }
             };
             databaseManager.BuildAndAddMetadataObject(histResourceId, histResourceLabel, resourceType: "Histogram", host, histDescription, fileExtension: "json", parents: parents);
-            string pathToSave = Path.Combine(pathToJson, $"{histResourceId}.json");
+            string pathToSave = Path.Combine(pathToHistogram, $"{histResourceId}.json");
             return pathToSave;
         }
 

@@ -42,13 +42,17 @@ namespace Repository.App.API
             {
                 databaseManager.UpdateDynamicResource(resourceId);
             }
-
             string host = $"{appUrl}/resources/";
-            string pathToFileExtension = DefaultFileMetadata(ref resourceLabel, ref resourceType, ref fileExtension, file);
-            string nameToSaveFile = resourceId + "." + fileExtension;
-            string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
-            if (File.Exists(pathToSaveFile)) return Results.BadRequest("File with that ID already exists. This should not be possible. Did you mean PUT?");
 
+            string nameToSaveFile = string.IsNullOrWhiteSpace(fileExtension) ? resourceId : resourceId + "." + fileExtension;
+            string pathToResourceType = Path.Combine(pathToResources, resourceType);
+            if (!Directory.Exists(pathToResourceType))
+            {
+                Console.WriteLine("No folder exists for this file type, creating " + pathToResourceType);
+                Directory.CreateDirectory(pathToResourceType);
+            }
+            string pathToSaveFile = Path.Combine(pathToResourceType, nameToSaveFile);
+            if (File.Exists(pathToSaveFile)) return Results.BadRequest("File with that ID already exists. This should not be possible. Did you mean PUT?");
 
             bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
@@ -86,10 +90,12 @@ namespace Repository.App.API
                 var requestFile = request.Form.Files;
                 if (!requestFile.Any()) return Results.BadRequest("Exactly one file is required");
                 var file = requestFile[0];
-                string fileExtension = metadataObject.ResourceInfo.FileExtension!;
-                string pathToFileExtension = Path.Combine(pathToResources, fileExtension.ToUpper());
-                string nameToSaveFile = resourceId + "." + fileExtension;
-                string pathToSaveFile = Path.Combine(pathToFileExtension, nameToSaveFile);
+                
+                string? fileExtension = metadataObject.ResourceInfo.FileExtension;
+                string nameToSaveFile = string.IsNullOrWhiteSpace(fileExtension) ? resourceId : resourceId + "." + fileExtension;
+
+                string pathToResourceType = Path.Combine(pathToResources, metadataObject.ResourceInfo.ResourceType);
+                string pathToSaveFile = Path.Combine(pathToResourceType, nameToSaveFile);
 
                 databaseManager.UpdateDynamicResource(resourceId);
                 // TODO: error: The process cannot access the file because it is being used by another process.
