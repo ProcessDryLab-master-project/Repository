@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using Repository.App.Database;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 
 namespace Repository.App.API
 {
@@ -121,6 +123,8 @@ namespace Repository.App.API
             string description = request.Form["Description"].ToString();
             string? streamTopic = request.Form["StreamTopic"];
             streamTopic = string.IsNullOrWhiteSpace(streamTopic) ? null : streamTopic.ToString();
+            string? overwriteString = request.Form["Overwrite"];
+            bool overwrite = string.Equals(overwriteString, "true", StringComparison.OrdinalIgnoreCase);
             string? fileExtension = request.Form["FileExtension"];
             fileExtension = string.IsNullOrWhiteSpace(fileExtension) ? null : fileExtension.ToString().Replace(".", "");
             string? host = request.Form["Host"];
@@ -132,9 +136,31 @@ namespace Repository.App.API
 
             bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
+
+            // Check if metadata stream broker/topic exists and if it should be overwritten
+            if(OverwriteEventStream(ref resourceId, resourceType, host, streamTopic, overwrite)) return Results.Ok(resourceId);
+
             databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
 
             return Results.Ok(resourceId);
+        }
+
+        private static bool OverwriteEventStream(ref string resourceId, string resourceType, string host, string? streamTopic, bool overwrite)
+        {
+            if (resourceType == "EventStream")
+            {
+                var metadataList = databaseManager.GetMetadataAsList();
+                var existingMetadata = metadataList.Find(metadata => metadata.ResourceInfo.Host == host && metadata.ResourceInfo.StreamTopic == streamTopic);
+                if (existingMetadata != null)
+                {
+                    resourceId = existingMetadata.ResourceId!;
+                    if (!overwrite) // If the resource exists and we shouldn't overwrite it, just return the ID.
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         public static IResult UpdateMetadata(HttpRequest request, string appUrl, string resourceId)
