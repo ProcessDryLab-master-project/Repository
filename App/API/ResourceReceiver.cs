@@ -116,7 +116,8 @@ namespace Repository.App.API
 
         // Assuming this is only relevant for streaming?
         public static IResult SaveMetadataOnly(HttpRequest request, string appUrl)
-        {
+        {   // TODO: The following error may occur if the miner is forcibly terminated: 'An existing connection was forcibly closed by the remote host.'
+            // Consider a try/catch block and any request with form data.
             string resourceId = Guid.NewGuid().ToString();
             string resourceLabel = request.Form["ResourceLabel"].ToString();
             string resourceType = request.Form["ResourceType"].ToString();
