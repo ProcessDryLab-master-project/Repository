@@ -4,7 +4,7 @@
 This project supports docker runtime environment.
 
 To build the docker image run, download docker from https://www.docker.com/products/docker-desktop/. 
-Run the following commands to build an image and run it. 
+Run the following commands from the project root to build an image and run it. 
 
 ```
 docker build -t dockerrepository .
