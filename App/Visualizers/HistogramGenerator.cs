@@ -74,7 +74,7 @@ namespace Repository.App.Visualizers
             string histResourceId = Guid.NewGuid().ToString();
             string host = $"{appUrl}/resources/";
             string histDescription = $"Histogram generated from log with label {logMetadataObject.ResourceInfo.ResourceLabel} and ID: {logMetadataObject.ResourceId}";
-            List<Parent> parents = new()
+            HashSet<Parent> parents = new()
             {
                 new Parent()
                 {

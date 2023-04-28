@@ -116,7 +116,7 @@ namespace Repository.App.Database
                         metadataObject.ResourceInfo.Description = keyValuePair.Value;
                         break;
                     case "Children":
-                        metadataObject.GenerationTree.Children ??= new List<Child>();  // If children are null, initialize
+                        metadataObject.GenerationTree.Children ??= new HashSet<Child>();  // If children are null, initialize
                         metadataObject.GenerationTree.Children.Add(new Child
                         {
                             ResourceId = keyValuePair.Value,
@@ -141,7 +141,7 @@ namespace Repository.App.Database
         }
 
 
-        public void BuildAndAddMetadataObject(string resourceId, string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, List<Parent>? parents = null, bool isDynamic = false)
+        public void BuildAndAddMetadataObject(string resourceId, string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, HashSet<Parent>? parents = null, bool isDynamic = false)
         {
             Console.WriteLine("Building metadata object");
             var dateInMilliSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;

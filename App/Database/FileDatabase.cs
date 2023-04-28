@@ -166,14 +166,14 @@ namespace Repository.App.Database
 
         private static void UpdateParentResource(Dictionary<string, MetadataObject> metadataDict, string resourceId)
         {
-            List<Parent> parents = metadataDict.GetValue(resourceId)?.GenerationTree?.Parents;
+            HashSet<Parent> parents = metadataDict.GetValue(resourceId)?.GenerationTree?.Parents;
             // Add own ID as child to parent resource
             foreach (var parent in parents ?? Enumerable.Empty<Parent>())
             {
                 string parentId = parent.ResourceId;
                 var parentObj = metadataDict.GetValue(parentId);
                 if (parentObj == null) return;              // If we can't find parentObj in metadata, do nothing (likely means it exists in another repo or has been deleted).
-                parentObj.GenerationTree.Children ??= new List<Child>();  // If children are null, initialize
+                parentObj.GenerationTree.Children ??= new HashSet<Child>();  // If children are null, initialize
                 parentObj.GenerationTree.Children.Add(new Child
                 {
                     ResourceId = resourceId,

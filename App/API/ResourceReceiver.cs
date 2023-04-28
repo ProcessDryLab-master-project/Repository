@@ -54,7 +54,7 @@ namespace Repository.App.API
             string pathToSaveFile = Path.Combine(pathToResourceType, nameToSaveFile);
             if (File.Exists(pathToSaveFile)) return Results.BadRequest("File with that ID already exists. This should not be possible. Did you mean PUT?");
 
-            bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
+            bool providedParents = parents.TryParseJson(out HashSet<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
             databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
 
@@ -84,6 +84,8 @@ namespace Repository.App.API
             {
                 if (request == null) 
                     Console.WriteLine("Request is null somehow?");
+                if (request.ContentLength == 0)
+                    Console.WriteLine("ContentLength is 0 somehow?");
                 if (request.Form == null)
                     Console.WriteLine("Request.Form is null somehow?");
 
@@ -141,7 +143,7 @@ namespace Repository.App.API
             string? parents = request.Form["Parents"];
             parents = string.IsNullOrWhiteSpace(parents) ? null : parents.ToString();
 
-            bool providedParents = parents.TryParseJson(out List<Parent> parentsList);
+            bool providedParents = parents.TryParseJson(out HashSet<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
 
             // Check if metadata stream broker/topic exists and if it should be overwritten

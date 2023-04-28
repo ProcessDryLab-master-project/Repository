@@ -67,8 +67,8 @@ namespace Repository.App.Database
     public class GenerationTree : IEquatable<GenerationTree?>
     {
         public GeneratedFrom? GeneratedFrom { get; set; }
-        public List<Parent>? Parents { get; set; }
-        public List<Child>? Children { get; set; }
+        public HashSet<Parent>? Parents { get; set; }
+        public HashSet<Child>? Children { get; set; }
         #region equals
         public override bool Equals(object? obj)
         {
