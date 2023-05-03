@@ -18,6 +18,6 @@ Run the following commands from the project root to build an image and run it.
 
 ```
 docker build -t <Image_name> .
-docker run -d -p 4001:80 -p 4000:443 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=4000 -e ASPNETCORE_Kestrel__Certificates__Default__Password="<CREDENTIAL_PLACEHOLDER>" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/<EXACT_PROJECT_NAME>.pfx -v %USERPROFILE%\.aspnet\https:/https/ --name <Container_name> <Image_name>
+docker run -d -p 4001:80 -p 4000:4000 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=4000 -e ASPNETCORE_Kestrel__Certificates__Default__Password="<CREDENTIAL_PLACEHOLDER>" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/<EXACT_PROJECT_NAME>.pfx -v %USERPROFILE%\.aspnet\https:/https/ --name <Container_name> <Image_name>
 
 ```

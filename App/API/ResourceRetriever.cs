@@ -39,6 +39,7 @@ namespace Repository.App.API
         }
         public static IResult GetResourceById(string resourceId)
         {
+            Console.WriteLine("dir: " + Directory.GetCurrentDirectory());
             MetadataObject? metadataObject = databaseManager.GetMetadataObjectById(resourceId);
             if (metadataObject == null) return Results.BadRequest("Invalid resource ID.");
 
