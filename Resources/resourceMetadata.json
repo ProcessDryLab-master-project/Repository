@@ -21,7 +21,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Custom Conformant Long",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "A log designed to be conformant with some reference model",
@@ -48,7 +49,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Custom Conformant",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "A filtered log of Custom Conformant Long",
@@ -77,7 +79,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Custom Conformant Small",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "A filtered log, based on 2 other logs.",
@@ -107,7 +110,8 @@
     "ResourceInfo": {
       "ResourceLabel": "ML1 Large Log",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "A large log",
@@ -128,7 +132,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Large Petri Net",
       "ResourceType": "PetriNet",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "jpg",
       "StreamTopic": null,
       "Description": "Image of a PetriNet, based on some large log",
@@ -150,7 +155,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Weird Petri Net",
       "ResourceType": "PetriNet",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "jpg",
       "StreamTopic": null,
       "Description": "Image of a Petri Net, based on some odd cyclic log",
@@ -172,7 +178,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Test Petri Net",
       "ResourceType": "PetriNet",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "png",
       "StreamTopic": null,
       "Description": "Image of a Petri Net from somewhere unknown",
@@ -189,7 +196,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Create Content",
       "ResourceType": "ProcessModel",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "bpmn",
       "StreamTopic": null,
       "Description": "Probably not the right parent, just for testing",
@@ -219,7 +227,8 @@
     "ResourceInfo": {
       "ResourceLabel": "A3E1",
       "ResourceType": "ProcessModel",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "bpmn",
       "StreamTopic": null,
       "Description": "Some BPMN with 2 parents somehow (probably wrong parents too)",
@@ -249,7 +258,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Custom Ref Model",
       "ResourceType": "PetriNet",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "pnml",
       "StreamTopic": null,
       "Description": "Petri Net designed to be conformant with Custom Conformant Long",
@@ -267,7 +277,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Running Example",
       "ResourceType": "EventLog",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "xes",
       "StreamTopic": null,
       "Description": "Running example log",
@@ -294,7 +305,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Running Example",
       "ResourceType": "PetriNet",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "pnml",
       "StreamTopic": null,
       "Description": "Petri Net from Running Example",
@@ -320,7 +332,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Pretend Petri Net",
       "ResourceType": "PetriNet",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "dot",
       "StreamTopic": null,
       "Description": "This is not a PetriNet, just a DOT graph for testing",
@@ -350,7 +363,8 @@
     "ResourceInfo": {
       "ResourceLabel": "SVG Pretend Petri Net",
       "ResourceType": "PetriNet",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "svg",
       "StreamTopic": null,
       "Description": "This is not a PetriNet, just a SVG from a dot graph for testing",
@@ -376,7 +390,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Histogram from log: Running Example",
       "ResourceType": "Histogram",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "json",
       "StreamTopic": null,
       "Description": "Histogram generated from log with label Running Example and ID: 1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
@@ -398,7 +413,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Histogram from log: Running Example",
       "ResourceType": "Histogram",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "json",
       "StreamTopic": null,
       "Description": "Histogram generated from log with label Running Example and ID: 1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
@@ -420,7 +436,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Histogram from log: Running Example",
       "ResourceType": "Histogram",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "json",
       "StreamTopic": null,
       "Description": "Histogram generated from log with label Running Example and ID: 1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
@@ -442,7 +459,8 @@
     "ResourceInfo": {
       "ResourceLabel": "Alpha PNML",
       "ResourceType": "PetriNet",
-      "Host": "https://localhost:4000/resources/",
+      //"Host": "https://localhost:4000/resources/",
+      "Host": "http://localhost:4001/resources",
       "FileExtension": "pnml",
       "StreamTopic": null,
       "Description": "Miner result from some miner",
