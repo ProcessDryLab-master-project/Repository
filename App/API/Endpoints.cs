@@ -41,7 +41,7 @@ namespace Repository.App.API
             // To retrieve configuration for the registrationprocess in ServiceRegistry
             app.MapGet("/configurations", (HttpContext httpContext) =>
             {
-                //Console.WriteLine("Received GET request for configurations");
+                Console.WriteLine("Received GET request for configurations");
                 return Registration.GetConfiguration();
             });
 
