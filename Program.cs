@@ -17,7 +17,8 @@ namespace Repository
             if (builder.Environment.IsDevelopment())
             {
                 Console.WriteLine("Environment.IsDevelopment");
-                builder.WebHost.UseUrls("https://localhost:4000");
+                builder.WebHost.UseUrls("http://localhost:4001");
+                //builder.WebHost.UseUrls("http://localhost:4001", "https://localhost:4000");
             }
 
             // Add services to the container.
@@ -65,9 +66,9 @@ namespace Repository
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
             //ResourceConnector.GetGraphForResource("08ac06ea-4005-4e31-ae69-7ffc0447b332");
             //HistogramGenerator.GetHistogram("21514961-4208-41ab-8c7a-3b549e22e3e3");
 

@@ -15,60 +15,63 @@ namespace Repository.App.Database
     {
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
-        static ConcurrentQueue<MetadataObject> metadataQueue = new ConcurrentQueue<MetadataObject>();
-
+        //static ConcurrentQueue<MetadataObject> metadataQueue = new ConcurrentQueue<MetadataObject>();
         static ConcurrentDictionary<string, long> dynamicFiles = new();
         // 1.000ms = 1s. 30.000ms = 30s. 300.000ms = 5min
         static readonly long millisecondsToWait = 30000; // 30 seconds before dynamic resources are changed
 
-        static Thread? MetadataThread;
-        static Thread? FileThread;
-
-        //static Thread? FileThread;
+        //static Thread? MetadataThread;
+        static Thread? DynamicThread;
         public FileDatabase()
         {
-            if (MetadataThread == null)
+            #region metadatathread
+            //if (MetadataThread == null)
+            //{
+            //    Console.WriteLine("Creating MetadataThread");
+            //    MetadataThread = new Thread(() =>
+            //    {
+            //        while (true)
+            //        {
+            //            if (!metadataQueue.IsEmpty)
+            //            {
+            //                metadataQueue.TryDequeue(out MetadataObject? metadataObject);
+            //                UpdateMetadataFile(metadataObject);
+            //            }
+            //        }
+            //    });
+            //    MetadataThread.Name = Guid.NewGuid().ToString();
+            //    MetadataThread.Start();
+            //}
+            #endregion
+
+            #region dynamicthread
+            if (DynamicThread == null)
             {
-                Console.WriteLine("Creating MetadataThread");
-                MetadataThread = new Thread(() =>
-                {
-                    while (true)
-                    {
-                        if (!metadataQueue.IsEmpty)
-                        {
-                            metadataQueue.TryDequeue(out MetadataObject? metadataObject);
-                            UpdateMetadataFile(metadataObject);
-                        }
-                    }
-                });
-                MetadataThread.Name = Guid.NewGuid().ToString();
-                MetadataThread.Start();
-            }
-            if (FileThread == null)
-            {
-                Console.WriteLine("Creating FileThread");
-                FileThread = new Thread(() =>
+                Console.WriteLine("Creating DynamicThread");
+                DynamicThread = new Thread(() =>
                 {
                     while (true)
                     {
                         foreach (var dynamicFile in dynamicFiles)
                         {
-                            var newTime = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds - millisecondsToWait;
+                            var currentTime = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+                            var newTime = currentTime - millisecondsToWait;
                             //Console.WriteLine($"Dynamicfile key: {dynamicFile.Key} and Dynamicfile value: {dynamicFile.Value} and New time: {newTime}");
                             if (dynamicFile.Value < newTime)
                             {
-                                Console.WriteLine($"No update to dynamic in {millisecondsToWait * 1000} seconds. Setting Dynamic to false and removing from dynamicFiles.");
+                                Console.WriteLine($"No update to dynamic in {(dynamicFile.Value - currentTime) * 1000} seconds. Setting Dynamic to false and removing from dynamicFiles.");
                                 // TODO: Consider that we can technically queue the update to Dynamic in metadata, remove it from "dynamicFiles" and then receive an update in the meantime. Very unlikely, but possible. And does it matter?
-                                SetDynamicToFalse(dynamicFile.Key); 
+                                SetDynamicToFalse(dynamicFile.Key);
                                 dynamicFiles.TryRemove(dynamicFile);
                             }
                         }
-                        Thread.Sleep(2000); // TODO: We don't really have to sleep here, it's just to make prints more managable.
+                        Thread.Sleep((int)millisecondsToWait); // Sleep here to reduce processing requirements
                     }
                 });
-                FileThread.Name = Guid.NewGuid().ToString();
-                FileThread.Start();
+                DynamicThread.Name = Guid.NewGuid().ToString();
+                DynamicThread.Start();
             }
+            #endregion
         }
         public bool ContainsKey(string key)
         {
@@ -86,8 +89,9 @@ namespace Repository.App.Database
 
         public void UpdateMetadataObject(MetadataObject metadataObject)
         {
-            metadataQueue.Enqueue(metadataObject);
-            Console.WriteLine($"Adding metadata object to queue with length {metadataQueue.Count()} on Thread: {MetadataThread.Name}");      
+            UpdateMetadataFile(metadataObject);
+            //metadataQueue.Enqueue(metadataObject);
+            //Console.WriteLine($"Adding metadata object to queue with length {metadataQueue.Count()} on Thread: {MetadataThread.Name}");      
         }
 
         public void UpdateDynamicResourceTime(string resourceId)
@@ -146,11 +150,15 @@ namespace Repository.App.Database
 
                 // TODO: (Lock might have fixed this) Following error can still occur despite queue: The process cannot access the file because it is being used by another process
                 //File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
-                lock (Globals.FileAccessLock)
-                {
-                    File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
-                }
-                
+
+                //lock (Globals.FileAccessLock)
+                //{
+                //    File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+                //}
+
+                updatedMetadataJsonString.Write(pathToMetadata);
+
+
             }
             catch (IOException ioe)
             {

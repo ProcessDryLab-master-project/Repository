@@ -35,6 +35,8 @@ namespace Repository.App.API
             // To maintain connection
             app.MapGet("ping", (HttpContext httpContext) =>
             {
+                //var appUrl = app.Urls.FirstOrDefault();
+                //Console.WriteLine("Repo URL: " + appUrl);
                 return "pong";
             });
 
