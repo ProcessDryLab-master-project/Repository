@@ -65,7 +65,7 @@ namespace Repository
                 app.UseSwaggerUI();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
             //ResourceConnector.GetGraphForResource("08ac06ea-4005-4e31-ae69-7ffc0447b332");

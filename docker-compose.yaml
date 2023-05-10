@@ -1,18 +1,17 @@
 version: "3.7"
 
 services:
-  Reposistory:
+  reposistory:
+    container_name: reposistory
     image: dockerrepository:latest
     build: .
-    #dockerfile: ./Dockerfile
     ports:
       - "4000:4000"
       - "4001:4001"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS="https://+;http://+"
-      - ASPNETCORE_HTTPS_PORT=4000 
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=1234
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/Repository.pfx
-    volumes:
-      -  ~/.aspnet/https:/https:ro
+      - ASPNETCORE_URLS="http://+"
+    networks:
+      - data
+    extra_hosts:
+      - "localhost:host-gateway"
