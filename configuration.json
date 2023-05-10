@@ -1,5 +1,6 @@
 {
   "Label": "Public Repository",
   "Type": "Repository",
-  "Access": "Public"
+  "Access": "Public",
+  "AlteredHostname": "http://repository:4001"
 }
