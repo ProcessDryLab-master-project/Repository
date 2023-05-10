@@ -65,7 +65,7 @@ The full run command we recommend for local development:
 docker run -d -p 4001:4001 -p 4000:4000 --add-host host.docker.internal:host-gateway --network=data --name Repository dockerrepository:latest
 ```
 
-To establish a secure connection on a development environment, a certificate is necessary. Run the follow commands. 
+To establish a secure connection on a development environment, a certificate is necessary. Run the follow commands to generate a development certificate. 
 
 EXACT_PROJECT_NAME is default: Repository
 CREDENTIAL_PLACEHOLDER is a password you choose. Remember it, because it will be used to run the docker container.
@@ -81,13 +81,4 @@ docker build -t <Image_name> .
 docker run -d -p 4001:80 -p 4000:4000 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=4000 -e ASPNETCORE_Kestrel__Certificates__Default__Password="<CREDENTIAL_PLACEHOLDER>" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/<EXACT_PROJECT_NAME>.pfx -v %USERPROFILE%\.aspnet\https:/https/ --name <Container_name> <Image_name>
 ```
 
-Another possibility is to enter the docker-compose.yaml file located in this project and update the password. Open a terminal in the project root folder.
-Start container:
-```
-docker-compose up
-```
-
-Stop container:
-```
-docker-compose down
-```
+If it is desired to update the docker-compose file to run a secure connection with this project, we recommend looking at ASP.NET dockumentation: https://learn.microsoft.com/en-us/aspnet/core/security/docker-compose-https?view=aspnetcore-7.0
