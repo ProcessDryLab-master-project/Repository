@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using Repository.App.Database;
+using Repository.App.Entities;
 using System.Collections.Specialized;
 using System.Net;
 using System.Reflection;
@@ -9,8 +10,8 @@ namespace Repository.App.API
 {
     public class ResourceRetriever
     {
-        static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-        static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
+        //static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+        static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
         public static async Task<IResult> GetFilteredList(HttpRequest request)
         {
             var body = new StreamReader(request.Body);
@@ -47,7 +48,7 @@ namespace Repository.App.API
             string? fileExtension = metadataObject.ResourceInfo.FileExtension;
             string nameOfFile = string.IsNullOrWhiteSpace(fileExtension) ? resourceId : resourceId + "." + fileExtension;
 
-            string pathToResourceType = Path.Combine(pathToResources, metadataObject.ResourceInfo.ResourceType);
+            string pathToResourceType = Path.Combine(Globals.pathToResources, metadataObject.ResourceInfo.ResourceType);
             string pathToFile = Path.Combine(pathToResourceType, nameOfFile);
 
             if (!File.Exists(pathToFile))

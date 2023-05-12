@@ -34,7 +34,7 @@ namespace Repository
             .AddFixedWindowLimiter(policyName: "fixed", options =>
                 {
                     options.PermitLimit = 1;    // Number of requests in the timespan
-                    options.Window = TimeSpan.FromSeconds(1); 
+                    options.Window = TimeSpan.FromSeconds(1);
                     options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
                     options.QueueLimit = 10;
                 }
@@ -49,6 +49,16 @@ namespace Repository
             //});
 
             //builder.Services.AddSingleton<MultiThreadFileWriter>(); // TODO: Delete if we don't end up using MultiThreadFileWriter
+
+
+
+            //builder.Services.AddScoped<IFileDb, FileDb>();
+            //builder.Services.AddScoped<IMetadataDb, MetadataDb>();
+            //builder.Services.AddSingleton<IFileDb, FileDb>();
+            //builder.Services.AddSingleton<IMetadataDb, MetadataDb>();
+            //builder.Services.AddSingleton<ResourceManager>();
+            builder.Services.AddSingleton<ResourceManager>(new ResourceManager(new FileDb(), new MetadataDb()));
+            //builder.Services.AddSingleton<Endpoints>();
 
             var app = builder.Build();
             app.UseRateLimiter();
@@ -66,11 +76,14 @@ namespace Repository
                 app.UseSwaggerUI();
             }
 
-            //app.UseHttpsRedirection();
+            //app.MapGet("/api/hello/{who}",
+            //    async (HttpRequest request, ResourceManager manager) =>
+            //    {
+            //        return await manager.PostMetadata(request.Form, app.Urls.FirstOrDefault());
+            //    }).WithName("Hello Who With Async");
 
+            //app.UseHttpsRedirection();
             //app.UseAuthorization();
-            //ResourceConnector.GetGraphForResource("08ac06ea-4005-4e31-ae69-7ffc0447b332");
-            //HistogramGenerator.GetHistogram("21514961-4208-41ab-8c7a-3b549e22e3e3");
 
             // TODO: Consider if we could/should use EnableBuffering for all endpoints. Code will look something like this:
             //app.Use(async (context, next) =>
@@ -88,7 +101,6 @@ namespace Repository
             //        await context.Response.WriteAsync("Hello World!");
             //    });
             //});
-
 
             app.MapGet("/", () => "Hello World!");
 

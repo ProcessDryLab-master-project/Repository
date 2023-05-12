@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using Repository.App.Database;
+using Repository.App.Entities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Specialized;
@@ -13,9 +15,9 @@ namespace Repository.App.API
 {
     public class ResourceReceiver
     {
-        static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-        static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
-
+        //static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+        static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
+        //static ResourceManager fileManager = new FileManager(new FileDb(databaseManager));
         //TODO: fix error: 'Unexpected end of Stream, the content may have already been read by another component. '
         // Potential solution to this and to reading file type: https://github.com/dotnet/AspNetCore.Docs/blob/5f362035992cc3b997903dda521a01ed59058dec/aspnetcore/mvc/models/file-uploads/samples/5.x/LargeFilesSample/Controllers/FileUploadController.cs#L49
         // Another post with a lot of useful information: https://stackoverflow.com/questions/63403921/process-incoming-filestream-asynchronously
@@ -45,7 +47,7 @@ namespace Repository.App.API
             string host = $"{appUrl}/resources/";
 
             string nameToSaveFile = string.IsNullOrWhiteSpace(fileExtension) ? resourceId : resourceId + "." + fileExtension;
-            string pathToResourceType = Path.Combine(pathToResources, resourceType);
+            string pathToResourceType = Path.Combine(Globals.pathToResources, resourceType);
             if (!Directory.Exists(pathToResourceType))
             {
                 Console.WriteLine("No folder exists for this file type, creating " + pathToResourceType);
@@ -56,7 +58,7 @@ namespace Repository.App.API
 
             bool providedParents = parents.TryParseJson(out HashSet<Parent> parentsList);
             bool providedFromSource = generatedFrom.TryParseJson(out GeneratedFrom generatedFromObj);
-            databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
+            var metadataObject = databaseManager.BuildMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, null, generatedFromObj, parentsList, isDynamic);
 
             lock (Globals.FileAccessLock) // Lock added, which should queue writes from multiple threads.
             {
@@ -68,6 +70,7 @@ namespace Repository.App.API
                     fileStream.SetLength(0); // truncate the file
                     file.CopyTo(fileStream); // write to the file
                     Console.WriteLine($"Saved file: {nameToSaveFile}");
+                    databaseManager.Add(metadataObject);
                     return Results.Ok(resourceId); // TODO: Beware that we're returning resourceId, before we know that the metadata file has been updated. The update to metadata is being put on a queue, which we currently can't return anything from. 
                 }
             }            
@@ -96,10 +99,19 @@ namespace Repository.App.API
                 string? fileExtension = metadataObject.ResourceInfo.FileExtension;
                 string nameToSaveFile = string.IsNullOrWhiteSpace(fileExtension) ? resourceId : resourceId + "." + fileExtension;
 
-                string pathToResourceType = Path.Combine(pathToResources, metadataObject.ResourceInfo.ResourceType);
+                string pathToResourceType = Path.Combine(Globals.pathToResources, metadataObject.ResourceInfo.ResourceType);
                 string pathToSaveFile = Path.Combine(pathToResourceType, nameToSaveFile);
 
                 databaseManager.UpdateDynamicResource(resourceId);
+
+                //byte[] fileData;
+                //using (var stream = new MemoryStream())
+                //{
+                //    file.CopyTo(stream);
+                //    fileData = stream.ToArray();
+                //}
+
+
                 // TODO: error: The process cannot access the file because it is being used by another process.
                 // Can sometimes write to this multiple times at the same time. It doesn't seem related to reading at the same time, as it can happen with POST requests alone.
                 lock (Globals.FileAccessLock) // Lock added, which should queue writes from multiple threads.
@@ -149,8 +161,8 @@ namespace Repository.App.API
             // Check if metadata stream broker/topic exists and if it should be overwritten
             if(OverwriteEventStream(ref resourceId, resourceType, host, streamTopic, overwrite)) return Results.Ok(resourceId);
 
-            databaseManager.BuildAndAddMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
-
+            var metadataObject = databaseManager.BuildMetadataObject(resourceId, resourceLabel, resourceType, host, description, fileExtension, streamTopic, generatedFromObj, parentsList);
+            databaseManager.Add(metadataObject);
             return Results.Ok(resourceId);
         }
 
@@ -185,7 +197,7 @@ namespace Repository.App.API
             string pathToResourceType;
             if (string.IsNullOrWhiteSpace(fileName)) fileName = file.FileName;
             if (string.IsNullOrWhiteSpace(fileExtension)) fileExtension = Path.GetExtension(file.FileName).Replace(".", "");
-            string pathToFileExtension = Path.Combine(pathToResources, fileExtension.ToUpper());
+            string pathToFileExtension = Path.Combine(Globals.pathToResources, fileExtension.ToUpper());
             if (!Directory.Exists(pathToFileExtension))
             {
                 Console.WriteLine("No folder exists for this file type, creating " + pathToFileExtension);

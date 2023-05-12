@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Repository.App.Entities;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Concurrent;
@@ -11,10 +12,10 @@ namespace Repository.App.Database
 {
     // https://briancaos.wordpress.com/2021/01/12/write-to-file-from-multiple-threads-async-with-c-and-net-core/
 
-    public class FileDatabase : IFileDatabase
+    public class MetadataDb : IMetadataDb
     {
-        static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-        static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
+        //static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+        //static readonly string pathToMetadata = Path.Combine(pathToResources, "resourceMetadata.json");
         //static ConcurrentQueue<MetadataObject> metadataQueue = new ConcurrentQueue<MetadataObject>();
         static ConcurrentDictionary<string, long> dynamicFiles = new();
         // 1.000ms = 1s. 30.000ms = 30s. 300.000ms = 5min
@@ -22,7 +23,7 @@ namespace Repository.App.Database
 
         //static Thread? MetadataThread;
         static Thread? DynamicThread;
-        public FileDatabase()
+        public MetadataDb()
         {
             #region metadatathread
             //if (MetadataThread == null)
@@ -78,57 +79,26 @@ namespace Repository.App.Database
             return GetMetadataDict().ContainsKey(key);
         }
 
-        public MetadataObject? GetMetadataObjectById(string key)
+        public MetadataObject? GetMetadataObjectById(string resourceId)
         {
-            if (ContainsKey(key))
-            {
-                return GetMetadataDict()[key];
-            }
-            else return null;
+            var metadataDict = GetMetadataDict();
+            MetadataObject? metadataObj = metadataDict.GetValue(resourceId);
+            if (metadataObj == null) return null;
+            metadataObj.ResourceId = resourceId;
+            return metadataObj;
         }
 
-        public void UpdateMetadataObject(MetadataObject metadataObject)
+        public void MetadataWrite(MetadataObject metadataObject)
         {
-            UpdateMetadataFile(metadataObject);
+            //UpdateMetadataFilse(metadataObject); 
+
             //metadataQueue.Enqueue(metadataObject);
             //Console.WriteLine($"Adding metadata object to queue with length {metadataQueue.Count()} on Thread: {MetadataThread.Name}");      
-        }
 
-        public void UpdateDynamicResourceTime(string resourceId)
-        {
-            //fileQueue.Enqueue(new(resourceId, file)); // Maybe use this to queue updates to dynamic resources like with metadata.
-            dynamicFiles[resourceId] = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
-        }
-
-        private void SetDynamicToFalse(string resourceId)
-        {
-            var metadataObj = GetMetadataDict()!.GetValue(resourceId);
-            if(metadataObj == null ) { return; }
-            metadataObj.ResourceId = resourceId;
-            metadataObj.ResourceInfo.Dynamic = false;
-            UpdateMetadataObject(metadataObj);
-        }
-
-        public Dictionary<string, MetadataObject> GetMetadataDict()
-        {
-            string metadataJsonString;
-            lock (Globals.FileAccessLock)
-            {
-                metadataJsonString = File.ReadAllText(pathToMetadata);
-            }
-            Dictionary<string, MetadataObject>? metadataDict = JsonConvert.DeserializeObject<Dictionary<string, MetadataObject>>(metadataJsonString);
-            metadataDict ??= new Dictionary<string, MetadataObject>();
-            return metadataDict;
-        }
-
-        // ONLY function that should ever write to the metadata file
-        private void UpdateMetadataFile(MetadataObject? metadataObject)
-        {
-            Console.WriteLine("Dequeuing, updating metadata file with object for ID: " + metadataObject?.ResourceId);
             try
             {
                 string? resourceId = metadataObject?.ResourceId;
-                if(string.IsNullOrWhiteSpace(resourceId))
+                if (string.IsNullOrWhiteSpace(resourceId))
                 {
                     Console.WriteLine("Error, missing resourceId in metadata object. Returning nothing");
                     return;
@@ -156,9 +126,7 @@ namespace Repository.App.Database
                 //    File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
                 //}
 
-                updatedMetadataJsonString.Write(pathToMetadata);
-
-
+                updatedMetadataJsonString.Write(Globals.pathToMetadata);
             }
             catch (IOException ioe)
             {
@@ -171,6 +139,82 @@ namespace Repository.App.Database
                 throw new Exception("Could not serialize object");
             }
         }
+
+        public void UpdateDynamicResourceTime(string resourceId)
+        {
+            //fileQueue.Enqueue(new(resourceId, file)); // Maybe use this to queue updates to dynamic resources like with metadata.
+            dynamicFiles[resourceId] = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+        }
+
+        private void SetDynamicToFalse(string resourceId)
+        {
+            var metadataObj = GetMetadataDict()!.GetValue(resourceId);
+            if(metadataObj == null ) { return; }
+            metadataObj.ResourceId = resourceId;
+            metadataObj.ResourceInfo.Dynamic = false;
+            MetadataWrite(metadataObj);
+        }
+
+        public Dictionary<string, MetadataObject> GetMetadataDict()
+        {
+            string metadataJsonString;
+            lock (Globals.FileAccessLock)
+            {
+                metadataJsonString = File.ReadAllText(Globals.pathToMetadata);
+            }
+            Dictionary<string, MetadataObject>? metadataDict = JsonConvert.DeserializeObject<Dictionary<string, MetadataObject>>(metadataJsonString);
+            metadataDict ??= new Dictionary<string, MetadataObject>();
+            return metadataDict;
+        }
+
+        // ONLY function that should ever write to the metadata file
+        //private void UpdateMetadataFile(MetadataObject? metadataObject)
+        //{
+        //    //Console.WriteLine("Dequeuing, updating metadata file with object for ID: " + metadataObject?.ResourceId);
+        //    try
+        //    {
+        //        string? resourceId = metadataObject?.ResourceId;
+        //        if(string.IsNullOrWhiteSpace(resourceId))
+        //        {
+        //            Console.WriteLine("Error, missing resourceId in metadata object. Returning nothing");
+        //            return;
+        //        }
+        //        metadataObject.ResourceId = null; // Set to null if it isn't already, before writing to file
+        //        Dictionary<string, MetadataObject> metadataDict = GetMetadataDict();
+        //        MetadataObject? currentMetadataObject = metadataDict.GetValue(resourceId);
+        //        if (metadataObject.Equals(currentMetadataObject))
+        //        {
+        //            Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
+        //            return;
+        //        }
+
+        //        metadataDict[resourceId] = metadataObject;
+        //        UpdateParentResource(metadataDict, resourceId);
+
+        //        string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataDict, Formatting.Indented);
+        //        Console.WriteLine("Writing to metadata for resource id " + resourceId);
+
+        //        // TODO: (Lock might have fixed this) Following error can still occur despite queue: The process cannot access the file because it is being used by another process
+        //        //File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+
+        //        //lock (Globals.FileAccessLock)
+        //        //{
+        //        //    File.WriteAllText(pathToMetadata, updatedMetadataJsonString);
+        //        //}
+
+        //        updatedMetadataJsonString.Write(Globals.pathToMetadata);
+        //    }
+        //    catch (IOException ioe)
+        //    {
+        //        Console.WriteLine("IOException: " + ioe);
+        //        throw new Exception("IOException: " + ioe);
+        //    }
+        //    catch (JsonException je)
+        //    {
+        //        Console.WriteLine("JsonException: " + je);
+        //        throw new Exception("Could not serialize object");
+        //    }
+        //}
 
         private static void UpdateParentResource(Dictionary<string, MetadataObject> metadataDict, string resourceId)
         {

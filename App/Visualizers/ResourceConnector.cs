@@ -5,12 +5,13 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Repository.App;
 using Repository.App.Database;
+using Repository.App.Entities;
 
 namespace Repository.App.Visualizers
 {
     public class ResourceConnector
     {
-        static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
+        static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToDot = Path.Combine(pathToResources, "DOT");
         public static IResult GetGraphForResource(string resourceId)

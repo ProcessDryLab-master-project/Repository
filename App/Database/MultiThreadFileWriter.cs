@@ -5,22 +5,26 @@ namespace Repository.App.Database
     // TODO: This class may be another way of writing to files from multiple threads in a safe way.
     public static class MultiThreadFileWriter
     {
-        static ReaderWriterLock locker = new ReaderWriterLock();
+        static ReaderWriterLock metadataLock = new ReaderWriterLock();
         static readonly int milliSecTimeout = 60000; // Timeout after 60 sec
         public static void Write(this string text, string path)
         {
             try
             {
-                locker.AcquireWriterLock(milliSecTimeout); // You might wanna change timeout value. Set to int.MaxValue or some val
-                Console.WriteLine("Lock set");
-                //var x = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", ""), "debug.txt");
-                //File.AppendAllLines(path, new[] { text });
+                metadataLock.AcquireWriterLock(milliSecTimeout); // You might wanna change timeout value. Set to int.MaxValue or some val
+                Console.WriteLine("Metadata lock set");
                 File.WriteAllText(path, text);
+                //var path = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Replace("file:\\", ""), "debug.txt");
+                //File.AppendAllLines(path, new[] { text });
             }
+            //catch(Exception e)
+            //{
+            //    Console.WriteLine("Write error: " + e.ToString());
+            //}
             finally
             {
-                locker.ReleaseWriterLock();
-                Console.WriteLine("Lock released");
+                metadataLock.ReleaseWriterLock();
+                Console.WriteLine("Metadata lock released");
             }
         }
         //private static ConcurrentQueue<string> _textToWrite = new ConcurrentQueue<string>();

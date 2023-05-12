@@ -1,27 +1,31 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using Repository.App.Entities;
+using System.Collections.Specialized;
+using System.Security.AccessControl;
 
 namespace Repository.App.Database
 {
     public class DatabaseManager
     {
-        IFileDatabase fileDatabase { get; set; }
-        public DatabaseManager(IFileDatabase dataInterface)
+        IMetadataDb metadataDb { get; set; }
+        public DatabaseManager(IMetadataDb dataInterface)
         {
-            fileDatabase = dataInterface;
+            metadataDb = dataInterface;
         }
 
         public void UpdateMetadata(MetadataObject metadataObject)
         {
-            fileDatabase.UpdateMetadataObject(metadataObject);
+            metadataDb.MetadataWrite(metadataObject);
         }
         public void UpdateDynamicResource(string resourceId)
         {
-            fileDatabase.UpdateDynamicResourceTime(resourceId);
+            metadataDb.UpdateDynamicResourceTime(resourceId);
         }
 
         public void TrackAllDynamicResources()
         {
-            Dictionary<string, MetadataObject> metadataDict = fileDatabase.GetMetadataDict();
+            Dictionary<string, MetadataObject> metadataDict = metadataDb.GetMetadataDict();
             foreach (var metadataObj in metadataDict)
             {
                 if (metadataObj.Value.ResourceInfo.Dynamic)
@@ -35,7 +39,7 @@ namespace Repository.App.Database
 
         public MetadataObject? GetMetadataObjectById(string resourceId)
         {
-            Dictionary<string, MetadataObject> metadataDict = fileDatabase.GetMetadataDict();
+            Dictionary<string, MetadataObject> metadataDict = metadataDb.GetMetadataDict();
             MetadataObject? metadataObj = metadataDict.GetValue(resourceId);
             if (metadataObj == null) return null;
             metadataObj.ResourceId = resourceId;
@@ -70,7 +74,7 @@ namespace Repository.App.Database
         }
         public List<MetadataObject> GetMetadataAsList()
         {
-            Dictionary<string, MetadataObject> metadataDict = fileDatabase.GetMetadataDict();
+            Dictionary<string, MetadataObject> metadataDict = metadataDb.GetMetadataDict();
             List<MetadataObject> metadataAsList = new();
             foreach (var metadataObject in metadataDict)
             {
@@ -100,7 +104,7 @@ namespace Repository.App.Database
                 }
             }
             metadatObject.ResourceId = resourceId;
-            fileDatabase.UpdateMetadataObject(metadatObject);
+            metadataDb.MetadataWrite(metadatObject);
             return Results.Ok(resourceId);
         }
         private static bool UpdateSingleMetadataValue(KeyValuePair<string, string> keyValuePair, MetadataObject metadataObject)
@@ -140,8 +144,37 @@ namespace Repository.App.Database
             }
         }
 
+        //public MetadataObject BuildMetadataObject(IDictionary<string, string> metadataKeys)
+        //{
+        //    //bool validKeys = ValidateKeys(Dictionary<string, string> metadataKeys); // TODO: Implement some function that checks that the contents are valid.
+        //    // if (!validKeys) return null;
+        //    bool providedFromSource = metadataKeys["GeneratedFrom"].TryParseJson(out HashSet<Parent>? parentsList);
+        //    bool providedParents = metadataKeys["Parents"].TryParseJson(out GeneratedFrom? generatedFromObj);
 
-        public void BuildAndAddMetadataObject(string resourceId, string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, HashSet<Parent>? parents = null, bool isDynamic = false)
+        //    var dateInMilliSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+        //    var metadataObject = new MetadataObject
+        //    {
+        //        ResourceId = metadataKeys["ResourceId"] ?? Guid.NewGuid().ToString(),
+        //        CreationDate = dateInMilliSeconds.ToString(),// DateTimeOffset.Now.ToString(),
+        //        ResourceInfo = new ResourceInfo
+        //        {
+        //            ResourceLabel = metadataKeys["ResourceLabel"],
+        //            ResourceType = metadataKeys["ResourceType"],
+        //            Host = metadataKeys["Host"],
+        //            Description = metadataKeys["Description"],
+        //            FileExtension = metadataKeys["FileExtension"],
+        //            StreamTopic = metadataKeys["StreamTopic"],
+        //            Dynamic = string.Equals(metadataKeys["Dynamic"], "true", StringComparison.OrdinalIgnoreCase),
+        //        },
+        //        GenerationTree = new GenerationTree
+        //        {
+        //            GeneratedFrom = generatedFromObj,
+        //            Parents = parentsList,
+        //        }
+        //    };
+        //    return metadataObject;
+        //}
+        public MetadataObject BuildMetadataObject(string resourceId, string resourceLabel, string resourceType, string host, string? description = null, string? fileExtension = null, string? streamTopic = null, GeneratedFrom? generatedFrom = null, HashSet<Parent>? parents = null, bool isDynamic = false)
         {
             Console.WriteLine("Building metadata object");
             var dateInMilliSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
@@ -165,27 +198,31 @@ namespace Repository.App.Database
                     Parents = parents,
                 }
             };
-            fileDatabase.UpdateMetadataObject(metadataObject);
+            return metadataObject;
+        }
+        public void Add(MetadataObject metadataObject)
+        {
+            metadataDb.MetadataWrite(metadataObject);
         }
 
         private Dictionary<string, MetadataObject> GetMetadataDict()
         {
-            return fileDatabase.GetMetadataDict();
+            return metadataDb.GetMetadataDict();
         }
 
         //public void WriteToFile(string path, IFormFile file)
         //{
-        //    fileDatabase.WriteFile(path, file);
+        //    metadataDB.WriteFile(path, file);
         //}
     }
 
     #region extensionMethods
     public static class ExtensionMethods
     {
-        public static TV GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default)
+        public static TV? GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV? defaultValue = default)
         {
-            TV value;
-            return dict.TryGetValue(key, out value) ? value : defaultValue;
+            //TV value;
+            return dict.TryGetValue(key, out TV? value) ? value : defaultValue;
         }
         public static bool TryParseJson<T>(this string obj, out T result)
         {
@@ -208,6 +245,18 @@ namespace Repository.App.Database
             var dict = new Dictionary<string, string>();
 
             foreach (var key in col.Keys)
+            {
+                dict.Add(key, col[key]);
+            }
+
+            return dict;
+        }
+
+        public static IDictionary<string, string> ToDictionary(this NameValueCollection col)
+        {
+            var dict = new Dictionary<string, string>();
+
+            foreach (string key in col.Keys)
             {
                 dict.Add(key, col[key]);
             }

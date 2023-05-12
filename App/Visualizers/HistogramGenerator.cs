@@ -2,6 +2,7 @@
 using Repository.App;
 using Repository.App.API;
 using Repository.App.Database;
+using Repository.App.Entities;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Reflection;
@@ -15,7 +16,7 @@ namespace Repository.App.Visualizers
 {
     public class HistogramGenerator
     {
-        static DatabaseManager databaseManager = new DatabaseManager(new FileDatabase());
+        static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
         static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
         static readonly string pathToHistogram = Path.Combine(pathToResources, "Histogram");
         static readonly string pathToEventLog = Path.Combine(pathToResources, "EventLog");
@@ -82,7 +83,8 @@ namespace Repository.App.Visualizers
                     UsedAs = "Log",
                 }
             };
-            databaseManager.BuildAndAddMetadataObject(histResourceId, histResourceLabel, resourceType: "Histogram", host, histDescription, fileExtension: "json", parents: parents);
+            var metadataObject = databaseManager.BuildMetadataObject(histResourceId, histResourceLabel, resourceType: "Histogram", host, histDescription, fileExtension: "json", parents: parents);
+            databaseManager.Add(metadataObject);
             string pathToSave = Path.Combine(pathToHistogram, $"{histResourceId}.json");
             return pathToSave;
         }

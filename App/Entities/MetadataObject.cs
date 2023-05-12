@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Repository.App.Database
+namespace Repository.App.Entities
 {
     public class MetadataObject : IEquatable<MetadataObject?>
     {
