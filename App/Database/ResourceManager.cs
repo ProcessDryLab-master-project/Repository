@@ -47,7 +47,7 @@ namespace Repository.App.Database
                 return Results.BadRequest(e);
             }
 }
-        public async Task<IResult> UpdateFile(IFormCollection formData, string resourceId)
+        public IResult UpdateFile(IFormCollection formData, string resourceId)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace Repository.App.Database
             }
         }
         // Metadata specific
-        public async Task<IResult> PostMetadata(IFormCollection formData, string appUrl)
+        public IResult PostMetadata(IFormCollection formData, string appUrl)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace Repository.App.Database
                 return Results.BadRequest("Repository PostMetadata error: " + e);
             }
         }
-        public async Task<IResult> UpdateMetadataObject(IFormCollection formData, string appUrl, string resourceId)
+        public IResult UpdateMetadataObject(IFormCollection formData, string appUrl, string resourceId)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace Repository.App.Database
 
         #region GETTERS
         // Files
-        public async Task<IResult> GetFileById(string resourceId)
+        public IResult GetFileById(string resourceId)
         {
             try
             {
@@ -149,7 +149,7 @@ namespace Repository.App.Database
         }
 
         // Metadata
-        public async Task<IResult> GetResourceList(HttpRequest request)
+        public IResult GetResourceList()
         {
             try
             {
@@ -162,13 +162,12 @@ namespace Repository.App.Database
                 return Results.BadRequest("Repository GetFilteredList error: " + e);
             }
         }
-        public async Task<IResult> GetFilteredList(HttpRequest request)
+        public IResult GetFilteredList(HttpRequest request)
         {
             try
             {
                 var body = new StreamReader(request.Body);
                 string bodyString = body.ReadToEnd();
-                //string bodyString = await body.ReadToEndAsync();
                 Console.WriteLine("Filters: " + bodyString);
 
                 bool validRequest = bodyString.TryParseJson(out List<string> filters);
@@ -183,7 +182,7 @@ namespace Repository.App.Database
                 return Results.BadRequest("Repository GetFilteredList error: " + e);
             }
         }
-        public async Task<IResult> GetChildrenMetadataList(string resourceId)
+        public IResult GetChildrenMetadataList(string resourceId)
         {
             try
             {
@@ -210,7 +209,7 @@ namespace Repository.App.Database
                 return Results.BadRequest("Repository GetChildrenMetadataList error: " + e);
             }
         }
-        public async Task<IResult> GetMetadataObjectStringById(string resourceId)
+        public IResult GetMetadataObjectStringById(string resourceId)
         {
             try
             {

@@ -53,12 +53,13 @@ namespace Repository.App.API
             //app.MapPost("/resources", (HttpRequest request) =>
             app.MapPost("/resources", (HttpRequest request, ResourceManager manager) => {
                 Console.WriteLine("Received POST request to save file");
+                var appUrl = app.Urls.FirstOrDefault();
                 request.EnableBuffering();
                 request.Body.Seek(0, SeekOrigin.Begin);
                 if (request.ContentLength == 0)
                     return Results.BadRequest("Invalid request. Body must have form data.");
 
-                return manager.PostFile(request.Form, app.Urls.FirstOrDefault());
+                return manager.PostFile(request.Form, appUrl!);
             }).RequireRateLimiting(ratePolicy);
 
             //app.MapPost("/resources", (HttpRequest request) =>
@@ -78,7 +79,7 @@ namespace Repository.App.API
             //.RequireRateLimiting(ratePolicy);
 
 
-            app.MapPut("/resources/{resourceId}", (HttpRequest request, string resourceId) =>
+            app.MapPut("/resources/{resourceId}", (HttpRequest request, string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received PUT request to update file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
@@ -104,12 +105,12 @@ namespace Repository.App.API
                 if (request.ContentLength == 0)
                     return Results.BadRequest("Invalid request. Body must have form data.");
 
-                return ResourceReceiver.SaveMetadataOnly(request, appUrl);
+                return ResourceReceiver.SaveMetadataOnly(request, appUrl!);
             });
             //.Produces(200)
             //.RequireRateLimiting(ratePolicy);
 
-            app.MapPut("/resources/metadata/{resourceId}", (HttpRequest request, string resourceId) =>
+            app.MapPut("/resources/metadata/{resourceId}", (HttpRequest request, string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received PUT request to update metadata object without a file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
@@ -119,24 +120,24 @@ namespace Repository.App.API
                 if (request.ContentLength == 0)
                     return Results.BadRequest("Invalid request. Body must have form data.");
 
-                return ResourceReceiver.UpdateMetadata(request, appUrl, resourceId);
+                return manager.UpdateMetadataObject(request.Form, appUrl!, resourceId);
             });
             //.Produces(200)
             //.RequireRateLimiting(ratePolicy);
 
             // To retrieve/output a list of available resources (metadata list)
-            app.MapGet("/resources/metadata", (HttpContext httpContext) =>
+            app.MapGet("/resources/metadata", (HttpContext httpContext, ResourceManager manager) =>
             {
                 Console.WriteLine("Received GET request for full metadata list");
-                return ResourceRetriever.GetResourceList();
+                return manager.GetResourceList();
             });
             //.RequireRateLimiting(ratePolicy);
 
             // To retrieve metadata object for given resourceId
-            app.MapGet("/resources/metadata/{resourceId}", (string resourceId) =>
+            app.MapGet("/resources/metadata/{resourceId}", (string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received GET request for metadata object on resource id: " + resourceId);
-                return ResourceRetriever.GetMetadataObjectStringById(resourceId);
+                return manager.GetMetadataObjectStringById(resourceId);
             });
             //.RequireRateLimiting(ratePolicy);
 
@@ -149,35 +150,38 @@ namespace Repository.App.API
             //.RequireRateLimiting(ratePolicy);
 
             // To retrieve/output a list of available Visualization resources
-            app.MapPost("/resources/metadata/filters", (HttpRequest request) =>
+            app.MapPost("/resources/metadata/filters", (HttpRequest request, ResourceManager manager) =>
             {
                 Console.WriteLine("Received POST request to get a filtered list of metadata objects");
-                return ResourceRetriever.GetFilteredList(request);
+                return manager.GetFilteredList(request);
             });
             //.RequireRateLimiting(ratePolicy);
 
             // To retrieve file for given resourceId
-            app.MapGet("/resources/{resourceId}", (string resourceId) =>
+            app.MapGet("/resources/{resourceId}", (string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received GET request for file on resource id: " + resourceId);
-                return ResourceRetriever.GetResourceById(resourceId);
+                return manager.GetFileById(resourceId);
             });
             //.RequireRateLimiting(ratePolicy); // TODO: Find out if retrieving files without rate limiter can be an issue (especially with streaming)
 
+
+
+            // FIX FOR GRAPH AND HISTOGRAM AS WELL!
             // To retrieve graph for given resourceId
-            app.MapGet("/resources/graphs/{resourceId}", (string resourceId) =>
+            app.MapGet("/resources/graphs/{resourceId}", (string resourceId, ResourceConnector resourceConnector) =>
             {
                 Console.WriteLine("Received GET request for relation graph on resource id: " + resourceId);
-                return ResourceConnector.GetGraphForResource(resourceId);
+                return resourceConnector.GetGraphForResource(resourceId);
             });
             //.RequireRateLimiting(ratePolicy);
 
             // To retrieve histogram for given resourceId
-            app.MapPost("/resources/histograms/{resourceId}", (string resourceId) =>
+            app.MapPost("/resources/histograms/{resourceId}", (string resourceId, HistogramGenerator histogramGenerator) =>
             {
                 Console.WriteLine("Received POST request for histogram on resource id: " + resourceId);
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
-                return HistogramGenerator.GetHistogram(resourceId, appUrl);
+                return histogramGenerator.GetHistogram(resourceId, appUrl);
             });
             //.RequireRateLimiting(ratePolicy);
 

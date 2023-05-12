@@ -11,14 +11,19 @@ namespace Repository.App.Visualizers
 {
     public class ResourceConnector
     {
-        static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
-        static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-        static readonly string pathToDot = Path.Combine(pathToResources, "DOT");
-        public static IResult GetGraphForResource(string resourceId)
+        IMetadataDb metadataDb { get; set; }
+        public ResourceConnector(IMetadataDb dataInterface)
+        {
+            metadataDb = dataInterface;
+        }
+        //static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
+        //static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+        //static readonly string pathToDot = Path.Combine(pathToResources, "DOT");
+        public IResult GetGraphForResource(string resourceId)
         {
             HashSet<string> exploredNodes = new HashSet<string>();
             Console.WriteLine("Getting graph for requested object: " + resourceId);
-            MetadataObject? requestedMdObject = databaseManager.GetMetadataObjectById(resourceId);
+            MetadataObject? requestedMdObject = metadataDb.GetMetadataObjectById(resourceId);
             if (requestedMdObject == null) return Results.BadRequest("No resource exist for that ID");
 
             string graphId = Guid.NewGuid().ToString();
@@ -46,7 +51,7 @@ namespace Repository.App.Visualizers
 
             return Results.Ok(graph.ElementToString());
         }
-        public static void RecursiveInsert(Graph graph, Node node, MetadataObject? mdObject, string resourceId, HashSet<string> exploredNodes)
+        public void RecursiveInsert(Graph graph, Node node, MetadataObject? mdObject, string resourceId, HashSet<string> exploredNodes)
         {
             if (mdObject == null) { return; } // The node is not part of this repository.
             var parentList = mdObject.GenerationTree.Parents;
@@ -73,9 +78,9 @@ namespace Repository.App.Visualizers
             //}
         }
 
-        private static void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeUsedAs = null)
+        private void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeUsedAs = null)
         {
-            MetadataObject? relativeMdObject = databaseManager.GetMetadataObjectById(relativeId);
+            MetadataObject? relativeMdObject = metadataDb.GetMetadataObjectById(relativeId);
             //string relativeInfo = JsonConvert.SerializeObject(relativeMdObject.ResourceInfo, Formatting.Indented);
             //Node relativeNode = new Node($"\"{relativeInfo}\"");
             Node relativeNode = new Node($"\"{relativeId}\"");

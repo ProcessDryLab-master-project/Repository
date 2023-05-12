@@ -16,19 +16,24 @@ namespace Repository.App.Visualizers
 {
     public class HistogramGenerator
     {
-        static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
-        static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-        static readonly string pathToHistogram = Path.Combine(pathToResources, "Histogram");
-        static readonly string pathToEventLog = Path.Combine(pathToResources, "EventLog");
-        public static IResult GetHistogram(string resourceId, string appUrl)
+        IMetadataDb metadataDb { get; set; }
+        public HistogramGenerator(IMetadataDb dataInterface)
         {
-            MetadataObject? logMetadataObject = databaseManager.GetMetadataObjectById(resourceId);
+            metadataDb = dataInterface;
+        }
+        //static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
+        //static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
+        //static readonly string pathToHistogram = Path.Combine(pathToResources, "Histogram");
+        //static readonly string pathToEventLog = Path.Combine(pathToResources, "EventLog");
+        public IResult GetHistogram(string resourceId, string appUrl)
+        {
+            MetadataObject? logMetadataObject = metadataDb.GetMetadataObjectById(resourceId);
             if (logMetadataObject == null || logMetadataObject.ResourceInfo?.FileExtension == null) return Results.BadRequest("Invalid resource ID. No reference to resource could be found.");
 
 
             string? requestedFileExtension = logMetadataObject.ResourceInfo.FileExtension;
             string nameOfFile = string.IsNullOrWhiteSpace(requestedFileExtension) ? resourceId : resourceId + "." + requestedFileExtension;
-            string pathToRequestFile = Path.Combine(pathToEventLog, nameOfFile);
+            string pathToRequestFile = Path.Combine(Globals.pathToEventLog, nameOfFile);
             if (!File.Exists(pathToRequestFile))
             {
                 string badResponse = "No file of type EventLog exists for path " + pathToRequestFile; // TODO: Should not return the entire path, just easier like this for now
@@ -38,7 +43,7 @@ namespace Repository.App.Visualizers
             List<string>? childrenIds = logMetadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
             foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
             {
-                var childMetadata = databaseManager.GetMetadataObjectById(childId);
+                var childMetadata = metadataDb.GetMetadataObjectById(childId);
                 if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram")
                 {
                     var result = ResourceRetriever.GetResourceById(childId);
@@ -55,38 +60,45 @@ namespace Repository.App.Visualizers
             }
 
             Console.WriteLine("No Histogram exist for resource, generating new one");
+            string histResourceId = Guid.NewGuid().ToString();
             var histogramDict = GenerateHistogramDict(pathToRequestFile);
             string jsonList = ConvertToJsonList(histogramDict);
-            string pathToSave = AddHistogramToMetadata(resourceId, appUrl, logMetadataObject);
+            string pathToSave = Path.Combine(Globals.pathToHistogram, $"{histResourceId}.json");
 
-            if (!Directory.Exists(pathToHistogram))
+            if (!Directory.Exists(Globals.pathToHistogram))
             {
-                Console.WriteLine("No folder exists for JSON, creating " + pathToHistogram);
-                Directory.CreateDirectory(pathToHistogram);
+                Console.WriteLine("No folder exists for JSON, creating " + Globals.pathToHistogram);
+                Directory.CreateDirectory(Globals.pathToHistogram);
             }
-            File.WriteAllText(pathToSave, jsonList);
+            File.WriteAllText(pathToSave, jsonList); // TODO: Consider if this should use the lock. It should never be possible to write the same histogram multiple times, so it might not be needed
+            AddHistogramToMetadata(resourceId, histResourceId, appUrl, logMetadataObject);
             return Results.Text(jsonList, contentType: "application/json");
             //return Results.File(pathToSave, GUID); // If we would want to return the file instead?
         }
 
-        private static string AddHistogramToMetadata(string logResourceId, string appUrl, MetadataObject? logMetadataObject)
+        private void AddHistogramToMetadata(string logResourceId, string histResourceId, string appUrl, MetadataObject? logMetadataObject)
         {
-            string histResourceLabel = $"Histogram from log: {logMetadataObject.ResourceInfo.ResourceLabel}";
-            string histResourceId = Guid.NewGuid().ToString();
-            string host = $"{appUrl}/resources/";
-            string histDescription = $"Histogram generated from log with label {logMetadataObject.ResourceInfo.ResourceLabel} and ID: {logMetadataObject.ResourceId}";
             HashSet<Parent> parents = new()
             {
                 new Parent()
                 {
                     ResourceId = logResourceId,
-                    UsedAs = "Log",
+                    UsedAs = "EventLog",
                 }
             };
-            var metadataObject = databaseManager.BuildMetadataObject(histResourceId, histResourceLabel, resourceType: "Histogram", host, histDescription, fileExtension: "json", parents: parents);
-            databaseManager.Add(metadataObject);
-            string pathToSave = Path.Combine(pathToHistogram, $"{histResourceId}.json");
-            return pathToSave;
+            string parentsAsString = JsonConvert.SerializeObject(parents);
+            Dictionary<string, string> metadataKeys = new()
+            {
+                { "ResourceLabel", $"Histogram from log: {logMetadataObject.ResourceInfo.ResourceLabel}"},
+                { "ResourceType", "Histogram"},
+                { "Host", $"{appUrl}/resources/"},
+                { "Description", $"Histogram generated from log with label {logMetadataObject.ResourceInfo.ResourceLabel} and ID: {logMetadataObject.ResourceId}"},
+                { "FileExtension", "json"},
+                { "Parents", parentsAsString},
+
+            };
+            var metadataObject = DbHelper.BuildMetadataObject(metadataKeys, histResourceId);
+            metadataDb.MetadataWrite(metadataObject);
         }
 
         // Convert dictionary to list in format that Frontend takes

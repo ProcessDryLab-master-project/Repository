@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using System.Net;
 using Repository.App.Database;
+using Repository.App.Visualizers;
 
 namespace Repository
 {
@@ -58,6 +59,8 @@ namespace Repository
             //builder.Services.AddSingleton<IMetadataDb, MetadataDb>();
             //builder.Services.AddSingleton<ResourceManager>();
             builder.Services.AddSingleton<ResourceManager>(new ResourceManager(new FileDb(), new MetadataDb()));
+            builder.Services.AddSingleton<ResourceConnector>(new ResourceConnector(new MetadataDb()));
+            builder.Services.AddSingleton<HistogramGenerator>(new HistogramGenerator(new MetadataDb()));
             //builder.Services.AddSingleton<Endpoints>();
 
             var app = builder.Build();
