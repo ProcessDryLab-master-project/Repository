@@ -4,6 +4,7 @@ using System.Threading.RateLimiting;
 using System.Net;
 using Repository.App.Database;
 using Repository.App.Visualizers;
+using System.Threading.Channels;
 
 namespace Repository
 {
@@ -52,16 +53,23 @@ namespace Repository
             //builder.Services.AddSingleton<MultiThreadFileWriter>(); // TODO: Delete if we don't end up using MultiThreadFileWriter
 
 
+            // Maybe some queue?
+            //// The max memory to use for the upload endpoint on this instance.
+            //var maxMemory = 500 * 1024 * 1024;
+            //// The max size of a single message, staying below the default LOH size of 85K.
+            //var maxMessageSize = 80 * 1024;
+            //// The max size of the queue based on those restrictions
+            //var maxQueueSize = maxMemory / maxMessageSize;
+            //// Create a channel to send data to the background queue.
+            //builder.Services.AddSingleton<Channel<ReadOnlyMemory<byte>>>((_) =>
+            //                     Channel.CreateBounded<ReadOnlyMemory<byte>>(maxQueueSize));
+            //// Create a background queue service.
+            //builder.Services.AddHostedService<BackgroundQueue>();
 
-            //builder.Services.AddScoped<IFileDb, FileDb>();
-            //builder.Services.AddScoped<IMetadataDb, MetadataDb>();
-            //builder.Services.AddSingleton<IFileDb, FileDb>();
-            //builder.Services.AddSingleton<IMetadataDb, MetadataDb>();
-            //builder.Services.AddSingleton<ResourceManager>();
+            // Dependency injection of the services using the database:
             builder.Services.AddSingleton<ResourceManager>(new ResourceManager(new FileDb(), new MetadataDb()));
             builder.Services.AddSingleton<ResourceConnector>(new ResourceConnector(new MetadataDb()));
             builder.Services.AddSingleton<HistogramGenerator>(new HistogramGenerator(new MetadataDb()));
-            //builder.Services.AddSingleton<Endpoints>();
 
             var app = builder.Build();
             app.UseRateLimiter();

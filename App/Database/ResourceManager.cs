@@ -64,7 +64,7 @@ namespace Repository.App.Database
             }
             catch (Exception e)
             {
-                return Results.BadRequest("Repository UpdateFile error: " + e);
+                return Results.BadRequest(e);
             }
         }
         // Metadata specific
@@ -99,7 +99,7 @@ namespace Repository.App.Database
             }
             catch (Exception e)
             {
-                return Results.BadRequest("Repository PostMetadata error: " + e);
+                return Results.BadRequest(e);
             }
         }
         public IResult UpdateMetadataObject(IFormCollection formData, string appUrl, string resourceId)
@@ -127,7 +127,7 @@ namespace Repository.App.Database
             }
             catch (Exception e)
             {
-                return Results.BadRequest("Repository UpdateMetadataObject error: " + e);
+                return Results.BadRequest(e);
             }
         }
         #endregion
@@ -144,7 +144,7 @@ namespace Repository.App.Database
             }
             catch (Exception e)
             {
-                return Results.BadRequest("Repository GetFileById error: " + e);
+                return Results.BadRequest(e);
             }
         }
 
@@ -159,19 +159,15 @@ namespace Repository.App.Database
             }
             catch (Exception e)
             {
-                return Results.BadRequest("Repository GetFilteredList error: " + e);
+                return Results.BadRequest(e);
             }
         }
-        public IResult GetFilteredList(HttpRequest request)
+        public IResult GetFilteredList(string body)
         {
             try
             {
-                var body = new StreamReader(request.Body);
-                string bodyString = body.ReadToEnd();
-                Console.WriteLine("Filters: " + bodyString);
-
-                bool validRequest = bodyString.TryParseJson(out List<string> filters);
-                if (!validRequest || filters == null || filters.Count == 0) return Results.BadRequest($"Request body: {bodyString} is not a valid list");
+                bool validRequest = body.TryParseJson(out List<string> filters);
+                if (!validRequest || filters == null || filters.Count == 0) return Results.BadRequest($"Request body: {body} is not a valid list");
                 var resourceList = DbHelper.MetadataDictToList(metadataDb.GetMetadataDict());
                 var filteredList = resourceList.Where(resource => filters.Any(filter => resource.ResourceInfo.ResourceType.Equals(filter, StringComparison.OrdinalIgnoreCase)));
                 var json = JsonConvert.SerializeObject(filteredList);
@@ -179,7 +175,7 @@ namespace Repository.App.Database
             }
             catch (Exception e)
             {
-                return Results.BadRequest("Repository GetFilteredList error: " + e);
+                return Results.BadRequest(e);
             }
         }
         public IResult GetChildrenMetadataList(string resourceId)
@@ -206,7 +202,7 @@ namespace Repository.App.Database
             }
             catch (Exception e)
             {
-                return Results.BadRequest("Repository GetChildrenMetadataList error: " + e);
+                return Results.BadRequest(e);
             }
         }
         public IResult GetMetadataObjectStringById(string resourceId)
@@ -222,7 +218,7 @@ namespace Repository.App.Database
             }
             catch (Exception e)
             {
-                return Results.BadRequest("Repository GetFilteredList error: " + e);
+                return Results.BadRequest(e);
             }
         }
         #endregion

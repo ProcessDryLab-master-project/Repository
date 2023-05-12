@@ -89,13 +89,13 @@ namespace Repository.App.API
                 if (request.ContentLength == 0)
                     return Results.BadRequest("Invalid request. Body must have form data.");
 
-                return ResourceReceiver.UpdateFile(request, resourceId);
+                return manager.UpdateFile(request.Form, resourceId);
             })
             //.Produces(200)
             //.Accepts<IFormFile>("multipart/form-data")
             .RequireRateLimiting(ratePolicy);
 
-            app.MapPost("/resources/metadata", (HttpRequest request) =>
+            app.MapPost("/resources/metadata", (HttpRequest request, ResourceManager manager) =>
             {
                 Console.WriteLine("Received POST request to create metadata object without a file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
@@ -105,7 +105,7 @@ namespace Repository.App.API
                 if (request.ContentLength == 0)
                     return Results.BadRequest("Invalid request. Body must have form data.");
 
-                return ResourceReceiver.SaveMetadataOnly(request, appUrl!);
+                return manager.PostMetadata(request.Form, appUrl!);
             });
             //.Produces(200)
             //.RequireRateLimiting(ratePolicy);
@@ -150,10 +150,12 @@ namespace Repository.App.API
             //.RequireRateLimiting(ratePolicy);
 
             // To retrieve/output a list of available Visualization resources
-            app.MapPost("/resources/metadata/filters", (HttpRequest request, ResourceManager manager) =>
+            app.MapPost("/resources/metadata/filters", async (HttpRequest request, ResourceManager manager) =>
             {
                 Console.WriteLine("Received POST request to get a filtered list of metadata objects");
-                return manager.GetFilteredList(request);
+                var body = new StreamReader(request.Body);
+                string bodyString = await body.ReadToEndAsync();
+                return manager.GetFilteredList(bodyString);
             });
             //.RequireRateLimiting(ratePolicy);
 
@@ -184,7 +186,6 @@ namespace Repository.App.API
                 return histogramGenerator.GetHistogram(resourceId, appUrl);
             });
             //.RequireRateLimiting(ratePolicy);
-
         }
     }
 }
