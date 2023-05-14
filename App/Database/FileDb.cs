@@ -88,7 +88,7 @@ namespace Repository.App.Database
                 Console.WriteLine("File lock released");
             }
             Console.WriteLine("Done, returning ok");
-            return Results.Ok();
+            return Results.Ok(metadataObject.ResourceId);
         }
 
 

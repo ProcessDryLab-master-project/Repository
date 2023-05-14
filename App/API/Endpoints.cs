@@ -33,6 +33,7 @@ namespace Repository.App.API
 
             var _hostEnvironment = app.Environment;
             // ----------------- CONNECTION ----------------- //
+            #region connection
             // To maintain connection
             app.MapGet("ping", (HttpContext httpContext) =>
             {
@@ -47,8 +48,36 @@ namespace Repository.App.API
                 Console.WriteLine("Received GET request for configurations");
                 return Registration.GetConfiguration();
             });
+            #endregion
 
-            // ----------------- DATA ----------------- //
+            #region files
+            // ----------------- Files ----------------- //
+            // To retrieve file for given resourceId
+            app.MapGet("/resources/{resourceId}", (string resourceId, ResourceManager manager) =>
+            {
+                Console.WriteLine("Received GET request for file on resource id: " + resourceId);
+                return manager.GetFileById(resourceId);
+            });
+            //.RequireRateLimiting(ratePolicy); // TODO: Find out if retrieving files without rate limiter can be an issue (especially with streaming)
+
+
+
+            //app.MapPost("/resources", (HttpRequest request) =>
+            //{
+            //    Console.WriteLine("Received POST request to save file");
+            //    var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+            //
+            //    request.EnableBuffering();
+            //    request.Body.Seek(0, SeekOrigin.Begin);
+            //    if (request.ContentLength == 0)
+            //        return Results.BadRequest("Invalid request. Body must have form data.");
+            //
+            //    return ResourceReceiver.SaveFile(request, appUrl);
+            //})
+            ////.Produces(200)
+            ////.Accepts<IFormFile>("multipart/form-data")
+            //.RequireRateLimiting(ratePolicy);
+
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
             //app.MapPost("/resources", (HttpRequest request) =>
             app.MapPost("/resources", (HttpRequest request, ResourceManager manager) => {
@@ -62,26 +91,9 @@ namespace Repository.App.API
                 return manager.PostFile(request.Form, appUrl!);
             }).RequireRateLimiting(ratePolicy);
 
-            //app.MapPost("/resources", (HttpRequest request) =>
-            //{
-            //    Console.WriteLine("Received POST request to save file");
-            //    var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
-
-            //    request.EnableBuffering();
-            //    request.Body.Seek(0, SeekOrigin.Begin);
-            //    if (request.ContentLength == 0)
-            //        return Results.BadRequest("Invalid request. Body must have form data.");
-
-            //    return ResourceReceiver.SaveFile(request, appUrl);
-            //})
-            ////.Produces(200)
-            ////.Accepts<IFormFile>("multipart/form-data")
-            //.RequireRateLimiting(ratePolicy);
-
-
             app.MapPut("/resources/{resourceId}", (HttpRequest request, string resourceId, ResourceManager manager) =>
             {
-                Console.WriteLine("Received PUT request to update file");
+                Console.WriteLine("Received PUT request to update file with id: " + resourceId);
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
 
                 request.EnableBuffering();
@@ -94,6 +106,32 @@ namespace Repository.App.API
             //.Produces(200)
             //.Accepts<IFormFile>("multipart/form-data")
             .RequireRateLimiting(ratePolicy);
+            #endregion
+            #region metadata
+            // ----------------- Metadata ----------------- //
+            // To retrieve/output a list of available resources (metadata list)
+            app.MapGet("/resources/metadata", (HttpContext httpContext, ResourceManager manager) =>
+            {
+                Console.WriteLine("Received GET request for full metadata list");
+                return manager.GetResourceList();
+            });
+            //.RequireRateLimiting(ratePolicy);
+
+            // To retrieve metadata object for given resourceId
+            app.MapGet("/resources/metadata/{resourceId}", (string resourceId, ResourceManager manager) =>
+            {
+                Console.WriteLine("Received GET request for metadata object on resource id: " + resourceId);
+                return manager.GetMetadataObjectStringById(resourceId);
+            });
+            //.RequireRateLimiting(ratePolicy);
+
+            // To retrieve children for given resourceId
+            app.MapGet("/resources/metadata/{resourceId}/children", (string resourceId, ResourceManager manager) =>
+            {
+                Console.WriteLine("Received GET request for list of children metadata on resource id: " + resourceId);
+                return manager.GetChildrenMetadataList(resourceId);
+            });
+            //.RequireRateLimiting(ratePolicy);
 
             app.MapPost("/resources/metadata", (HttpRequest request, ResourceManager manager) =>
             {
@@ -125,30 +163,6 @@ namespace Repository.App.API
             //.Produces(200)
             //.RequireRateLimiting(ratePolicy);
 
-            // To retrieve/output a list of available resources (metadata list)
-            app.MapGet("/resources/metadata", (HttpContext httpContext, ResourceManager manager) =>
-            {
-                Console.WriteLine("Received GET request for full metadata list");
-                return manager.GetResourceList();
-            });
-            //.RequireRateLimiting(ratePolicy);
-
-            // To retrieve metadata object for given resourceId
-            app.MapGet("/resources/metadata/{resourceId}", (string resourceId, ResourceManager manager) =>
-            {
-                Console.WriteLine("Received GET request for metadata object on resource id: " + resourceId);
-                return manager.GetMetadataObjectStringById(resourceId);
-            });
-            //.RequireRateLimiting(ratePolicy);
-
-            // To retrieve children for given resourceId
-            app.MapGet("/resources/metadata/{resourceId}/children", (string resourceId, ResourceManager manager) =>
-            {
-                Console.WriteLine("Received GET request for list of children metadata on resource id: " + resourceId);
-                return manager.GetChildrenMetadataList(resourceId);
-            });
-            //.RequireRateLimiting(ratePolicy);
-
             // To retrieve/output a list of available Visualization resources
             app.MapPost("/resources/metadata/filters", async (HttpRequest request, ResourceManager manager) =>
             {
@@ -158,18 +172,8 @@ namespace Repository.App.API
                 return manager.GetFilteredList(bodyString);
             });
             //.RequireRateLimiting(ratePolicy);
-
-            // To retrieve file for given resourceId
-            app.MapGet("/resources/{resourceId}", (string resourceId, ResourceManager manager) =>
-            {
-                Console.WriteLine("Received GET request for file on resource id: " + resourceId);
-                return manager.GetFileById(resourceId);
-            });
-            //.RequireRateLimiting(ratePolicy); // TODO: Find out if retrieving files without rate limiter can be an issue (especially with streaming)
-
-
-
-            // FIX FOR GRAPH AND HISTOGRAM AS WELL!
+            #endregion
+            #region visualizers
             // To retrieve graph for given resourceId
             app.MapGet("/resources/graphs/{resourceId}", (string resourceId, ResourceConnector resourceConnector) =>
             {
@@ -186,6 +190,7 @@ namespace Repository.App.API
                 return histogramGenerator.GetHistogram(resourceId, appUrl);
             });
             //.RequireRateLimiting(ratePolicy);
+            #endregion
         }
     }
 }
