@@ -127,6 +127,7 @@ namespace Repository.App.Database
                 //}
 
                 updatedMetadataJsonString.Write(Globals.pathToMetadata);
+                metadataObject.ResourceId = resourceId; // We only remove it before printing to metadata to make it cleaner. We add it here again so it can be used when the object is passed around.
             }
             catch (IOException ioe)
             {

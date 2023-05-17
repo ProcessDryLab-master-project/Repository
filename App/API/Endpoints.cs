@@ -14,6 +14,8 @@ namespace Repository.App.API
 {
     public class Endpoints
     {
+        // TODO: Delete this dict and its uses before hand-in
+        static Dictionary<string, int> numUpdates = new Dictionary<string, int>();
         //static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
         //static ResourceManager resourceManager = new ResourceManager(new FileDb(), new MetadataDb());
         public Endpoints(WebApplication app)
@@ -60,51 +62,34 @@ namespace Repository.App.API
             });
             //.RequireRateLimiting(ratePolicy); // TODO: Find out if retrieving files without rate limiter can be an issue (especially with streaming)
 
-
-
-            //app.MapPost("/resources", (HttpRequest request) =>
-            //{
-            //    Console.WriteLine("Received POST request to save file");
-            //    var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
-            //
-            //    request.EnableBuffering();
-            //    request.Body.Seek(0, SeekOrigin.Begin);
-            //    if (request.ContentLength == 0)
-            //        return Results.BadRequest("Invalid request. Body must have form data.");
-            //
-            //    return ResourceReceiver.SaveFile(request, appUrl);
-            //})
-            ////.Produces(200)
-            ////.Accepts<IFormFile>("multipart/form-data")
-            //.RequireRateLimiting(ratePolicy);
-
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
-            //app.MapPost("/resources", (HttpRequest request) =>
-            app.MapPost("/resources", (HttpRequest request, ResourceManager manager) => {
+            app.MapPost("/resources", async (HttpContext context, ResourceManager manager) => {
                 Console.WriteLine("Received POST request to save file");
                 var appUrl = app.Urls.FirstOrDefault();
-                request.EnableBuffering();
-                request.Body.Seek(0, SeekOrigin.Begin);
-                if (request.ContentLength == 0)
-                    return Results.BadRequest("Invalid request. Body must have form data.");
+                return await manager.PostFile(context.Request.Form, appUrl!);
+            })
+            .RequireRateLimiting(ratePolicy);
 
-                return manager.PostFile(request.Form, appUrl!);
-            }).RequireRateLimiting(ratePolicy);
-
-            app.MapPut("/resources/{resourceId}", (HttpRequest request, string resourceId, ResourceManager manager) =>
+            app.MapPut("/resources/{resourceId}", async (HttpContext context, string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received PUT request to update file with id: " + resourceId);
-                var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
 
-                request.EnableBuffering();
-                request.Body.Seek(0, SeekOrigin.Begin);
-                if (request.ContentLength == 0)
-                    return Results.BadRequest("Invalid request. Body must have form data.");
+                // TODO: Delete the following section. Just to track number of updates and to print headers:
+                if (numUpdates.ContainsKey(resourceId)) numUpdates[resourceId] += 1;
+                else numUpdates[resourceId] = 1;
+                Console.WriteLine($"Num updates for {resourceId} = {numUpdates[resourceId]}");
 
-                return manager.UpdateFile(request.Form, resourceId);
+                string headers = String.Empty;
+                foreach (var key in context.Request.Headers.Keys)
+                    headers += key + "=" + context.Request.Headers[key] + Environment.NewLine;
+                Console.WriteLine("headers:\n" + headers);
+                // TODO: Delete end
+
+                var requestFiles = context.Request.Form.Files;
+                if (requestFiles?.Count != 1) return Results.BadRequest("Exactly one file is required");
+                var file = requestFiles.Single();
+                return await manager.UpdateFile(file, resourceId);
             })
-            //.Produces(200)
-            //.Accepts<IFormFile>("multipart/form-data")
             .RequireRateLimiting(ratePolicy);
             #endregion
             #region metadata
@@ -115,7 +100,6 @@ namespace Repository.App.API
                 Console.WriteLine("Received GET request for full metadata list");
                 return manager.GetResourceList();
             });
-            //.RequireRateLimiting(ratePolicy);
 
             // To retrieve metadata object for given resourceId
             app.MapGet("/resources/metadata/{resourceId}", (string resourceId, ResourceManager manager) =>
@@ -123,7 +107,6 @@ namespace Repository.App.API
                 Console.WriteLine("Received GET request for metadata object on resource id: " + resourceId);
                 return manager.GetMetadataObjectStringById(resourceId);
             });
-            //.RequireRateLimiting(ratePolicy);
 
             // To retrieve children for given resourceId
             app.MapGet("/resources/metadata/{resourceId}/children", (string resourceId, ResourceManager manager) =>
@@ -131,7 +114,6 @@ namespace Repository.App.API
                 Console.WriteLine("Received GET request for list of children metadata on resource id: " + resourceId);
                 return manager.GetChildrenMetadataList(resourceId);
             });
-            //.RequireRateLimiting(ratePolicy);
 
             app.MapPost("/resources/metadata", (HttpRequest request, ResourceManager manager) =>
             {
@@ -145,8 +127,6 @@ namespace Repository.App.API
 
                 return manager.PostMetadata(request.Form, appUrl!);
             });
-            //.Produces(200)
-            //.RequireRateLimiting(ratePolicy);
 
             app.MapPut("/resources/metadata/{resourceId}", (HttpRequest request, string resourceId, ResourceManager manager) =>
             {
@@ -160,8 +140,6 @@ namespace Repository.App.API
 
                 return manager.UpdateMetadataObject(request.Form, appUrl!, resourceId);
             });
-            //.Produces(200)
-            //.RequireRateLimiting(ratePolicy);
 
             // To retrieve/output a list of available Visualization resources
             app.MapPost("/resources/metadata/filters", async (HttpRequest request, ResourceManager manager) =>
@@ -171,7 +149,6 @@ namespace Repository.App.API
                 string bodyString = await body.ReadToEndAsync();
                 return manager.GetFilteredList(bodyString);
             });
-            //.RequireRateLimiting(ratePolicy);
             #endregion
             #region visualizers
             // To retrieve graph for given resourceId
@@ -180,7 +157,6 @@ namespace Repository.App.API
                 Console.WriteLine("Received GET request for relation graph on resource id: " + resourceId);
                 return resourceConnector.GetGraphForResource(resourceId);
             });
-            //.RequireRateLimiting(ratePolicy);
 
             // To retrieve histogram for given resourceId
             app.MapPost("/resources/histograms/{resourceId}", (string resourceId, HistogramGenerator histogramGenerator) =>
@@ -189,7 +165,6 @@ namespace Repository.App.API
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
                 return histogramGenerator.GetHistogram(resourceId, appUrl);
             });
-            //.RequireRateLimiting(ratePolicy);
             #endregion
         }
     }

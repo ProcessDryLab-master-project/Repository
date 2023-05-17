@@ -20,15 +20,13 @@ namespace Repository.App.Database
         }
         #region SETTERS
         // Files
-        public IResult PostFile(IFormCollection formData, string appUrl)
+        public async Task<IResult> PostFile(IFormCollection formData, string appUrl)
         {
             try
             {
-                var requestFile = formData.Files;
-                if (!requestFile.Any()) return Results.BadRequest("Exactly one file is required");
-                var file = requestFile.Single();
-                // TODO: Consider if we should send byte[] or IFormFile: Reading IFormFile to a byte array in the hopes that it makes it more stable. Might not be needed.
-                byte[] fileData = DbHelper.FileToByteArr(file);
+                var requestFiles = formData.Files;
+                if (requestFiles.Count != 1) return Results.BadRequest("Exactly one file is required");
+                var file = requestFiles.Single();
 
                 var formDataObj = formData.ToDictionary();
                 formDataObj = DbHelper.ValidateFormData(formDataObj, appUrl);
@@ -36,31 +34,23 @@ namespace Repository.App.Database
                 var metadataObject = DbHelper.BuildMetadataObject(formDataObj);
                 string resourceId = metadataObject.ResourceId!; // Saving generated resource ID so we can return it, since it's removed before writing to metadata file
 
-                var writeResult = fileDb.WriteFile(metadataObject, fileData);
-                if (writeResult.GetType() == typeof(BadRequest)) return writeResult;
                 metadataDb.MetadataWrite(metadataObject);
                 if(metadataObject.ResourceInfo.Dynamic) metadataDb.UpdateDynamicResourceTime(resourceId);
-                return Results.Ok(resourceId);
+                return await fileDb.WriteFile(metadataObject, file);
         }
             catch (Exception e)
             {
                 return Results.BadRequest(e);
             }
 }
-        public IResult UpdateFile(IFormCollection formData, string resourceId)
+        public async Task<IResult> UpdateFile(IFormFile file, string resourceId)
         {
             try
             {
-                var requestFile = formData.Files;
-                if (!requestFile.Any()) return Results.BadRequest("Exactly one file is required");
-                var file = requestFile.Single();
-                byte[] fileData = DbHelper.FileToByteArr(file);
-
                 MetadataObject? metadataObject = metadataDb.GetMetadataObjectById(resourceId);
                 if (metadataObject == null) return Results.BadRequest("No resource with that ID");
                 metadataDb.UpdateDynamicResourceTime(resourceId); // TODO: Make MetadataWrite async and write await?
-
-                return fileDb.WriteFile(metadataObject, fileData);
+                return await fileDb.WriteFile(metadataObject, file);
             }
             catch (Exception e)
             {

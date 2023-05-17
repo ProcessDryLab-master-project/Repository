@@ -1,4 +1,6 @@
-﻿using Repository.App.Entities;
+﻿using Newtonsoft.Json;
+using Repository.App.Entities;
+using System.Collections.Specialized;
 
 namespace Repository.App.Database
 {
@@ -117,4 +119,53 @@ namespace Repository.App.Database
             }
         }
     }
+    #region extensionMethods
+    public static class ExtensionMethods
+    {
+        public static TV? GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV? defaultValue = default)
+        {
+            //TV value;
+            return dict.TryGetValue(key, out TV? value) ? value : defaultValue;
+        }
+        public static bool TryParseJson<T>(this string obj, out T result)
+        {
+            try
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.MissingMemberHandling = MissingMemberHandling.Error;
+
+                result = JsonConvert.DeserializeObject<T>(obj, settings);
+                return true;
+            }
+            catch (Exception)
+            {
+                result = default;
+                return false;
+            }
+        }
+        public static IDictionary<string, string> ToDictionary(this IFormCollection col)
+        {
+            var dict = new Dictionary<string, string>();
+
+            foreach (var key in col.Keys)
+            {
+                dict.Add(key, col[key]);
+            }
+
+            return dict;
+        }
+
+        public static IDictionary<string, string> ToDictionary(this NameValueCollection col)
+        {
+            var dict = new Dictionary<string, string>();
+
+            foreach (string key in col.Keys)
+            {
+                dict.Add(key, col[key]);
+            }
+
+            return dict;
+        }
+    }
+    #endregion
 }

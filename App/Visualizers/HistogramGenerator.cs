@@ -16,9 +16,11 @@ namespace Repository.App.Visualizers
 {
     public class HistogramGenerator
     {
+        IFileDb fileDb { get; set; }
         IMetadataDb metadataDb { get; set; }
-        public HistogramGenerator(IMetadataDb dataInterface)
+        public HistogramGenerator(IFileDb fileInterface, IMetadataDb dataInterface)
         {
+            fileDb = fileInterface;
             metadataDb = dataInterface;
         }
         //static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
@@ -46,11 +48,13 @@ namespace Repository.App.Visualizers
                 var childMetadata = metadataDb.GetMetadataObjectById(childId);
                 if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram")
                 {
-                    var result = ResourceRetriever.GetResourceById(childId);
+                    //var result = ResourceRetriever.GetResourceById(childId);
+                    var result = fileDb.GetFile(childMetadata);
                     if (!result.GetType().IsInstanceOfType(Results.BadRequest()))
                     {
                         Console.WriteLine("Histogram already exist, returning this");
-                        return ResourceRetriever.GetResourceById(childId);
+                        return result;
+                        //return ResourceRetriever.GetResourceById(childId);
                     }
                     return Results.BadRequest("Resource has child Histogram that does not exist in the repository. This should not happen, consider removing as child and run again");
                     //List<Child>? mdChildren = logMetadataObject.GenerationTree?.Children;
