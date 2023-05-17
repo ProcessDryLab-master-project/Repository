@@ -45,10 +45,10 @@ namespace Repository
 
             var app = builder.Build();
             // TODO: Consider if we could/should use EnableBuffering for all endpoints. Code will look something like this:
-            app.Use(async (context, next) => {
-                context.Request.EnableBuffering();
-                await next();
-            });
+            //app.Use(async (context, next) => {
+            //    context.Request.EnableBuffering();
+            //    await next();
+            //});
 
             app.UseRateLimiter();
             //app.UseMiddleware<RequestValidatorMiddleware>(); // TODO: If this isn't necessary, delete the class as well.

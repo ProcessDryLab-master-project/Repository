@@ -5,8 +5,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Specialized;
 using System.IO;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Repository.App.Database
 {
@@ -159,10 +161,17 @@ namespace Repository.App.Database
         public Dictionary<string, MetadataObject> GetMetadataDict()
         {
             string metadataJsonString;
-            lock (Globals.FileAccessLock)
+            using (var fileStream = File.Open(Globals.pathToMetadata, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
-                metadataJsonString = File.ReadAllText(Globals.pathToMetadata);
+                using (StreamReader rdr = new StreamReader(fileStream))
+                {
+                    metadataJsonString = rdr.ReadToEnd();
+                }
             }
+            //lock (Globals.FileAccessLock)
+            //{
+            //    metadataJsonString = File.ReadAllText(Globals.pathToMetadata);
+            //}
             Dictionary<string, MetadataObject>? metadataDict = JsonConvert.DeserializeObject<Dictionary<string, MetadataObject>>(metadataJsonString);
             metadataDict ??= new Dictionary<string, MetadataObject>();
             return metadataDict;

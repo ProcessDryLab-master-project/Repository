@@ -20,7 +20,7 @@ namespace Repository.App.Database
         }
         #region SETTERS
         // Files
-        public async Task<IResult> PostFile(IFormCollection formData, string appUrl)
+        public IResult PostFile(IFormCollection formData, string appUrl)
         {
             try
             {
@@ -36,21 +36,22 @@ namespace Repository.App.Database
 
                 metadataDb.MetadataWrite(metadataObject);
                 if(metadataObject.ResourceInfo.Dynamic) metadataDb.UpdateDynamicResourceTime(resourceId);
-                return await fileDb.WriteFile(metadataObject, file);
+                return fileDb.WriteFile(metadataObject, file);
         }
             catch (Exception e)
             {
                 return Results.BadRequest(e);
             }
 }
-        public async Task<IResult> UpdateFile(IFormFile file, string resourceId)
+        public IResult UpdateFile(IFormFile file, string resourceId)
         {
             try
             {
                 MetadataObject? metadataObject = metadataDb.GetMetadataObjectById(resourceId);
-                if (metadataObject == null) return Results.BadRequest("No resource with that ID");
+                if (metadataObject == null) 
+                    return Results.BadRequest("No resource with that ID");
                 metadataDb.UpdateDynamicResourceTime(resourceId); // TODO: Make MetadataWrite async and write await?
-                return await fileDb.WriteFile(metadataObject, file);
+                return fileDb.WriteFile(metadataObject, file);
             }
             catch (Exception e)
             {
@@ -101,7 +102,8 @@ namespace Repository.App.Database
                 if (formDataObj == null) return Results.BadRequest("Invalid FormData keys");
 
                 MetadataObject? metadataObject = metadataDb.GetMetadataObjectById(resourceId);
-                if (metadataObject == null) return Results.BadRequest("No resource with that ID");
+                if (metadataObject == null)
+                    return Results.BadRequest("No resource with that ID");
 
                 foreach (var keyValuePair in formDataObj)
                 {
@@ -129,7 +131,8 @@ namespace Repository.App.Database
             try
             {
                 MetadataObject? metadataObject = metadataDb.GetMetadataObjectById(resourceId);
-                if (metadataObject == null) return Results.BadRequest("No resource with that ID");
+                if (metadataObject == null) 
+                    return Results.BadRequest("No resource with that ID");
                 return fileDb.GetFile(metadataObject);
             }
             catch (Exception e)
@@ -200,7 +203,8 @@ namespace Repository.App.Database
             try
             {
                 MetadataObject? metadataObject = metadataDb.GetMetadataObjectById(resourceId);
-                if (metadataObject == null) return Results.BadRequest("No resource with that ID");
+                if (metadataObject == null) 
+                    return Results.BadRequest("No resource with that ID");
                 string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataObject, Formatting.Indented);
                 return Results.Text(updatedMetadataJsonString, contentType: "application/json"); 
                 //return Results.Text(updatedMetadataJsonString);

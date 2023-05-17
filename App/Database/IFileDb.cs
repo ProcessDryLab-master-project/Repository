@@ -6,6 +6,6 @@ namespace Repository.App.Database
     public interface IFileDb
     {
         public IResult GetFile(MetadataObject metadataObject);
-        public Task<IResult> WriteFile(MetadataObject metadataObject, IFormFile file);
+        public IResult WriteFile(MetadataObject metadataObject, IFormFile file);
     }
 }

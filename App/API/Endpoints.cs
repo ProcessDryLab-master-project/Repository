@@ -63,14 +63,14 @@ namespace Repository.App.API
             //.RequireRateLimiting(ratePolicy); // TODO: Find out if retrieving files without rate limiter can be an issue (especially with streaming)
 
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
-            app.MapPost("/resources", async (HttpContext context, ResourceManager manager) => {
+            app.MapPost("/resources", (HttpContext context, ResourceManager manager) => {
                 Console.WriteLine("Received POST request to save file");
                 var appUrl = app.Urls.FirstOrDefault();
-                return await manager.PostFile(context.Request.Form, appUrl!);
+                return manager.PostFile(context.Request.Form, appUrl!);
             })
             .RequireRateLimiting(ratePolicy);
 
-            app.MapPut("/resources/{resourceId}", async (HttpContext context, string resourceId, ResourceManager manager) =>
+            app.MapPut("/resources/{resourceId}", (HttpContext context, string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received PUT request to update file with id: " + resourceId);
 
@@ -79,16 +79,16 @@ namespace Repository.App.API
                 else numUpdates[resourceId] = 1;
                 Console.WriteLine($"Num updates for {resourceId} = {numUpdates[resourceId]}");
 
-                string headers = String.Empty;
-                foreach (var key in context.Request.Headers.Keys)
-                    headers += key + "=" + context.Request.Headers[key] + Environment.NewLine;
-                Console.WriteLine("headers:\n" + headers);
+                //string headers = String.Empty;
+                //foreach (var key in context.Request.Headers.Keys)
+                //    headers += key + "=" + context.Request.Headers[key] + Environment.NewLine;
+                //Console.WriteLine("headers:\n" + headers);
                 // TODO: Delete end
 
                 var requestFiles = context.Request.Form.Files;
                 if (requestFiles?.Count != 1) return Results.BadRequest("Exactly one file is required");
                 var file = requestFiles.Single();
-                return await manager.UpdateFile(file, resourceId);
+                return manager.UpdateFile(file, resourceId);
             })
             .RequireRateLimiting(ratePolicy);
             #endregion
