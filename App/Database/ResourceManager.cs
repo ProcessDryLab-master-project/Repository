@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text;
+using csdot;
 
 namespace Repository.App.Database
 {
@@ -224,6 +225,16 @@ namespace Repository.App.Database
         #endregion
 
         #region VISUALIZERS
+        public IResult GetGraphForResource(string resourceId)
+        {
+
+            Console.WriteLine("Getting graph for requested object: " + resourceId);
+            Dictionary<string, MetadataObject> metadataDict = metadataDb.GetMetadataDict();
+            MetadataObject? requestedMdObject = metadataDict.GetMetadataObjWithId(resourceId);
+            if (requestedMdObject == null) return Results.BadRequest("No resource exist for that ID");
+            var graphString = ResourceConnector.CreateGraph(requestedMdObject, metadataDict);
+            return Results.Text(graphString);
+        }
         public IResult GetHistogram(string resourceId, string appUrl)
         {
             if (!Directory.Exists(Globals.pathToHistogram))

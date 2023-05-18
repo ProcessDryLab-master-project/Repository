@@ -152,20 +152,18 @@ namespace Repository.App.API
             #endregion
             #region visualizers
             // To retrieve graph for given resourceId
-            app.MapGet("/resources/graphs/{resourceId}", (string resourceId, ResourceConnector resourceConnector) =>
+            app.MapGet("/resources/graphs/{resourceId}", (string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received GET request for relation graph on resource id: " + resourceId);
-                return resourceConnector.GetGraphForResource(resourceId);
+                return manager.GetGraphForResource(resourceId);
             });
-
-            // To retrieve histogram for given resourceId
-            //app.MapPost("/resources/histograms/{resourceId}", (string resourceId, HistogramGenerator histogramGenerator) =>
+            //app.MapGet("/resources/graphs/{resourceId}", (string resourceId, ResourceConnector resourceConnector) =>
             //{
-            //    Console.WriteLine("Received POST request for histogram on resource id: " + resourceId);
-            //    var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
-            //    return histogramGenerator.GetHistogram(resourceId, appUrl);
+            //    Console.WriteLine("Received GET request for relation graph on resource id: " + resourceId);
+            //    return resourceConnector.GetGraphForResource(resourceId);
             //});
 
+            // To create/retrieve a histogram for an EventLog.
             app.MapPost("/resources/histograms/{resourceId}", (string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received POST request for histogram on resource id: " + resourceId);

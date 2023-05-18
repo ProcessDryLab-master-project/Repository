@@ -11,27 +11,24 @@ namespace Repository.App.Visualizers
 {
     public class ResourceConnector
     {
-        IMetadataDb metadataDb { get; set; }
-        public ResourceConnector(IMetadataDb dataInterface)
-        {
-            metadataDb = dataInterface;
-        }
-        //static DatabaseManager databaseManager = new DatabaseManager(new MetadataDb());
-        //static readonly string pathToResources = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-        //static readonly string pathToDot = Path.Combine(pathToResources, "DOT");
-        public IResult GetGraphForResource(string resourceId)
+        //IMetadataDb metadataDb { get; set; }
+        //public ResourceConnector(IMetadataDb dataInterface)
+        //{
+        //    metadataDb = dataInterface;
+        //}
+        public static string CreateGraph(MetadataObject requestedMdObject, Dictionary<string, MetadataObject> metadataDict)
         {
             HashSet<string> exploredNodes = new HashSet<string>();
-            Console.WriteLine("Getting graph for requested object: " + resourceId);
-            MetadataObject? requestedMdObject = metadataDb.GetMetadataObjectById(resourceId);
-            if (requestedMdObject == null) return Results.BadRequest("No resource exist for that ID");
+            //Console.WriteLine("Getting graph for requested object: " + resourceId);
+            //MetadataObject? requestedMdObject = metadataDb.GetMetadataObjectById(resourceId);
+            //if (requestedMdObject == null) return Results.BadRequest("No resource exist for that ID");
 
             string graphId = Guid.NewGuid().ToString();
             //Graph graph = new Graph($"\"{graphId}\"");
             Graph graph = new Graph($"\"Relations Graph\"");
             graph.type = "digraph";
 
-            Node centerNode = new Node($"\"{resourceId}\"");
+            Node centerNode = new Node($"\"{requestedMdObject.ResourceId}\"");
             centerNode.Attribute.color.Value = Color.X11.blue; // Color it because it's the requested node.
             centerNode.Attribute.label.Value = "Label: " + requestedMdObject.ResourceInfo.ResourceLabel;// "Center label";
             string? sourceLabel = requestedMdObject.GenerationTree?.GeneratedFrom?.SourceLabel;
@@ -41,17 +38,17 @@ namespace Repository.App.Visualizers
             FillToolTip(requestedMdObject, centerNode);
             graph.AddElement(centerNode);
 
-            RecursiveInsert(graph, centerNode, requestedMdObject, resourceId, exploredNodes);
+            RecursiveInsert(requestedMdObject, metadataDict, graph, centerNode, exploredNodes);
 
             // This if we want to save as a file and send it as IResult instead. Can convert the dot file to svg with this command: dot -Tsvg test.dot > test.svg
             //string pathToFile = Path.Combine(pathToDot, "test" + ".dot");
             //DotDocument dotDocument = new DotDocument();
             //dotDocument.SaveToFile(graph, pathToFile);
             //return Results.File(pathToFile, resourceId);
-
-            return Results.Ok(graph.ElementToString());
+            return graph.ElementToString();
+            //return Results.Ok(graph.ElementToString());
         }
-        public void RecursiveInsert(Graph graph, Node node, MetadataObject? mdObject, string resourceId, HashSet<string> exploredNodes)
+        public static void RecursiveInsert(MetadataObject? mdObject, Dictionary<string, MetadataObject> metadataDict, Graph graph, Node node, HashSet<string> exploredNodes)
         {
             if (mdObject == null) { return; } // The node is not part of this repository.
             var parentList = mdObject.GenerationTree.Parents;
@@ -59,10 +56,11 @@ namespace Repository.App.Visualizers
             {
                 string relativeId = relative.ResourceId;
                 string parentUsedAs = relative.UsedAs;
-                if (!exploredNodes.Contains(relativeId + resourceId))
+                if (!exploredNodes.Contains(relativeId + mdObject.ResourceId))
                 {
-                    exploredNodes.Add(relativeId + resourceId);
-                    CreateNodeAndEdge(graph, node, relativeId, false, exploredNodes, parentUsedAs);
+                    exploredNodes.Add(relativeId + mdObject.ResourceId);
+                    MetadataObject? relativeMdObject = metadataDict.GetMetadataObjWithId(relativeId);
+                    CreateNodeAndEdge(relativeMdObject, metadataDict, graph, node, relativeId, false, exploredNodes, parentUsedAs);
                 }
             }
             // Code if we're interested in children.
@@ -78,9 +76,10 @@ namespace Repository.App.Visualizers
             //}
         }
 
-        private void CreateNodeAndEdge(Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeUsedAs = null)
+        private static void CreateNodeAndEdge(MetadataObject? relativeMdObject, Dictionary<string, MetadataObject> metadataDict, Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeUsedAs = null)
         {
-            MetadataObject? relativeMdObject = metadataDb.GetMetadataObjectById(relativeId);
+            //MetadataObject? relativeMdObject = metadataDb.GetMetadataObjectById(relativeId);
+            
             //string relativeInfo = JsonConvert.SerializeObject(relativeMdObject.ResourceInfo, Formatting.Indented);
             //Node relativeNode = new Node($"\"{relativeInfo}\"");
             Node relativeNode = new Node($"\"{relativeId}\"");
@@ -106,7 +105,8 @@ namespace Repository.App.Visualizers
                 edge.Attribute.labelfontsize.Value = 5;
             }
             graph.AddElements(relativeNode, edge);
-            RecursiveInsert(graph, relativeNode, relativeMdObject, relativeId, exploredNodes);
+            RecursiveInsert(relativeMdObject, metadataDict, graph, relativeNode, exploredNodes);
+            //RecursiveInsert(graph, relativeNode, exploredNodes, relativeMdObject, relativeId);
         }
 
         private static void FillToolTip(MetadataObject relativeMdObject, Node relativeNode)

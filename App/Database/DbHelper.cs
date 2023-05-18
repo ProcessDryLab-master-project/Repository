@@ -127,6 +127,12 @@ namespace Repository.App.Database
             //TV value;
             return dict.TryGetValue(key, out TV? value) ? value : defaultValue;
         }
+        public static MetadataObject? GetMetadataObjWithId(this Dictionary<string, MetadataObject> metadataDict, string resourceId, MetadataObject? defaultValue = null)
+        {
+            var result = metadataDict.TryGetValue(resourceId, out MetadataObject? value) ? value : defaultValue;
+            if (result != null) result.ResourceId = resourceId;
+            return result;
+        }
         public static bool TryParseJson<T>(this string obj, out T result)
         {
             try
