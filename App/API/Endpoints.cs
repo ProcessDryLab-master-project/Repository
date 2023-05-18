@@ -79,12 +79,6 @@ namespace Repository.App.API
                 else numUpdates[resourceId] = 1;
                 Console.WriteLine($"Num updates for {resourceId} = {numUpdates[resourceId]}");
 
-                //string headers = String.Empty;
-                //foreach (var key in context.Request.Headers.Keys)
-                //    headers += key + "=" + context.Request.Headers[key] + Environment.NewLine;
-                //Console.WriteLine("headers:\n" + headers);
-                // TODO: Delete end
-
                 var requestFiles = context.Request.Form.Files;
                 if (requestFiles?.Count != 1) return Results.BadRequest("Exactly one file is required");
                 var file = requestFiles.Single();
