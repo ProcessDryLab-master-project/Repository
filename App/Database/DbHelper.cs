@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Newtonsoft.Json;
 using Repository.App.Entities;
 using System.Collections.Specialized;
 
@@ -19,10 +20,38 @@ namespace Repository.App.Database
 
             return pathToSaveFile;
         }
-        public static MetadataObject BuildMetadataObject(IDictionary<string, string> metadataKeys, string? resourceId = null)
+        //public static MetadataObject BuildMetadataObject(IDictionary<string, string> metadataKeys, string? resourceId = null)
+        //{
+        //    bool providedFromSource = metadataKeys.GetValue("GeneratedFrom").TryParseJson(out GeneratedFrom? generatedFromObj);
+        //    bool providedParents = metadataKeys.GetValue("Parents").TryParseJson(out HashSet<Parent>? parentsList);
+
+        //    var dateInMilliSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
+        //    var metadataObject = new MetadataObject
+        //    {
+        //        ResourceId = resourceId ?? Guid.NewGuid().ToString(),
+        //        CreationDate = dateInMilliSeconds.ToString(),// DateTimeOffset.Now.ToString(),
+        //        ResourceInfo = new ResourceInfo
+        //        {
+        //            ResourceLabel = metadataKeys.GetValue("ResourceLabel"),
+        //            ResourceType = metadataKeys.GetValue("ResourceType"),
+        //            Host = metadataKeys.GetValue("Host"),
+        //            Description = metadataKeys.GetValue("Description"),
+        //            FileExtension = metadataKeys.GetValue("FileExtension"),
+        //            StreamTopic = metadataKeys.GetValue("StreamTopic"),
+        //            Dynamic = string.Equals(metadataKeys.GetValue("Dynamic"), "true", StringComparison.OrdinalIgnoreCase),
+        //        },
+        //        GenerationTree = new GenerationTree
+        //        {
+        //            GeneratedFrom = generatedFromObj,
+        //            Parents = parentsList,
+        //        }
+        //    };
+        //    return metadataObject;
+        //}
+        public static MetadataObject BuildMetadataObject(FormObject formObject, string? resourceId = null)
         {
-            bool providedFromSource = metadataKeys.GetValue("GeneratedFrom").TryParseJson(out GeneratedFrom? generatedFromObj);
-            bool providedParents = metadataKeys.GetValue("Parents").TryParseJson(out HashSet<Parent>? parentsList);
+            bool providedFromSource = formObject.GeneratedFrom.TryParseJson(out GeneratedFrom? generatedFromObj);
+            bool providedParents = formObject.Parents.TryParseJson(out HashSet<Parent>? parentsList);
 
             var dateInMilliSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
             var metadataObject = new MetadataObject
@@ -31,13 +60,13 @@ namespace Repository.App.Database
                 CreationDate = dateInMilliSeconds.ToString(),// DateTimeOffset.Now.ToString(),
                 ResourceInfo = new ResourceInfo
                 {
-                    ResourceLabel = metadataKeys.GetValue("ResourceLabel"),
-                    ResourceType = metadataKeys.GetValue("ResourceType"),
-                    Host = metadataKeys.GetValue("Host"),
-                    Description = metadataKeys.GetValue("Description"),
-                    FileExtension = metadataKeys.GetValue("FileExtension"),
-                    StreamTopic = metadataKeys.GetValue("StreamTopic"),
-                    Dynamic = string.Equals(metadataKeys.GetValue("Dynamic"), "true", StringComparison.OrdinalIgnoreCase),
+                    ResourceLabel = formObject.ResourceLabel,
+                    ResourceType = formObject.ResourceType,
+                    Host = formObject.Host,
+                    Description = formObject.Description,
+                    FileExtension = formObject.FileExtension,
+                    StreamTopic = formObject.StreamTopic,
+                    Dynamic = formObject.Dynamic,
                 },
                 GenerationTree = new GenerationTree
                 {
@@ -46,20 +75,6 @@ namespace Repository.App.Database
                 }
             };
             return metadataObject;
-        }
-
-        public static IDictionary<string, string>? ValidateFormData(IDictionary<string, string> metadataKeys, string? appUrl = null)
-        {
-            if (metadataKeys == null) { return null; }
-            // TODO: Add different validations, such as verifying that certain keys exist and if X key is there, then Y key must also be there
-            // if (metadataKeys.GetValue("ResourceLabel") == null) { return null; }
-            // if (metadataKeys.GetValue("ResourceType") == null) { return null; }
-            // if (metadataKeys.GetValue("ResourceType") == "EventStream" && (metadataKeys.GetValue("Host") == null || metadataKeys.GetValue("StreamTopic") == null)) { return null; }
-
-            metadataKeys["Host"] = metadataKeys.GetValue("Host") ?? $"{appUrl}/resources/";
-            //metadataKeys["Host"] = metadataKeys["Host"] ?? $"{appUrl}/resources/"; // Set "Host" key if it's not already set.
-
-            return metadataKeys;
         }
         public static List<MetadataObject> MetadataDictToList(Dictionary<string, MetadataObject> metadataDict)
         {
@@ -110,8 +125,9 @@ namespace Repository.App.Database
             }
         }
 
-        public static byte[] FileToByteArr(IFormFile file)
+        public static byte[]? FileToByteArr(IFormFile? file)
         {
+            if (file == null) return null;
             using (var stream = new MemoryStream())
             {
                 file.CopyTo(stream);
@@ -159,6 +175,37 @@ namespace Repository.App.Database
             }
 
             return dict;
+        }
+        public static FormObject? ToFormObject(this IFormCollection? formCollection, string? appUrl = null)
+        {
+            if (formCollection == null) return null;
+            if (string.Equals(formCollection["ResourceType"], "EventStream", StringComparison.OrdinalIgnoreCase)
+                && (string.IsNullOrWhiteSpace(formCollection["Host"]) || string.IsNullOrWhiteSpace(formCollection["StreamTopic"])))
+            {
+                return null;
+            }
+
+            var files = formCollection?.Files;
+            byte[]? file = null;
+            if (files?.Count == 1) file = DbHelper.FileToByteArr(files.Single());
+
+
+            var formObject = new FormObject()
+            {
+                File = file, // DbHelper.FileToByteArr(formCollection?.Files.Single())
+                Host = string.IsNullOrWhiteSpace(formCollection["Host"]) ? $"{appUrl}/resources/" : formCollection["Host"],
+                StreamTopic = formCollection["StreamTopic"],
+                FileExtension = formCollection["FileExtension"],
+                ResourceLabel = formCollection["ResourceLabel"],
+                ResourceType = formCollection["ResourceType"],
+                Description = formCollection["Description"],
+                Parents = formCollection["Parents"],
+                GeneratedFrom = formCollection["GeneratedFrom"],
+                Overwrite = string.Equals(formCollection["Overwrite"], "true", StringComparison.OrdinalIgnoreCase),
+                Dynamic = string.Equals(formCollection["Dynamic"], "true", StringComparison.OrdinalIgnoreCase),
+            };
+
+            return formObject;
         }
 
         public static IDictionary<string, string> ToDictionary(this NameValueCollection col)

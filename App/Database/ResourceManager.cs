@@ -24,41 +24,37 @@ namespace Repository.App.Database
         }
         #region SETTERS
         // Files
-        public IResult PostFile(IFormCollection formData, string appUrl)
+        public IResult PostFile(FormObject formObject, string appUrl)
         {
             try
             {
-                var requestFiles = formData.Files;
-                if (requestFiles.Count != 1) return Results.BadRequest("Exactly one file is required");
-                var formFile = requestFiles.Single();
+                //var requestFiles = formData.Files;
+                //if (requestFiles.Count != 1) return Results.BadRequest("Exactly one file is required");
+                //var formFile = requestFiles.Single();
 
-                var formDataObj = formData.ToDictionary();
-                formDataObj = DbHelper.ValidateFormData(formDataObj, appUrl);
-                if(formDataObj == null) return Results.BadRequest("Invalid FormData keys");
-                var metadataObject = DbHelper.BuildMetadataObject(formDataObj);
-                string resourceId = metadataObject.ResourceId!; // Saving generated resource ID so we can return it, since it's removed before writing to metadata file
-
+                //var formDataObj = formData.ToDictionary();
+                //formDataObj = DbHelper.ValidateFormData(formDataObj, appUrl);
+                var metadataObject = DbHelper.BuildMetadataObject(formObject);
                 metadataDb.MetadataWrite(metadataObject);
-                if(metadataObject.ResourceInfo.Dynamic) metadataDb.UpdateDynamicResourceTime(resourceId);
-
-                byte[] file = DbHelper.FileToByteArr(formFile);
-                return fileDb.WriteFile(metadataObject, file);
+                if(metadataObject.ResourceInfo.Dynamic) metadataDb.UpdateDynamicResourceTime(metadataObject.ResourceId);
+                //byte[] file = DbHelper.FileToByteArr(formFile);
+                return fileDb.WriteFile(metadataObject, formObject.File!);
             }
             catch (Exception e)
             {
                 return Results.BadRequest(e);
             }
         }
-        public IResult UpdateFile(IFormFile formFile, string resourceId)
+        public IResult UpdateFile(byte[] file, string resourceId)
         {
             try
             {
-                MetadataObject? metadataObject = metadataDb.GetMetadataObjectById(resourceId);
+                MetadataObject metadataObject = metadataDb.GetMetadataObjectById(resourceId);
                 if (metadataObject == null) 
                     return Results.BadRequest("No resource with that ID");
                 metadataDb.UpdateDynamicResourceTime(resourceId); // TODO: Make MetadataWrite async and write await?
 
-                byte[] file = DbHelper.FileToByteArr(formFile);
+                //byte[] file = DbHelper.FileToByteArr(formFile);
                 return fileDb.WriteFile(metadataObject, file);
             }
             catch (Exception e)
@@ -67,40 +63,69 @@ namespace Repository.App.Database
             }
         }
         // Metadata specific
-        public IResult PostMetadata(IFormCollection formData, string appUrl)
+        //public IResult PostMetadata(IFormCollection formData, string appUrl)
+        //{
+        //    try
+        //    {
+        //        var formDataObj = formData.ToDictionary();
+        //        formDataObj = DbHelper.ValidateFormData(formDataObj, appUrl);
+        //        if (formDataObj == null) return Results.BadRequest("Invalid FormData keys");
+        //        string? resourceId = null;
+        //        MetadataObject? metadataObject;
+        //        if (formDataObj["ResourceType"] == "EventStream")
+        //        {
+        //            bool overwrite = !string.Equals(formDataObj["Overwrite"], "true", StringComparison.OrdinalIgnoreCase);
+        //            var metadataList = DbHelper.MetadataDictToList(metadataDb.GetMetadataDict());
+        //            var existingMetadata = metadataList.Find(metadata => metadata.ResourceInfo.Host == formDataObj["Host"] && metadata.ResourceInfo.StreamTopic == formDataObj["StreamTopic"]);
+        //            if (existingMetadata != null)
+        //            {
+        //                if(!overwrite) // If a similar metadata object exists and no Overwrite key has been sent, don't add a new one.
+        //                    return Results.BadRequest("An EventStream for that StreamTopic and Host already exist. Use the Overwrite key if you wish to change it.");
+
+        //                resourceId = existingMetadata.ResourceId!; // If we're overwriting a metadata object, save that key for when it's built
+        //            }
+        //        }
+
+        //        metadataObject = DbHelper.BuildMetadataObject(formDataObj, resourceId);
+        //        resourceId = metadataObject.ResourceId!; // Saving generated resource ID so we can return it, since it's removed before writing to metadata file
+
+        //        metadataDb.MetadataWrite(metadataObject); // TODO: Make MetadataWrite async and write await?
+        //        return Results.Ok(resourceId);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Results.BadRequest(e);
+        //    }
+        //}
+        public IResult PostMetadata(FormObject formObject, string appUrl)
         {
             try
             {
-                var formDataObj = formData.ToDictionary();
-                formDataObj = DbHelper.ValidateFormData(formDataObj, appUrl);
-                if (formDataObj == null) return Results.BadRequest("Invalid FormData keys");
                 string? resourceId = null;
-                MetadataObject? metadataObject;
-                if (formDataObj["ResourceType"] == "EventStream")
+                if (formObject.ResourceType == "EventStream")
                 {
-                    bool overwrite = !string.Equals(formDataObj["Overwrite"], "true", StringComparison.OrdinalIgnoreCase);
+                    bool overwrite = formObject.Overwrite;
                     var metadataList = DbHelper.MetadataDictToList(metadataDb.GetMetadataDict());
-                    var existingMetadata = metadataList.Find(metadata => metadata.ResourceInfo.Host == formDataObj["Host"] && metadata.ResourceInfo.StreamTopic == formDataObj["StreamTopic"]);
+                    var existingMetadata = metadataList.Find(metadata => metadata.ResourceInfo.Host == formObject.Host && metadata.ResourceInfo.StreamTopic == formObject.StreamTopic);
                     if (existingMetadata != null)
                     {
-                        if(!overwrite) // If a similar metadata object exists and no Overwrite key has been sent, don't add a new one.
+                        if (!overwrite) // If a similar metadata object exists and no Overwrite key has been sent, don't add a new one.
                             return Results.BadRequest("An EventStream for that StreamTopic and Host already exist. Use the Overwrite key if you wish to change it.");
-                        
+
                         resourceId = existingMetadata.ResourceId!; // If we're overwriting a metadata object, save that key for when it's built
                     }
                 }
 
-                metadataObject = DbHelper.BuildMetadataObject(formDataObj, resourceId);
-                resourceId = metadataObject.ResourceId!; // Saving generated resource ID so we can return it, since it's removed before writing to metadata file
-
+                MetadataObject metadataObject = DbHelper.BuildMetadataObject(formObject, resourceId);
                 metadataDb.MetadataWrite(metadataObject); // TODO: Make MetadataWrite async and write await?
-                return Results.Ok(resourceId);
+                return Results.Ok(metadataObject.ResourceId);
             }
             catch (Exception e)
             {
                 return Results.BadRequest(e);
             }
         }
+        // Takes IFormCollection instead of FormObject, to make it easier to loop through. Otherwise we'd have to use reflection.
         public IResult UpdateMetadataObject(IFormCollection formData, string appUrl, string resourceId)
         {
             try
@@ -213,9 +238,7 @@ namespace Repository.App.Database
                 if (metadataObject == null) 
                     return Results.BadRequest("No resource with that ID");
                 string updatedMetadataJsonString = JsonConvert.SerializeObject(metadataObject, Formatting.Indented);
-                return Results.Text(updatedMetadataJsonString, contentType: "application/json"); 
-                //return Results.Text(updatedMetadataJsonString);
-                //return Results.Ok(metadataObject);
+                return Results.Text(updatedMetadataJsonString, contentType: "application/json");
             }
             catch (Exception e)
             {
@@ -251,7 +274,7 @@ namespace Repository.App.Database
             string pathToRequestFile = Path.Combine(Globals.pathToEventLog, nameOfFile);
             if (!File.Exists(pathToRequestFile))
             {
-                string badResponse = "No file of type EventLog exists for path " + pathToRequestFile; // TODO: Should not return the entire path, just easier like this for now
+                string badResponse = "No file of type EventLog exists for path " + pathToRequestFile; // TODO: Delete at some point. Should not return the entire path, just easier like this for now
                 return Results.BadRequest(badResponse);
             }
 
@@ -261,13 +284,11 @@ namespace Repository.App.Database
                 var childMetadata = metadataDb.GetMetadataObjectById(childId);
                 if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram")
                 {
-                    //var result = ResourceRetriever.GetResourceById(childId);
                     var result = fileDb.GetFile(childMetadata);
                     if (!result.GetType().IsInstanceOfType(Results.BadRequest()))
                     {
                         Console.WriteLine("Histogram already exist, returning this");
                         return result;
-                        //return ResourceRetriever.GetResourceById(childId);
                     }
                     return Results.BadRequest("Resource has child Histogram that does not exist in the repository. This should not happen, consider removing as child and run again");
                 }

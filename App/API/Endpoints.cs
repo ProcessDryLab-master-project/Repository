@@ -34,7 +34,6 @@ namespace Repository.App.API
             var ratePolicy = "fixed";
 
             var _hostEnvironment = app.Environment;
-            // ----------------- CONNECTION ----------------- //
             #region connection
             // To maintain connection
             app.MapGet("ping", (HttpContext httpContext) =>
@@ -53,7 +52,6 @@ namespace Repository.App.API
             #endregion
 
             #region files
-            // ----------------- Files ----------------- //
             // To retrieve file for given resourceId
             app.MapGet("/resources/{resourceId}", (string resourceId, ResourceManager manager) =>
             {
@@ -66,7 +64,12 @@ namespace Repository.App.API
             app.MapPost("/resources", (HttpContext context, ResourceManager manager) => {
                 Console.WriteLine("Received POST request to save file");
                 var appUrl = app.Urls.FirstOrDefault();
-                return manager.PostFile(context.Request.Form, appUrl!);
+                var formObject = context.Request.Form.ToFormObject();
+
+                if (formObject == null) return Results.BadRequest("Invalid FormData keys");
+                if (formObject.File == null) return Results.BadRequest("Exactly one file is required");
+                if (formObject.Host == null) formObject.Host = $"{appUrl}/resources/";
+                return manager.PostFile(formObject, appUrl!);
             })
             .RequireRateLimiting(ratePolicy);
 
@@ -81,13 +84,14 @@ namespace Repository.App.API
 
                 var requestFiles = context.Request.Form.Files;
                 if (requestFiles?.Count != 1) return Results.BadRequest("Exactly one file is required");
-                var file = requestFiles.Single();
+                var formFile = requestFiles.Single();
+                byte[] file = DbHelper.FileToByteArr(formFile)!;
                 return manager.UpdateFile(file, resourceId);
             })
             .RequireRateLimiting(ratePolicy);
             #endregion
+
             #region metadata
-            // ----------------- Metadata ----------------- //
             // To retrieve/output a list of available resources (metadata list)
             app.MapGet("/resources/metadata", (HttpContext httpContext, ResourceManager manager) =>
             {
@@ -114,12 +118,15 @@ namespace Repository.App.API
                 Console.WriteLine("Received POST request to create metadata object without a file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
 
-                request.EnableBuffering();
-                request.Body.Seek(0, SeekOrigin.Begin);
-                if (request.ContentLength == 0)
-                    return Results.BadRequest("Invalid request. Body must have form data.");
+                //request.EnableBuffering();
+                //request.Body.Seek(0, SeekOrigin.Begin);
+                //if (request.ContentLength == 0)
+                //    return Results.BadRequest("Invalid request. Body must have form data.");
 
-                return manager.PostMetadata(request.Form, appUrl!);
+                var formObject = request.Form.ToFormObject();
+                if (formObject == null) return Results.BadRequest("Invalid FormData keys");
+                return manager.PostMetadata(formObject, appUrl!);
+                //return manager.PostMetadata(request.Form, appUrl!);
             });
 
             app.MapPut("/resources/metadata/{resourceId}", (HttpRequest request, string resourceId, ResourceManager manager) =>
@@ -127,10 +134,10 @@ namespace Repository.App.API
                 Console.WriteLine("Received PUT request to update metadata object without a file");
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
 
-                request.EnableBuffering();
-                request.Body.Seek(0, SeekOrigin.Begin);
-                if (request.ContentLength == 0)
-                    return Results.BadRequest("Invalid request. Body must have form data.");
+                //request.EnableBuffering();
+                //request.Body.Seek(0, SeekOrigin.Begin);
+                //if (request.ContentLength == 0)
+                //    return Results.BadRequest("Invalid request. Body must have form data.");
 
                 return manager.UpdateMetadataObject(request.Form, appUrl!, resourceId);
             });
@@ -151,11 +158,6 @@ namespace Repository.App.API
                 Console.WriteLine("Received GET request for relation graph on resource id: " + resourceId);
                 return manager.GetGraphForResource(resourceId);
             });
-            //app.MapGet("/resources/graphs/{resourceId}", (string resourceId, ResourceConnector resourceConnector) =>
-            //{
-            //    Console.WriteLine("Received GET request for relation graph on resource id: " + resourceId);
-            //    return resourceConnector.GetGraphForResource(resourceId);
-            //});
 
             // To create/retrieve a histogram for an EventLog.
             app.MapPost("/resources/histograms/{resourceId}", (string resourceId, ResourceManager manager) =>

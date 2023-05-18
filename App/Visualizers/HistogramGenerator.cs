@@ -40,17 +40,27 @@ namespace Repository.App.Visualizers
                 }
             };
             string parentsAsString = JsonConvert.SerializeObject(parents);
-            Dictionary<string, string> metadataKeys = new()
-            {
-                { "ResourceLabel", $"Histogram from log: {logMetadataObject.ResourceInfo.ResourceLabel}"},
-                { "ResourceType", "Histogram"},
-                { "Host", $"{appUrl}/resources/"},
-                { "Description", $"Histogram generated from log with label {logMetadataObject.ResourceInfo.ResourceLabel} and ID: {logResourceId}"},
-                { "FileExtension", "json"},
-                { "Parents", parentsAsString},
+            //Dictionary<string, string> metadataKeys = new()
+            //{
+            //    { "ResourceLabel", $"Histogram from log: {logMetadataObject.ResourceInfo.ResourceLabel}"},
+            //    { "ResourceType", "Histogram"},
+            //    { "Host", $"{appUrl}/resources/"},
+            //    { "Description", $"Histogram generated from log with label {logMetadataObject.ResourceInfo.ResourceLabel} and ID: {logResourceId}"},
+            //    { "FileExtension", "json"},
+            //    { "Parents", parentsAsString},
 
+            //};
+            //var metadataObject = DbHelper.BuildMetadataObject(metadataKeys);
+            FormObject formObject = new()
+            {
+                ResourceLabel =$"Histogram from log: {logMetadataObject.ResourceInfo.ResourceLabel}",
+                ResourceType = "Histogram",
+                Host = $"{appUrl}/resources/",
+                Description = $"Histogram generated from log with label {logMetadataObject.ResourceInfo.ResourceLabel} and ID: {logResourceId}",
+                FileExtension = "json",
+                Parents = parentsAsString,
             };
-            var metadataObject = DbHelper.BuildMetadataObject(metadataKeys);
+            var metadataObject = DbHelper.BuildMetadataObject(formObject);
             return metadataObject;
             //metadataDb.MetadataWrite(metadataObject);
         }
