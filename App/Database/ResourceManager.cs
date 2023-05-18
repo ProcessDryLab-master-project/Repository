@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Repository.App.Entities;
+using Repository.App.Visualizers;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using static System.Net.Mime.MediaTypeNames;
+using System.Text;
 
 namespace Repository.App.Database
 {
@@ -26,7 +29,7 @@ namespace Repository.App.Database
             {
                 var requestFiles = formData.Files;
                 if (requestFiles.Count != 1) return Results.BadRequest("Exactly one file is required");
-                var file = requestFiles.Single();
+                var formFile = requestFiles.Single();
 
                 var formDataObj = formData.ToDictionary();
                 formDataObj = DbHelper.ValidateFormData(formDataObj, appUrl);
@@ -36,14 +39,16 @@ namespace Repository.App.Database
 
                 metadataDb.MetadataWrite(metadataObject);
                 if(metadataObject.ResourceInfo.Dynamic) metadataDb.UpdateDynamicResourceTime(resourceId);
+
+                byte[] file = DbHelper.FileToByteArr(formFile);
                 return fileDb.WriteFile(metadataObject, file);
-        }
+            }
             catch (Exception e)
             {
                 return Results.BadRequest(e);
             }
-}
-        public IResult UpdateFile(IFormFile file, string resourceId)
+        }
+        public IResult UpdateFile(IFormFile formFile, string resourceId)
         {
             try
             {
@@ -51,6 +56,8 @@ namespace Repository.App.Database
                 if (metadataObject == null) 
                     return Results.BadRequest("No resource with that ID");
                 metadataDb.UpdateDynamicResourceTime(resourceId); // TODO: Make MetadataWrite async and write await?
+
+                byte[] file = DbHelper.FileToByteArr(formFile);
                 return fileDb.WriteFile(metadataObject, file);
             }
             catch (Exception e)
@@ -98,7 +105,6 @@ namespace Repository.App.Database
             try
             {
                 var formDataObj = formData.ToDictionary();
-                formDataObj = DbHelper.ValidateFormData(formDataObj, appUrl);
                 if (formDataObj == null) return Results.BadRequest("Invalid FormData keys");
 
                 MetadataObject? metadataObject = metadataDb.GetMetadataObjectById(resourceId);
@@ -110,7 +116,7 @@ namespace Repository.App.Database
                     Console.WriteLine($"Overwriting key {keyValuePair.Key} with value {keyValuePair.Value}");
                     if (!DbHelper.UpdateSingleMetadataValues(keyValuePair, metadataObject))
                     {
-                        return Results.BadRequest($"Invalid Key {keyValuePair.Key} or Value {keyValuePair.Value}");
+                        return Results.BadRequest($"Invalid Key \"{keyValuePair.Key}\" or Value \"{keyValuePair.Value}\"");
                     }
                 }
                 metadataObject.ResourceId = resourceId;
@@ -214,6 +220,54 @@ namespace Repository.App.Database
             {
                 return Results.BadRequest(e);
             }
+        }
+        #endregion
+
+        #region VISUALIZERS
+        public IResult GetHistogram(string resourceId, string appUrl)
+        {
+            if (!Directory.Exists(Globals.pathToHistogram))
+            {
+                Console.WriteLine("No folder exists for JSON, creating " + Globals.pathToHistogram);
+                Directory.CreateDirectory(Globals.pathToHistogram);
+            }
+            MetadataObject? logMetadataObject = metadataDb.GetMetadataObjectById(resourceId);
+            if (logMetadataObject == null || logMetadataObject.ResourceInfo?.FileExtension == null) return Results.BadRequest("Invalid resource ID. No reference to resource could be found.");
+
+
+            string? requestedFileExtension = logMetadataObject.ResourceInfo.FileExtension;
+            string nameOfFile = string.IsNullOrWhiteSpace(requestedFileExtension) ? resourceId : resourceId + "." + requestedFileExtension;
+            string pathToRequestFile = Path.Combine(Globals.pathToEventLog, nameOfFile);
+            if (!File.Exists(pathToRequestFile))
+            {
+                string badResponse = "No file of type EventLog exists for path " + pathToRequestFile; // TODO: Should not return the entire path, just easier like this for now
+                return Results.BadRequest(badResponse);
+            }
+
+            List<string>? childrenIds = logMetadataObject.GenerationTree?.Children?.Select(child => child.ResourceId).ToList();
+            foreach (var childId in childrenIds ?? Enumerable.Empty<string>())
+            {
+                var childMetadata = metadataDb.GetMetadataObjectById(childId);
+                if (childMetadata != null && childMetadata.ResourceInfo.ResourceType == "Histogram")
+                {
+                    //var result = ResourceRetriever.GetResourceById(childId);
+                    var result = fileDb.GetFile(childMetadata);
+                    if (!result.GetType().IsInstanceOfType(Results.BadRequest()))
+                    {
+                        Console.WriteLine("Histogram already exist, returning this");
+                        return result;
+                        //return ResourceRetriever.GetResourceById(childId);
+                    }
+                    return Results.BadRequest("Resource has child Histogram that does not exist in the repository. This should not happen, consider removing as child and run again");
+                }
+            }
+            Console.WriteLine("No Histogram exist for resource, creating a new one");
+            var histMetadata = HistogramGenerator.CreateHistogramMetadata(resourceId, appUrl, logMetadataObject);
+            string histogramString = HistogramGenerator.CreateHistogram(logMetadataObject);
+            byte[] file = new UTF8Encoding(true).GetBytes(histogramString);
+            metadataDb.MetadataWrite(histMetadata);
+            fileDb.WriteFile(histMetadata, file);
+            return Results.Text(histogramString, contentType: "application/json");
         }
         #endregion
     }

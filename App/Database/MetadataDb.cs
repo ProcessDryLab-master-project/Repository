@@ -172,6 +172,7 @@ namespace Repository.App.Database
             //{
             //    metadataJsonString = File.ReadAllText(Globals.pathToMetadata);
             //}
+            // TODO: Consider the error: 'Unterminated string. Expected delimiter:'
             Dictionary<string, MetadataObject>? metadataDict = JsonConvert.DeserializeObject<Dictionary<string, MetadataObject>>(metadataJsonString);
             metadataDict ??= new Dictionary<string, MetadataObject>();
             return metadataDict;

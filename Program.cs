@@ -41,7 +41,7 @@ namespace Repository
             // Dependency injection of the services using the database:
             builder.Services.AddSingleton<ResourceManager>(new ResourceManager(new FileDb(), new MetadataDb()));
             builder.Services.AddSingleton<ResourceConnector>(new ResourceConnector(new MetadataDb()));
-            builder.Services.AddSingleton<HistogramGenerator>(new HistogramGenerator(new FileDb(), new MetadataDb()));
+            //builder.Services.AddSingleton<HistogramGenerator>(new HistogramGenerator(new FileDb(), new MetadataDb()));
 
             var app = builder.Build();
             // TODO: Consider if we could/should use EnableBuffering for all endpoints. Code will look something like this:

@@ -21,8 +21,8 @@ namespace Repository.App.Database
         }
         public static MetadataObject BuildMetadataObject(IDictionary<string, string> metadataKeys, string? resourceId = null)
         {
-            bool providedFromSource = metadataKeys.GetValue("GeneratedFrom").TryParseJson(out HashSet<Parent>? parentsList);
-            bool providedParents = metadataKeys.GetValue("Parents").TryParseJson(out GeneratedFrom? generatedFromObj);
+            bool providedFromSource = metadataKeys.GetValue("GeneratedFrom").TryParseJson(out GeneratedFrom? generatedFromObj);
+            bool providedParents = metadataKeys.GetValue("Parents").TryParseJson(out HashSet<Parent>? parentsList);
 
             var dateInMilliSeconds = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalMilliseconds;
             var metadataObject = new MetadataObject

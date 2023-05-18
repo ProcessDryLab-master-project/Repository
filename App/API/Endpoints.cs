@@ -159,11 +159,18 @@ namespace Repository.App.API
             });
 
             // To retrieve histogram for given resourceId
-            app.MapPost("/resources/histograms/{resourceId}", (string resourceId, HistogramGenerator histogramGenerator) =>
+            //app.MapPost("/resources/histograms/{resourceId}", (string resourceId, HistogramGenerator histogramGenerator) =>
+            //{
+            //    Console.WriteLine("Received POST request for histogram on resource id: " + resourceId);
+            //    var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+            //    return histogramGenerator.GetHistogram(resourceId, appUrl);
+            //});
+
+            app.MapPost("/resources/histograms/{resourceId}", (string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received POST request for histogram on resource id: " + resourceId);
                 var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
-                return histogramGenerator.GetHistogram(resourceId, appUrl);
+                return manager.GetHistogram(resourceId, appUrl);
             });
             #endregion
         }

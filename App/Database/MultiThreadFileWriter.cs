@@ -55,5 +55,28 @@ namespace Repository.App.Database
                 Console.WriteLine("File lock released");
             }
         }
+        public static void Write(this byte[] file, string path)
+        {
+            try
+            {
+                fileLock.AcquireWriterLock(milliSecTimeout); // You might wanna change timeout value. Set to int.MaxValue or some val
+                Console.WriteLine("File lock set");
+                using (var fileStream = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    fileStream.SetLength(0); // truncate the file
+                    fileStream.Write(file, 0, file.Length);
+                }
+                //File.WriteAllText(path, text);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Write error: " + e.ToString());
+            }
+            finally
+            {
+                fileLock.ReleaseWriterLock();
+                Console.WriteLine("File lock released");
+            }
+        }
     }
 }

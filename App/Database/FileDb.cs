@@ -35,6 +35,7 @@ namespace Repository.App.Database
                     string badResponse = "No such file exists for path " + pathToFile; // TODO: Should not return the entire path, just easier like this for now
                     return Results.BadRequest(badResponse);
                 }
+
                 return Results.File(pathToFile, metadataObject.ResourceId);
             }
             catch (Exception e)
@@ -96,7 +97,7 @@ namespace Repository.App.Database
         //    Console.WriteLine("Done, returning ok");
         //    return Results.Ok(metadataObject.ResourceId);
         //}
-        public IResult WriteFile(MetadataObject metadataObject, IFormFile file)
+        public IResult WriteFile(MetadataObject metadataObject, byte[] file)
         {
             string path = DbHelper.GetFileSavePath(metadataObject);
             file.Write(path);
