@@ -21,7 +21,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Custom Conformant Long",
       "ResourceType": "EventLog",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "xes",
       "StreamTopic": null,
@@ -49,7 +48,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Custom Conformant",
       "ResourceType": "EventLog",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "xes",
       "StreamTopic": null,
@@ -79,7 +77,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Custom Conformant Small",
       "ResourceType": "EventLog",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "xes",
       "StreamTopic": null,
@@ -110,7 +107,6 @@
     "ResourceInfo": {
       "ResourceLabel": "ML1 Large Log",
       "ResourceType": "EventLog",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "xes",
       "StreamTopic": null,
@@ -132,7 +128,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Large Petri Net",
       "ResourceType": "PetriNet",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "jpg",
       "StreamTopic": null,
@@ -155,7 +150,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Weird Petri Net",
       "ResourceType": "PetriNet",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "jpg",
       "StreamTopic": null,
@@ -178,7 +172,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Test Petri Net",
       "ResourceType": "PetriNet",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "png",
       "StreamTopic": null,
@@ -196,7 +189,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Create Content",
       "ResourceType": "ProcessModel",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "bpmn",
       "StreamTopic": null,
@@ -227,7 +219,6 @@
     "ResourceInfo": {
       "ResourceLabel": "A3E1",
       "ResourceType": "ProcessModel",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "bpmn",
       "StreamTopic": null,
@@ -250,7 +241,11 @@
           "UsedAs": "InputLog2"
         }
       ],
-      "Children": null
+      "Children": [
+        {
+          "ResourceId": "78b92dd2-ef1d-4d98-9182-01b454edc507"
+        }
+      ]
     }
   },
   "dd12e950-73eb-4064-941e-bfeb56f73f8f": {
@@ -258,7 +253,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Custom Ref Model",
       "ResourceType": "PetriNet",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "pnml",
       "StreamTopic": null,
@@ -277,7 +271,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Running Example",
       "ResourceType": "EventLog",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "xes",
       "StreamTopic": null,
@@ -305,7 +298,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Running Example",
       "ResourceType": "PetriNet",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "pnml",
       "StreamTopic": null,
@@ -332,7 +324,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Pretend Petri Net",
       "ResourceType": "PetriNet",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "dot",
       "StreamTopic": null,
@@ -363,7 +354,6 @@
     "ResourceInfo": {
       "ResourceLabel": "SVG Pretend Petri Net",
       "ResourceType": "PetriNet",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "svg",
       "StreamTopic": null,
@@ -390,7 +380,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Histogram from log: Running Example",
       "ResourceType": "Histogram",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "json",
       "StreamTopic": null,
@@ -413,7 +402,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Histogram from log: Running Example",
       "ResourceType": "Histogram",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "json",
       "StreamTopic": null,
@@ -436,7 +424,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Histogram from log: Running Example",
       "ResourceType": "Histogram",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "json",
       "StreamTopic": null,
@@ -459,7 +446,6 @@
     "ResourceInfo": {
       "ResourceLabel": "Alpha PNML",
       "ResourceType": "PetriNet",
-      //"Host": "https://localhost:4000/resources/",
       "Host": "http://localhost:4001/resources",
       "FileExtension": "pnml",
       "StreamTopic": null,
@@ -476,6 +462,32 @@
         {
           "ResourceId": "33405ce3-7265-4015-8d82-0d2d4cf89952",
           "UsedAs": "LogToRun"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "78b92dd2-ef1d-4d98-9182-01b454edc507": {
+    "CreationDate": "1684597917315",
+    "ResourceInfo": {
+      "ResourceLabel": "Small BPMN",
+      "ResourceType": "ProcessModel",
+      "Host": "/resources/",
+      "FileExtension": "bpmn",
+      "StreamTopic": null,
+      "Description": "A very small BPMN, cut down from A3E1",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": {
+        "SourceHost": "Frontend",
+        "SourceId": "",
+        "SourceLabel": "Manual editing"
+      },
+      "Parents": [
+        {
+          "ResourceId": "b5c8d896-45c8-4054-8620-6570184d1b0c",
+          "UsedAs": "ManualEditing"
         }
       ],
       "Children": null
