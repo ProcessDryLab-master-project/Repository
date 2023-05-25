@@ -1,5 +1,11 @@
 # Repository
 
+## Starting the repository
+This section describes how to start the repository
+
+## Add a database
+This section describes how to connect a database to the repository
+
 ## Docker
 This project supports docker runtime environment, for which you will need to download docker from here: https://www.docker.com/products/docker-desktop/.
 
