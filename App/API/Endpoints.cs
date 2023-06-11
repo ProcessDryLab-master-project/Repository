@@ -63,13 +63,16 @@ namespace Repository.App.API
             // To save incomming files (.png, .xes, .bpmn, .pnml etc)
             app.MapPost("/resources", (HttpContext context, ResourceManager manager) => {
                 Console.WriteLine("Received POST request to save file");
-                var appUrl = app.Urls.FirstOrDefault();
-                var formObject = context.Request.Form.ToFormObject();
+                var request = context.Request;
+                //var appUrl = $"{request.Scheme}://{request.Host}{request.PathBase}{request.Path}{request.QueryString}"; // Full URL with path and everything
+                var appUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+                //var appUrl = app.Urls.FirstOrDefault();
+                var formObject = context.Request.Form.ToFormObject(appUrl);
 
                 if (formObject == null) return Results.BadRequest("Invalid FormData keys");
                 if (formObject.File == null) return Results.BadRequest("Exactly one file is required");
                 if (formObject.Host == null) formObject.Host = $"{appUrl}/resources/";
-                return manager.PostFile(formObject, appUrl!);
+                return manager.PostFile(formObject);
             })
             .RequireRateLimiting(ratePolicy);
 
@@ -116,8 +119,8 @@ namespace Repository.App.API
             app.MapPost("/resources/metadata", (HttpRequest request, ResourceManager manager) =>
             {
                 Console.WriteLine("Received POST request to create metadata object without a file");
-                var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
-
+                //var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+                var appUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
                 //request.EnableBuffering();
                 //request.Body.Seek(0, SeekOrigin.Begin);
                 //if (request.ContentLength == 0)
@@ -132,8 +135,8 @@ namespace Repository.App.API
             app.MapPut("/resources/metadata/{resourceId}", (HttpRequest request, string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received PUT request to update metadata object without a file");
-                var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
-
+                //var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+                var appUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
                 //request.EnableBuffering();
                 //request.Body.Seek(0, SeekOrigin.Begin);
                 //if (request.ContentLength == 0)
@@ -153,17 +156,18 @@ namespace Repository.App.API
             #endregion
             #region visualizers
             // To retrieve graph for given resourceId
-            app.MapGet("/resources/graphs/{resourceId}", (string resourceId, ResourceManager manager) =>
+            app.MapGet("/resources/graphs/{resourceId}", (HttpRequest request, string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received GET request for relation graph on resource id: " + resourceId);
                 return manager.GetGraphForResource(resourceId);
             });
 
             // To create/retrieve a histogram for an EventLog.
-            app.MapPost("/resources/histograms/{resourceId}", (string resourceId, ResourceManager manager) =>
+            app.MapPost("/resources/histograms/{resourceId}", (HttpRequest request, string resourceId, ResourceManager manager) =>
             {
                 Console.WriteLine("Received POST request for histogram on resource id: " + resourceId);
-                var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+                //var appUrl = app.Urls.FirstOrDefault(); // TODO: This isn't the cleanest way to get our own URL. Maybe change at some point.
+                var appUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
                 return manager.GetHistogram(resourceId, appUrl);
             });
             #endregion

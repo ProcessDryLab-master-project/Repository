@@ -24,7 +24,7 @@ namespace Repository.App.Database
         }
         #region SETTERS
         // Files
-        public IResult PostFile(FormObject formObject, string appUrl)
+        public IResult PostFile(FormObject formObject)
         {
             try
             {

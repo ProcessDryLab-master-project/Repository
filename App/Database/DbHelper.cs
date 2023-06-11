@@ -188,8 +188,6 @@ namespace Repository.App.Database
             var files = formCollection?.Files;
             byte[]? file = null;
             if (files?.Count == 1) file = DbHelper.FileToByteArr(files.Single());
-
-
             var formObject = new FormObject()
             {
                 File = file, // DbHelper.FileToByteArr(formCollection?.Files.Single())
