@@ -132,7 +132,7 @@ namespace Repository.App.Database
             //    fileLock.ReleaseWriterLock();
             //    Console.WriteLine("File lock released");
             //}
-            Console.WriteLine("Done, returning ok");
+            Console.WriteLine("Done, returning resource id: " + metadataObject.ResourceId);
             return Results.Ok(metadataObject.ResourceId);
         }
     }
