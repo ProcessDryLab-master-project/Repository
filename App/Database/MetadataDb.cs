@@ -111,6 +111,7 @@ namespace Repository.App.Database
                 if (metadataObject.Equals(currentMetadataObject))
                 {
                     Console.WriteLine($"Metadata object already exist with the same values. Leaving metadata as is.");
+                    metadataObject.ResourceId = resourceId;
                     return;
                 }
 
