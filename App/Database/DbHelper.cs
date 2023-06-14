@@ -179,6 +179,8 @@ namespace Repository.App.Database
         public static FormObject? ToFormObject(this IFormCollection? formCollection, string? appUrl = null)
         {
             if (formCollection == null) return null;
+            if (string.IsNullOrWhiteSpace(formCollection["ResourceType"])) return null;
+            if (string.IsNullOrWhiteSpace(formCollection["ResourceLabel"])) return null;
             if (string.Equals(formCollection["ResourceType"], "EventStream", StringComparison.OrdinalIgnoreCase)
                 && (string.IsNullOrWhiteSpace(formCollection["Host"]) || string.IsNullOrWhiteSpace(formCollection["StreamTopic"])))
             {
