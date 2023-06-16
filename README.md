@@ -3,6 +3,60 @@
 ## Starting the repository
 This section describes how to start the repository
 
+## Metadata structure
+The metadata object structure and key explanations can be seen here
+```js
+{
+    CreationDate: "some_number_of_ms_since_1970",
+    GenerationTree : {
+        Children: null,
+        GeneratedFrom: {
+            SourceHost: "hostname_of_miner_that_created_this_resource", 
+            SourceId: "id_of_miner_that_created_this_resource", 
+            SourceLabel: "name_of_miner_that_created_this_resource"
+        },
+        Parents: [
+            {
+                ResourceId: "parent_resourceId", 
+                UsedAs: "miner_config_ResourceInput_value"
+            }
+        ]
+    },
+    ResourceId: "id_of_self_generated_from_repository",
+    ResourceInfo: {
+        Description: "description_of_self",
+        Dynamic: false, // Shows if resource can change
+        FileExtension: "file_extension_of_self e.g. png, pnml, bpmn",
+        Host: "{hostname}/resources/",
+        ResourceLabel: "name_of_self",
+        ResourceType: "EventStream || ProcessModel || PetriNet || Histogram",
+        StreamTopic: "topic_of_self_if_stream",
+    },
+    fileContent: the_file_contents,
+    repositoryUrl: used_to_request_the_actual_file
+    processId: reference_to_process_that_created_file
+}
+```
+
+How this information is used for this project:
+
+1. <b>CreationDate:</b> This is used for sorting files, as well as a deplay value on file cards in the sidebar. Utility functions found in /src/Utils/Utils are used to convert the format into human readable information.
+2. <b>Generation tree:</b> This is information is only used in repository.
+3. <b>ResourceId:</b> The metadata is stored in localMemory using this key, and therefore the key to accessing the information from a specific file.
+4. <b>ResourceInfo:</b>
+    1. <b>Description:</b> Not implemented. Intented for additional information.
+    2. <b>Dynamic:</b> Is resource expected to update. Resource will be requested in regular intervals when selected in the visualizations screen (only the file that is selected).
+    3. <b>FileExtension:</b> Used by miner and repository for running and saving.
+    4. <b>Host:</b> Owner of the file. Used to request for updates, or by miner to fetch the file from repository.
+    5. <b>ResourceLabel:</b> The name of the file seen everywhere on the frontend.
+    6. <b>ResourceType:</b> Used to determine which visualization can be displayed. Also used to filter input files when running a miner, to only provide allowed files.
+    7. <b>StreamTopic:</b> A pointer to a stream on a broker located on the address showed in the "Host" attibute.
+5. <b>FileContent:</b> This key only exist in the frontend, and holds the file data. This could be a BPMN string, a saved image or otherwise.
+6. <b>repositoryUrl:</b> This key is used as a reference to get the actual files content.
+7. <b>ProcessId:</b> Reference to the process that spawned this file. This is created when starting a process from the frontend, and saved in the output files object on this key.
+
+## File storage structure
+
 ## Add a database
 This section describes how to connect a database to the repository
 
@@ -87,4 +141,4 @@ docker build -t <Image_name> .
 docker run -d -p 4001:80 -p 4000:4000 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=4000 -e ASPNETCORE_Kestrel__Certificates__Default__Password="<CREDENTIAL_PLACEHOLDER>" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/<EXACT_PROJECT_NAME>.pfx -v %USERPROFILE%\.aspnet\https:/https/ --name <Container_name> <Image_name>
 ```
 
-If it is desired to update the docker-compose file to run a secure connection with this project, we recommend looking at ASP.NET dockumentation: https://learn.microsoft.com/en-us/aspnet/core/security/docker-compose-https?view=aspnetcore-7.0
+If it is desired to update the docker-compose file to run a secure connection with this project, we recommend looking at ASP.NET documentation: https://learn.microsoft.com/en-us/aspnet/core/security/docker-compose-https?view=aspnetcore-7.0
