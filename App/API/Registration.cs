@@ -1,4 +1,8 @@
-﻿namespace Repository.App.API
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Repository.App.Entities;
+
+namespace Repository.App.API
 {
     public class Registration
     {
@@ -6,7 +10,9 @@
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "configuration.json");
             string config = File.ReadAllText(path);
-            return config;
+            var jsonConfig = JObject.Parse(config); // To remove comments
+            string configFormat = JsonConvert.SerializeObject(jsonConfig, Formatting.Indented);
+            return configFormat;
         }
     }
 }
