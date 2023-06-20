@@ -22,11 +22,6 @@ namespace Repository.App.Visualizers
             var histogramDict = GenerateHistogramDict(path);
             string jsonListStr = ConvertToJsonList(histogramDict);
             return jsonListStr;
-
-
-            //File.WriteAllText(pathToSave, jsonList); // TODO: Consider if this should use the lock. It should never be possible to write the same histogram multiple times, so it might not be needed
-            //return Results.Text(jsonListStr, contentType: "application/json");
-            //return Results.File(pathToSave, GUID); // If we would want to return the file instead?
         }
 
         public static MetadataObject CreateHistogramMetadata(string logResourceId, string appUrl, MetadataObject? logMetadataObject)
@@ -40,17 +35,6 @@ namespace Repository.App.Visualizers
                 }
             };
             string parentsAsString = JsonConvert.SerializeObject(parents);
-            //Dictionary<string, string> metadataKeys = new()
-            //{
-            //    { "ResourceLabel", $"Histogram from log: {logMetadataObject.ResourceInfo.ResourceLabel}"},
-            //    { "ResourceType", "Histogram"},
-            //    { "Host", $"{appUrl}/resources/"},
-            //    { "Description", $"Histogram generated from log with label {logMetadataObject.ResourceInfo.ResourceLabel} and ID: {logResourceId}"},
-            //    { "FileExtension", "json"},
-            //    { "Parents", parentsAsString},
-
-            //};
-            //var metadataObject = DbHelper.BuildMetadataObject(metadataKeys);
             FormObject formObject = new()
             {
                 ResourceLabel =$"Histogram from log: {logMetadataObject.ResourceInfo.ResourceLabel}",
@@ -62,7 +46,6 @@ namespace Repository.App.Visualizers
             };
             var metadataObject = DbHelper.BuildMetadataObject(formObject);
             return metadataObject;
-            //metadataDb.MetadataWrite(metadataObject);
         }
 
         // Convert dictionary to list in format that Frontend takes

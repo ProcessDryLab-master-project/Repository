@@ -17,7 +17,7 @@ namespace Repository
             {
                 Console.WriteLine("Environment.IsDevelopment");
                 builder.WebHost.UseUrls("http://localhost:4001");
-                //builder.WebHost.UseUrls("http://localhost:4001", "https://localhost:4000");
+                //builder.WebHost.UseUrls("http://localhost:4001", "https://localhost:4000"); // For https as well as http
             }
 
             // Add services to the container.
@@ -41,12 +41,6 @@ namespace Repository
             // Dependency injection of the ResourceManager to use the databases:
             builder.Services.AddSingleton<ResourceManager>(new ResourceManager(new FileDb(), new MetadataDb()));
             var app = builder.Build();
-            // TODO: Consider if we could/should use EnableBuffering for all endpoints. Code will look something like this:
-            //app.Use(async (context, next) => {
-            //    context.Request.EnableBuffering();
-            //    await next();
-            //});
-            //app.UseMiddleware<RequestValidatorMiddleware>(); // TODO: If this isn't necessary, delete the class as well.
 
             app.UseRateLimiter();
             
@@ -63,7 +57,7 @@ namespace Repository
                 app.UseSwaggerUI();
             }
 
-            // TODO: Delete if we don't reimplement https.
+            // If https should be added again
             //app.UseHttpsRedirection();
             //app.UseAuthorization();
             //app.UseRouting();

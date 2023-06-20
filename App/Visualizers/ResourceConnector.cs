@@ -11,20 +11,10 @@ namespace Repository.App.Visualizers
 {
     public class ResourceConnector
     {
-        //IMetadataDb metadataDb { get; set; }
-        //public ResourceConnector(IMetadataDb dataInterface)
-        //{
-        //    metadataDb = dataInterface;
-        //}
         public static string CreateGraph(MetadataObject requestedMdObject, Dictionary<string, MetadataObject> metadataDict)
         {
             HashSet<string> exploredNodes = new HashSet<string>();
-            //Console.WriteLine("Getting graph for requested object: " + resourceId);
-            //MetadataObject? requestedMdObject = metadataDb.GetMetadataObjectById(resourceId);
-            //if (requestedMdObject == null) return Results.BadRequest("No resource exist for that ID");
-
             string graphId = Guid.NewGuid().ToString();
-            //Graph graph = new Graph($"\"{graphId}\"");
             Graph graph = new Graph($"\"Relations Graph\"");
             graph.type = "digraph";
 
@@ -40,13 +30,12 @@ namespace Repository.App.Visualizers
 
             RecursiveInsert(requestedMdObject, metadataDict, graph, centerNode, exploredNodes);
 
-            // This if we want to save as a file and send it as IResult instead. Can convert the dot file to svg with this command: dot -Tsvg test.dot > test.svg
+            // This if we want to save as a file and send it as IResult instead. Useful for confirming that it works as expected. Can convert the dot file to svg with this command: dot -Tsvg test.dot > test.svg
             //string pathToFile = Path.Combine(pathToDot, "test" + ".dot");
             //DotDocument dotDocument = new DotDocument();
             //dotDocument.SaveToFile(graph, pathToFile);
             //return Results.File(pathToFile, resourceId);
             return graph.ElementToString();
-            //return Results.Ok(graph.ElementToString());
         }
         public static void RecursiveInsert(MetadataObject? mdObject, Dictionary<string, MetadataObject> metadataDict, Graph graph, Node node, HashSet<string> exploredNodes)
         {
@@ -63,7 +52,7 @@ namespace Repository.App.Visualizers
                     CreateNodeAndEdge(relativeMdObject, metadataDict, graph, node, relativeId, false, exploredNodes, parentUsedAs);
                 }
             }
-            // Code if we're interested in children.
+            // Code if the graph should include children as well (may need some updates)
             //var childList = mdObject.GenerationTree.Children;
             //foreach (var relative in childList ?? Enumerable.Empty<Child>())
             //{
@@ -78,21 +67,16 @@ namespace Repository.App.Visualizers
 
         private static void CreateNodeAndEdge(MetadataObject? relativeMdObject, Dictionary<string, MetadataObject> metadataDict, Graph graph, Node currentNode, string relativeId, bool isChild, HashSet<string> exploredNodes, string? relativeUsedAs = null)
         {
-            //MetadataObject? relativeMdObject = metadataDb.GetMetadataObjectById(relativeId);
-            
-            //string relativeInfo = JsonConvert.SerializeObject(relativeMdObject.ResourceInfo, Formatting.Indented);
-            //Node relativeNode = new Node($"\"{relativeInfo}\"");
             Node relativeNode = new Node($"\"{relativeId}\"");
             relativeNode.Attribute.fontsize.Value = 15;
 
             if (relativeMdObject == null) relativeNode.Attribute.color.Value = Color.X11.red; // Red because it's not part of this repository
             else
             {
-                //relativeNode.Attribute.label.TranslateToValue("<<FONT POINT-SIZE=\"20\">Bigger</FONT>and<FONT POINT-SIZE=\"10\">Smaller</FONT>>");
                 relativeNode.Attribute.label.Value = "Label: " + relativeMdObject.ResourceInfo.ResourceLabel;
                 string? sourceLabel = relativeMdObject.GenerationTree?.GeneratedFrom?.SourceLabel;
                 if (!string.IsNullOrWhiteSpace(sourceLabel))
-                    relativeNode.Attribute.label.Value += $"\\nGenerated from: {sourceLabel}";// Can only use label if it's part of this repo
+                    relativeNode.Attribute.label.Value += $"\\nGenerated from: {sourceLabel}"; // Can only use label if it's part of this repo
 
                 FillToolTip(relativeMdObject, relativeNode);
             }
@@ -106,7 +90,6 @@ namespace Repository.App.Visualizers
             }
             graph.AddElements(relativeNode, edge);
             RecursiveInsert(relativeMdObject, metadataDict, graph, relativeNode, exploredNodes);
-            //RecursiveInsert(graph, relativeNode, exploredNodes, relativeMdObject, relativeId);
         }
 
         private static void FillToolTip(MetadataObject relativeMdObject, Node relativeNode)

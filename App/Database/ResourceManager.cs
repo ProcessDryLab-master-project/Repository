@@ -28,16 +28,9 @@ namespace Repository.App.Database
         {
             try
             {
-                //var requestFiles = formData.Files;
-                //if (requestFiles.Count != 1) return Results.BadRequest("Exactly one file is required");
-                //var formFile = requestFiles.Single();
-
-                //var formDataObj = formData.ToDictionary();
-                //formDataObj = DbHelper.ValidateFormData(formDataObj, appUrl);
                 var metadataObject = DbHelper.BuildMetadataObject(formObject);
                 metadataDb.MetadataWrite(metadataObject);
                 if(metadataObject.ResourceInfo.Dynamic) metadataDb.UpdateDynamicResourceTime(metadataObject.ResourceId);
-                //byte[] file = DbHelper.FileToByteArr(formFile);
                 return fileDb.WriteFile(metadataObject, formObject.File!);
             }
             catch (Exception e)
@@ -52,9 +45,8 @@ namespace Repository.App.Database
                 MetadataObject metadataObject = metadataDb.GetMetadataObjectById(resourceId);
                 if (metadataObject == null) 
                     return Results.BadRequest("No resource with that ID");
-                metadataDb.UpdateDynamicResourceTime(resourceId); // TODO: Make MetadataWrite async and write await?
+                metadataDb.UpdateDynamicResourceTime(resourceId);
 
-                //byte[] file = DbHelper.FileToByteArr(formFile);
                 return fileDb.WriteFile(metadataObject, file);
             }
             catch (Exception e)
@@ -63,40 +55,6 @@ namespace Repository.App.Database
             }
         }
         // Metadata specific
-        //public IResult PostMetadata(IFormCollection formData, string appUrl)
-        //{
-        //    try
-        //    {
-        //        var formDataObj = formData.ToDictionary();
-        //        formDataObj = DbHelper.ValidateFormData(formDataObj, appUrl);
-        //        if (formDataObj == null) return Results.BadRequest("Invalid FormData keys");
-        //        string? resourceId = null;
-        //        MetadataObject? metadataObject;
-        //        if (formDataObj["ResourceType"] == "EventStream")
-        //        {
-        //            bool overwrite = !string.Equals(formDataObj["Overwrite"], "true", StringComparison.OrdinalIgnoreCase);
-        //            var metadataList = DbHelper.MetadataDictToList(metadataDb.GetMetadataDict());
-        //            var existingMetadata = metadataList.Find(metadata => metadata.ResourceInfo.Host == formDataObj["Host"] && metadata.ResourceInfo.StreamTopic == formDataObj["StreamTopic"]);
-        //            if (existingMetadata != null)
-        //            {
-        //                if(!overwrite) // If a similar metadata object exists and no Overwrite key has been sent, don't add a new one.
-        //                    return Results.BadRequest("An EventStream for that StreamTopic and Host already exist. Use the Overwrite key if you wish to change it.");
-
-        //                resourceId = existingMetadata.ResourceId!; // If we're overwriting a metadata object, save that key for when it's built
-        //            }
-        //        }
-
-        //        metadataObject = DbHelper.BuildMetadataObject(formDataObj, resourceId);
-        //        resourceId = metadataObject.ResourceId!; // Saving generated resource ID so we can return it, since it's removed before writing to metadata file
-
-        //        metadataDb.MetadataWrite(metadataObject); // TODO: Make MetadataWrite async and write await?
-        //        return Results.Ok(resourceId);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Results.BadRequest(e);
-        //    }
-        //}
         public IResult PostMetadata(FormObject formObject, string appUrl)
         {
             try
@@ -117,7 +75,7 @@ namespace Repository.App.Database
                 }
 
                 MetadataObject metadataObject = DbHelper.BuildMetadataObject(formObject, resourceId);
-                metadataDb.MetadataWrite(metadataObject); // TODO: Make MetadataWrite async and write await?
+                metadataDb.MetadataWrite(metadataObject);
                 return Results.Ok(metadataObject.ResourceId);
             }
             catch (Exception e)
@@ -146,7 +104,7 @@ namespace Repository.App.Database
                     }
                 }
                 metadataObject.ResourceId = resourceId;
-                metadataDb.MetadataWrite(metadataObject); // TODO: Make MetadataWrite async and write await?
+                metadataDb.MetadataWrite(metadataObject); 
                 return Results.Ok(resourceId);
             }
             catch (Exception e)
@@ -216,7 +174,7 @@ namespace Repository.App.Database
                 {
                     Console.WriteLine("Child id: " + childId);
                     var childMetadata = metadataDb.GetMetadataObjectById(childId);
-                    if (childMetadata != null) // TODO: Consider if this is needed? Children should always exist in same repo
+                    if (childMetadata != null) 
                     {
                         childMetadata.ResourceId = childId;
                         childrenMetadataList.Add(childMetadata);
@@ -274,7 +232,7 @@ namespace Repository.App.Database
             string pathToRequestFile = Path.Combine(Globals.pathToEventLog, nameOfFile);
             if (!File.Exists(pathToRequestFile))
             {
-                string badResponse = "No file of type EventLog exists for path " + pathToRequestFile; // TODO: Delete at some point. Should not return the entire path, just easier like this for now
+                string badResponse = "No file of type EventLog exist for resource id: " + resourceId; 
                 return Results.BadRequest(badResponse);
             }
 
