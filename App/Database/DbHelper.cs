@@ -81,6 +81,12 @@ namespace Repository.App.Database
                     case "Dynamic":
                         metadataObject.ResourceInfo.Dynamic = Convert.ToBoolean(keyValuePair.Value);
                         break;
+                    case "Host":
+                        metadataObject.ResourceInfo.Host = keyValuePair.Value;
+                        break;
+                    case "StreamTopic":
+                        metadataObject.ResourceInfo.StreamTopic = keyValuePair.Value;
+                        break;
 
                     // Additional keys that we may want the option to change.
                     //case "GeneratedFrom":
