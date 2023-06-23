@@ -91,7 +91,6 @@ namespace Repository.App.Entities
         }
         #endregion equals
     }
-    // TODO: Consider if this should be an object instead, since some of the input may vary and it would be easier when used through Histogram.
     public class GeneratedFrom : IEquatable<GeneratedFrom?>
     {
         public string SourceHost { get; set; }

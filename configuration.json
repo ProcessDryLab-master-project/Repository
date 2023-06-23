@@ -1,6 +1,6 @@
 {
+  //"AlteredHostname": "http://repository:4001",
   "Label": "Public Repository",
   "Type": "Repository",
-  "Access": "Public",
-  //"AlteredHostname": "http://repository:4001"
+  "Access": "Public"
 }
