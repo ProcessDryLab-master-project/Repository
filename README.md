@@ -63,6 +63,8 @@ This section describes how to connect a database to the repository.
 The current implementation utilizes IfileDb and IMetadataDb that are interfaces. To create and connect an external database, make new classes and extend the interfaces and add the source code necessary for the functionality of all functions of the interfaces. Import the new classes in "Program.cs" and replace the dependency injection of "builder.Services.AddSingleton..." with your new database classes. This will replace the default in-app file database with your new implementation.
 
 ## Docker
+This does not fulfill it's intended functionality when all services are running through docker on the same windows machine.
+
 This project supports docker runtime environment, for which you will need to download docker from here: https://www.docker.com/products/docker-desktop/.
 
 For this project, be aware that express listens on a specfic port (can be found in /API/Endpoints), which must be the same port that is used in the docker file. 
