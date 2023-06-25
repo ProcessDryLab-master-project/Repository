@@ -1,0 +1,26 @@
+[
+  [
+    "Seat Guests",
+    6
+  ],
+  [
+    "Take Order",
+    6
+  ],
+  [
+    "Send Order",
+    9
+  ],
+  [
+    "Complete Order",
+    9
+  ],
+  [
+    "Take Another Order",
+    3
+  ],
+  [
+    "Take Payment",
+    6
+  ]
+]

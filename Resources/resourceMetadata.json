@@ -1,19 +1,30 @@
 {
   "8b8ceaae-1425-4bf6-8316-cd432c007638": {
-    "CreationDate": "1680777783668",
+    "CreationDate": "1687623832076",
     "ResourceInfo": {
-      "ResourceLabel": "Alphabet Stream",
+      "ResourceLabel": "Publisher",
       "ResourceType": "EventStream",
       "Host": "mqtt.eclipseprojects.io",
       "FileExtension": null,
       "StreamTopic": "AlphabetStream",
-      "Description": "A stream of letters from the alphabet",
+      "Description": "Filtered stream",
       "Dynamic": false
     },
     "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": null,
-      "Children": null
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000/miner",
+        "SourceId": "8",
+        "SourceLabel": "Alphabet Stream Publisher"
+      },
+      "Parents": [],
+      "Children": [
+        {
+          "ResourceId": "e84579ca-b7ce-480d-b3be-0efff2edab30"
+        },
+        {
+          "ResourceId": "44a84f3b-1e5b-44ce-8fc7-3b86e45c8f91"
+        }
+      ]
     }
   },
   "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8": {
@@ -35,102 +46,16 @@
           "ResourceId": "33405ce3-7265-4015-8d82-0d2d4cf89952"
         },
         {
-          "ResourceId": "2277f2f6-de91-43bd-a9d6-3bcf3dda46a7"
+          "ResourceId": "dcecb254-4699-4fd3-9b5c-eb77d90b74c6"
         },
         {
-          "ResourceId": "c9187211-ed4f-4604-96e3-d1e34c2b026f"
+          "ResourceId": "0d509ef1-cd40-4fd9-86c9-ff91f0a5c456"
         },
         {
-          "ResourceId": "b6765c86-b352-4ff8-b0b0-e845b75a4b7f"
-        }
-      ]
-    }
-  },
-  "33405ce3-7265-4015-8d82-0d2d4cf89952": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Custom Conformant",
-      "ResourceType": "EventLog",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "xes",
-      "StreamTopic": null,
-      "Description": "A filtered log of Custom Conformant Long",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": [
-        {
-          "ResourceId": "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8",
-          "UsedAs": "LogToFilter"
-        }
-      ],
-      "Children": [
-        {
-          "ResourceId": "2277f2f6-de91-43bd-a9d6-3bcf3dda46a7"
+          "ResourceId": "6fd2ea02-352a-4211-a440-8c997a34dd4b"
         },
         {
-          "ResourceId": "c2144ad3-a069-4cac-a1f8-b8c4bf235a91"
-        }
-      ]
-    }
-  },
-  "b6765c86-b352-4ff8-b0b0-e845b75a4b7f": {
-    "CreationDate": "1686044632056",
-    "ResourceInfo": {
-      "ResourceLabel": "Alignment output",
-      "ResourceType": "Alignment",
-      "Host": "/resources/",
-      "FileExtension": "json",
-      "StreamTopic": null,
-      "Description": "Miner result from some miner",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": {
-        "SourceHost": "http://localhost:5000/miner",
-        "SourceId": "5",
-        "SourceLabel": "Alignment Conformance"
-      },
-      "Parents": [
-        {
-          "ResourceId": "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8",
-          "UsedAs": "LogToCheck"
-        },
-        {
-          "ResourceId": "dd12e950-73eb-4064-941e-bfeb56f73f8f",
-          "UsedAs": "ReferenceModel"
-        }
-      ],
-      "Children": null
-    }
-  },
-  "2277f2f6-de91-43bd-a9d6-3bcf3dda46a7": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Custom Conformant Small",
-      "ResourceType": "EventLog",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "xes",
-      "StreamTopic": null,
-      "Description": "A filtered log, based on 2 other logs.",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": [
-        {
-          "ResourceId": "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8",
-          "UsedAs": "InputLog1"
-        },
-        {
-          "ResourceId": "33405ce3-7265-4015-8d82-0d2d4cf89952",
-          "UsedAs": "InputLog2"
-        }
-      ],
-      "Children": [
-        {
-          "ResourceId": "b5c8d896-45c8-4054-8620-6570184d1b0c"
+          "ResourceId": "8fd4b46d-e086-4488-ae46-8f0e88b63709"
         }
       ]
     }
@@ -152,19 +77,51 @@
       "Children": [
         {
           "ResourceId": "58da665d-ce6d-495f-baed-9a3437dac590"
+        },
+        {
+          "ResourceId": "c9187211-ed4f-4604-96e3-d1e34c2b026f"
+        },
+        {
+          "ResourceId": "1672f495-6f74-4292-ac7f-ea4f633292fd"
         }
       ]
     }
   },
-  "58da665d-ce6d-495f-baed-9a3437dac590": {
-    "CreationDate": "1680777783668",
+  "c9187211-ed4f-4604-96e3-d1e34c2b026f": {
+    "CreationDate": "1687618842627",
     "ResourceInfo": {
-      "ResourceLabel": "Large Petri Net",
-      "ResourceType": "PetriNet",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "jpg",
+      "ResourceLabel": "ML1 Large Log BPMN",
+      "ResourceType": "ProcessModel",
+      "Host": "http://10.209.219.227:4001/resources/",
+      "FileExtension": "bpmn",
       "StreamTopic": null,
-      "Description": "Image of a PetriNet, based on some large log",
+      "Description": "A BPMN model generated from ML1 Large Log",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000/miner",
+        "SourceId": "3",
+        "SourceLabel": "Inductive Miner"
+      },
+      "Parents": [
+        {
+          "ResourceId": "8e8741e6-471f-48a9-8060-6a7ca4de82c1",
+          "UsedAs": "LogToRun"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "1672f495-6f74-4292-ac7f-ea4f633292fd": {
+    "CreationDate": "1687619255544",
+    "ResourceInfo": {
+      "ResourceLabel": "Histogram from log: ML1 Large Log",
+      "ResourceType": "Histogram",
+      "Host": "http://10.209.219.227:4001/resources/",
+      "FileExtension": "json",
+      "StreamTopic": null,
+      "Description": "Histogram generated from log with label ML1 Large Log and ID: 8e8741e6-471f-48a9-8060-6a7ca4de82c1",
       "Dynamic": false
     },
     "GenerationTree": {
@@ -172,318 +129,18 @@
       "Parents": [
         {
           "ResourceId": "8e8741e6-471f-48a9-8060-6a7ca4de82c1",
-          "UsedAs": "InputLog"
+          "UsedAs": "EventLog"
         }
       ],
       "Children": null
     }
   },
-  "5dd1a19f-919a-4d46-8ea2-ab34eb98adb0": {
-    "CreationDate": "1680777783668",
+  "dcecb254-4699-4fd3-9b5c-eb77d90b74c6": {
+    "CreationDate": "1687622366403",
     "ResourceInfo": {
-      "ResourceLabel": "Weird Petri Net",
+      "ResourceLabel": "Alpha Petri Net",
       "ResourceType": "PetriNet",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "jpg",
-      "StreamTopic": null,
-      "Description": "Image of a Petri Net, based on some odd cyclic log",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": [
-        {
-          "ResourceId": "138e4fe6-421f-48a9-8060-6a1qa5de42c1",
-          "UsedAs": "LogToUse"
-        }
-      ],
-      "Children": null
-    }
-  },
-  "77d0e9a4-e315-4be1-a387-e5d4f18c787a": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Test Petri Net",
-      "ResourceType": "PetriNet",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "png",
-      "StreamTopic": null,
-      "Description": "Image of a Petri Net from somewhere unknown",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": null,
-      "Children": null
-    }
-  },
-  "c9187211-ed4f-4604-96e3-d1e34c2b026f": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Create Content",
-      "ResourceType": "ProcessModel",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "bpmn",
-      "StreamTopic": null,
-      "Description": "Probably not the right parent, just for testing",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": {
-        "SourceHost": "http://localhost:5000",
-        "SourceId": "4",
-        "SourceLabel": "Inductive Miner"
-      },
-      "Parents": [
-        {
-          "ResourceId": "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8",
-          "UsedAs": "InputLog"
-        }
-      ],
-      "Children": [
-        {
-          "ResourceId": "b5c8d896-45c8-4054-8620-6570184d1b0c"
-        }
-      ]
-    }
-  },
-  "b5c8d896-45c8-4054-8620-6570184d1b0c": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "A3E1",
-      "ResourceType": "ProcessModel",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "bpmn",
-      "StreamTopic": null,
-      "Description": "Some BPMN with 2 parents somehow (probably wrong parents too)",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": {
-        "SourceHost": "http://localhost:5000",
-        "SourceId": "4",
-        "SourceLabel": "Inductive Miner"
-      },
-      "Parents": [
-        {
-          "ResourceId": "c9187211-ed4f-4604-96e3-d1e34c2b026f",
-          "UsedAs": "InputLog1"
-        },
-        {
-          "ResourceId": "2277f2f6-de91-43bd-a9d6-3bcf3dda46a7",
-          "UsedAs": "InputLog2"
-        }
-      ],
-      "Children": [
-        {
-          "ResourceId": "78b92dd2-ef1d-4d98-9182-01b454edc507"
-        }
-      ]
-    }
-  },
-  "dd12e950-73eb-4064-941e-bfeb56f73f8f": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Custom Ref Model",
-      "ResourceType": "PetriNet",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "pnml",
-      "StreamTopic": null,
-      "Description": "Petri Net designed to be conformant with Custom Conformant Long",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": null,
-      "Children": [
-        {
-          "ResourceId": "b6765c86-b352-4ff8-b0b0-e845b75a4b7f"
-        }
-      ]
-    }
-  },
-  "1780591b-b2e6-466a-9de2-9b0fedfb7a8e": {
-    "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Running Example",
-      "ResourceType": "EventLog",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "xes",
-      "StreamTopic": null,
-      "Description": "Running example log",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": null,
-      "Children": [
-        {
-          "ResourceId": "76d042dd-81d7-4a44-889f-5814bd9c97e9"
-        },
-        {
-          "ResourceId": "e94aea38-7ec3-4eef-9bc7-ed4d9ec1c96b"
-        },
-        {
-          "ResourceId": "78330164-4a8f-4855-b142-f262607b55db"
-        }
-      ]
-    }
-  },
-  "76d042dd-81d7-4a44-889f-5814bd9c97e9": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Running Example",
-      "ResourceType": "PetriNet",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "pnml",
-      "StreamTopic": null,
-      "Description": "Petri Net from Running Example",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": {
-        "SourceHost": "http://localhost:5000",
-        "SourceId": "1",
-        "SourceLabel": "Alpha Miner"
-      },
-      "Parents": [
-        {
-          "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
-          "UsedAs": "InputLog"
-        }
-      ],
-      "Children": null
-    }
-  },
-  "e94aea38-7ec3-4eef-9bc7-ed4d9ec1c96b": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Pretend Petri Net",
-      "ResourceType": "PetriNet",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "dot",
-      "StreamTopic": null,
-      "Description": "This is not a PetriNet, just a DOT graph for testing",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": {
-        "SourceHost": "http://localhost:5000",
-        "SourceId": "2",
-        "SourceLabel": "Heuristic Miner"
-      },
-      "Parents": [
-        {
-          "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
-          "UsedAs": "LogToRun"
-        }
-      ],
-      "Children": [
-        {
-          "ResourceId": "b85b7d07-2007-483e-8c7e-9d1cf9ddea88"
-        }
-      ]
-    }
-  },
-  "b85b7d07-2007-483e-8c7e-9d1cf9ddea88": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "SVG Pretend Petri Net",
-      "ResourceType": "PetriNet",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "svg",
-      "StreamTopic": null,
-      "Description": "This is not a PetriNet, just a SVG from a dot graph for testing",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": {
-        "SourceHost": "http://notarealhost.com",
-        "SourceId": "58742",
-        "SourceLabel": "GraphConverter"
-      },
-      "Parents": [
-        {
-          "ResourceId": "e94aea38-7ec3-4eef-9bc7-ed4d9ec1c96b",
-          "UsedAs": "FileToConvert"
-        }
-      ],
-      "Children": null
-    }
-  },
-  "e40ae370-3509-4869-8b77-ecade2bd253c": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Histogram from log: Running Example",
-      "ResourceType": "Histogram",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "json",
-      "StreamTopic": null,
-      "Description": "Histogram generated from log with label Running Example and ID: 1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": [
-        {
-          "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
-          "UsedAs": "Log"
-        }
-      ],
-      "Children": null
-    }
-  },
-  "060d4965-5abc-40dc-8cad-ad936db9e6ed": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Histogram from log: Running Example",
-      "ResourceType": "Histogram",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "json",
-      "StreamTopic": null,
-      "Description": "Histogram generated from log with label Running Example and ID: 1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": [
-        {
-          "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
-          "UsedAs": "Log"
-        }
-      ],
-      "Children": null
-    }
-  },
-  "78330164-4a8f-4855-b142-f262607b55db": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Histogram from log: Running Example",
-      "ResourceType": "Histogram",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "json",
-      "StreamTopic": null,
-      "Description": "Histogram generated from log with label Running Example and ID: 1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": [
-        {
-          "ResourceId": "1780591b-b2e6-466a-9de2-9b0fedfb7a8e",
-          "UsedAs": "Log"
-        }
-      ],
-      "Children": null
-    }
-  },
-  "c2144ad3-a069-4cac-a1f8-b8c4bf235a91": {
-    "CreationDate": "1682347423406",
-    "ResourceInfo": {
-      "ResourceLabel": "Alpha PNML",
-      "ResourceType": "PetriNet",
-      "Host": "http://localhost:4001/resources",
+      "Host": "http://10.209.219.227:4001/resources/",
       "FileExtension": "pnml",
       "StreamTopic": null,
       "Description": "Miner result from some miner",
@@ -497,22 +154,112 @@
       },
       "Parents": [
         {
-          "ResourceId": "33405ce3-7265-4015-8d82-0d2d4cf89952",
+          "ResourceId": "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8",
+          "UsedAs": "LogToRun"
+        }
+      ],
+      "Children": [
+        {
+          "ResourceId": "6fd2ea02-352a-4211-a440-8c997a34dd4b"
+        }
+      ]
+    }
+  },
+  "0d509ef1-cd40-4fd9-86c9-ff91f0a5c456": {
+    "CreationDate": "1687622401179",
+    "ResourceInfo": {
+      "ResourceLabel": "Heuristic Petri Net",
+      "ResourceType": "PetriNet",
+      "Host": "http://10.209.219.227:4001/resources/",
+      "FileExtension": "png",
+      "StreamTopic": null,
+      "Description": "Miner result from some miner",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000/miner",
+        "SourceId": "2",
+        "SourceLabel": "Heuristic Miner"
+      },
+      "Parents": [
+        {
+          "ResourceId": "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8",
           "UsedAs": "LogToRun"
         }
       ],
       "Children": null
     }
   },
-  "78b92dd2-ef1d-4d98-9182-01b454edc507": {
-    "CreationDate": "1684597917315",
+  "6fd2ea02-352a-4211-a440-8c997a34dd4b": {
+    "CreationDate": "1687622437299",
     "ResourceInfo": {
-      "ResourceLabel": "Small BPMN",
+      "ResourceLabel": "Alignment",
+      "ResourceType": "Alignment",
+      "Host": "http://10.209.219.227:4001/resources/",
+      "FileExtension": "json",
+      "StreamTopic": null,
+      "Description": "Miner result from some miner",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000/miner",
+        "SourceId": "5",
+        "SourceLabel": "Alignment Conformance"
+      },
+      "Parents": [
+        {
+          "ResourceId": "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8",
+          "UsedAs": "LogToCheck"
+        },
+        {
+          "ResourceId": "dcecb254-4699-4fd3-9b5c-eb77d90b74c6",
+          "UsedAs": "ReferenceModel"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "8fd4b46d-e086-4488-ae46-8f0e88b63709": {
+    "CreationDate": "1687622879639",
+    "ResourceInfo": {
+      "ResourceLabel": "Inductive output",
       "ResourceType": "ProcessModel",
-      "Host": "/resources/",
+      "Host": "http://10.209.219.227:4001/resources/",
       "FileExtension": "bpmn",
       "StreamTopic": null,
-      "Description": "A very small BPMN, cut down from A3E1",
+      "Description": "Miner result from some miner",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000/miner",
+        "SourceId": "5fb3624b-4242-4cfe-82b6-c142eb739ebf",
+        "SourceLabel": "Cloned Inductive EXE"
+      },
+      "Parents": [
+        {
+          "ResourceId": "ee72a5ef-4156-4e7c-9ce7-e3a65291f6c8",
+          "UsedAs": "LogToRun"
+        }
+      ],
+      "Children": [
+        {
+          "ResourceId": "aea8440e-3c58-44a8-ac47-07e2a7348375"
+        }
+      ]
+    }
+  },
+  "aea8440e-3c58-44a8-ac47-07e2a7348375": {
+    "CreationDate": "1687623185616",
+    "ResourceInfo": {
+      "ResourceLabel": "Inductive output changed",
+      "ResourceType": "ProcessModel",
+      "Host": "http://10.209.219.227:4001/resources/",
+      "FileExtension": "bpmn",
+      "StreamTopic": null,
+      "Description": "Manual changes to Inductive output",
       "Dynamic": false
     },
     "GenerationTree": {
@@ -523,206 +270,93 @@
       },
       "Parents": [
         {
-          "ResourceId": "b5c8d896-45c8-4054-8620-6570184d1b0c",
+          "ResourceId": "8fd4b46d-e086-4488-ae46-8f0e88b63709",
           "UsedAs": "ManualEditing"
         }
       ],
       "Children": null
     }
   },
-  "1": {
-    "CreationDate": "1680777783668",
+  "e84579ca-b7ce-480d-b3be-0efff2edab30": {
+    "CreationDate": "1687623863073",
     "ResourceInfo": {
-      "ResourceLabel": "Log A",
-      "ResourceType": "EventLog",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "xes",
-      "StreamTopic": null,
-      "Description": "Log 1 with no parents",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": null,
-      "Children": [
-        {
-          "ResourceId": "2"
-        }
-      ]
-    }
-  },
-  "2": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Filtered log",
-      "ResourceType": "EventLog",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "xes",
-      "StreamTopic": null,
-      "Description": "Log 1 filtered",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": {
-        "SourceHost": "https://joes-miner",
-        "SourceId": "MID",
-        "SourceLabel": "Filterer"
-      },
-      "Parents": [
-        {
-          "ResourceId": "1",
-          "UsedAs": "LogToFilter"
-        }
-      ],
-      "Children": [
-        {
-          "ResourceId": "4"
-        }
-      ]
-    }
-  },
-  "3": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Log B",
-      "ResourceType": "EventLog",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "xes",
-      "StreamTopic": null,
-      "Description": "Log 3 with no parents",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": null,
-      "Children": [
-        {
-          "ResourceId": "4"
-        }
-      ]
-    }
-  },
-  "4": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Combined log",
-      "ResourceType": "EventLog",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "xes",
-      "StreamTopic": null,
-      "Description": "A combination of 2 logs, with events excluded from a third log",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": {
-        "SourceHost": "https://joes-miner",
-        "SourceId": "MID",
-        "SourceLabel": "Combine and Exclude"
-      },
-      "Parents": [
-        {
-          "ResourceId": "2",
-          "UsedAs": "Log1Combine"
-        },
-        {
-          "ResourceId": "3",
-          "UsedAs": "Log2Combine"
-        },
-        {
-          "ResourceId": "8e8741e6-471f-48a9-8060-6a7ca4de82c0",
-          "UsedAs": "LogExclude"
-        }
-      ],
-      "Children": [
-        {
-          "ResourceId": "7"
-        }
-      ]
-    }
-  },
-  "5": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Log C",
-      "ResourceType": "EventLog",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "xes",
-      "StreamTopic": null,
-      "Description": "Log 5, with no parents, used to create Petri Net 6",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": null,
-      "Parents": null,
-      "Children": [
-        {
-          "ResourceId": "6"
-        }
-      ]
-    }
-  },
-  "6": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Alpha Petri Net",
-      "ResourceType": "PetriNet",
-      "Host": "http://localhost:4001/resources",
-      "FileExtension": "pnml",
-      "StreamTopic": null,
-      "Description": "A Petri Net from Log 5",
-      "Dynamic": false
-    },
-    "GenerationTree": {
-      "GeneratedFrom": {
-        "SourceHost": "https://bills-miner",
-        "SourceId": "MID",
-        "SourceLabel": "Alpha Miner"
-      },
-      "Parents": [
-        {
-          "ResourceId": "5",
-          "UsedAs": "LogToRun"
-        }
-      ],
-      "Children": [
-        {
-          "ResourceId": "7"
-        }
-      ]
-    }
-  },
-  "7": {
-    "CreationDate": "1680777783668",
-    "ResourceInfo": {
-      "ResourceLabel": "Alignment",
-      "ResourceType": "Alignment",
-      "Host": "http://localhost:4001/resources",
+      "ResourceLabel": "Alphabet Stream Histogram",
+      "ResourceType": "Histogram",
+      "Host": "http://10.209.219.227:4001/resources/",
       "FileExtension": "json",
       "StreamTopic": null,
-      "Description": "Alignment of Log 4 and Petri Net 6",
+      "Description": "Miner result from some miner",
       "Dynamic": false
     },
     "GenerationTree": {
       "GeneratedFrom": {
-        "SourceHost": "https://bills-miner",
-        "SourceId": "MID",
-        "SourceLabel": "Conformance Checker"
+        "SourceHost": "http://localhost:5000/miner",
+        "SourceId": "d69a8aae-bdff-43dc-afd2-6d33f1e13925",
+        "SourceLabel": "Cloned Alphabet Miner"
       },
       "Parents": [
         {
-          "ResourceId": "4",
-          "UsedAs": "InputLog"
-        },
+          "ResourceId": "8b8ceaae-1425-4bf6-8316-cd432c007638",
+          "UsedAs": "InputStream"
+        }
+      ],
+      "Children": null
+    }
+  },
+  "44a84f3b-1e5b-44ce-8fc7-3b86e45c8f91": {
+    "CreationDate": "1687623917081",
+    "ResourceInfo": {
+      "ResourceLabel": "Filtered Alphabet Stream",
+      "ResourceType": "EventStream",
+      "Host": "mqtt.eclipseprojects.io",
+      "FileExtension": null,
+      "StreamTopic": "FilteredAlphabetStream",
+      "Description": "Filtered stream",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000/miner",
+        "SourceId": "7",
+        "SourceLabel": "Alphabet Filter Stream"
+      },
+      "Parents": [
         {
-          "ResourceId": "6",
-          "UsedAs": "InputModel"
+          "ResourceId": "8b8ceaae-1425-4bf6-8316-cd432c007638",
+          "UsedAs": "InputStream"
         }
       ],
       "Children": [
         {
-          "ResourceId": "10"
+          "ResourceId": "96945426-16f6-45e1-ae61-b35253d32462"
         }
       ]
+    }
+  },
+  "96945426-16f6-45e1-ae61-b35253d32462": {
+    "CreationDate": "1687623948231",
+    "ResourceInfo": {
+      "ResourceLabel": "Filtered Alphabet Stream Histogram",
+      "ResourceType": "Histogram",
+      "Host": "http://10.209.219.227:4001/resources/",
+      "FileExtension": "json",
+      "StreamTopic": null,
+      "Description": "Miner result from some miner",
+      "Dynamic": false
+    },
+    "GenerationTree": {
+      "GeneratedFrom": {
+        "SourceHost": "http://localhost:5000/miner",
+        "SourceId": "d69a8aae-bdff-43dc-afd2-6d33f1e13925",
+        "SourceLabel": "Cloned Alphabet Miner"
+      },
+      "Parents": [
+        {
+          "ResourceId": "44a84f3b-1e5b-44ce-8fc7-3b86e45c8f91",
+          "UsedAs": "InputStream"
+        }
+      ],
+      "Children": null
     }
   }
 }

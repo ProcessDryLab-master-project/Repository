@@ -1,0 +1,224 @@
+[
+    {
+        "alignment": [
+            [
+                "Seat Guests",
+                "Seat Guests"
+            ],
+            [
+                "Take Order",
+                "Take Order"
+            ],
+            [
+                "Send Order",
+                "Send Order"
+            ],
+            [
+                "Complete Order",
+                "Complete Order"
+            ],
+            [
+                "Take Another Order",
+                "Take Another Order"
+            ],
+            [
+                "Send Order",
+                "Send Order"
+            ],
+            [
+                "Complete Order",
+                "Complete Order"
+            ],
+            [
+                "Take Payment",
+                "Take Payment"
+            ]
+        ],
+        "cost": 0,
+        "visited_states": 8,
+        "queued_states": 26,
+        "traversed_arcs": 26,
+        "lp_solved": 1,
+        "fitness": 1.0,
+        "bwc": 130000
+    },
+    {
+        "alignment": [
+            [
+                "Seat Guests",
+                "Seat Guests"
+            ],
+            [
+                "Take Order",
+                "Take Order"
+            ],
+            [
+                "Send Order",
+                "Send Order"
+            ],
+            [
+                "Complete Order",
+                "Complete Order"
+            ],
+            [
+                "Take Payment",
+                "Take Payment"
+            ]
+        ],
+        "cost": 0,
+        "visited_states": 5,
+        "queued_states": 16,
+        "traversed_arcs": 16,
+        "lp_solved": 1,
+        "fitness": 1.0,
+        "bwc": 100000
+    },
+    {
+        "alignment": [
+            [
+                "Seat Guests",
+                "Seat Guests"
+            ],
+            [
+                "Take Order",
+                "Take Order"
+            ],
+            [
+                "Send Order",
+                "Send Order"
+            ],
+            [
+                "Complete Order",
+                "Complete Order"
+            ],
+            [
+                "Take Payment",
+                "Take Payment"
+            ]
+        ],
+        "cost": 0,
+        "visited_states": 5,
+        "queued_states": 16,
+        "traversed_arcs": 16,
+        "lp_solved": 1,
+        "fitness": 1.0,
+        "bwc": 100000
+    },
+    {
+        "alignment": [
+            [
+                "Seat Guests",
+                "Seat Guests"
+            ],
+            [
+                "Take Order",
+                "Take Order"
+            ],
+            [
+                "Send Order",
+                "Send Order"
+            ],
+            [
+                "Complete Order",
+                "Complete Order"
+            ],
+            [
+                "Take Payment",
+                "Take Payment"
+            ]
+        ],
+        "cost": 0,
+        "visited_states": 5,
+        "queued_states": 16,
+        "traversed_arcs": 16,
+        "lp_solved": 1,
+        "fitness": 1.0,
+        "bwc": 100000
+    },
+    {
+        "alignment": [
+            [
+                "Seat Guests",
+                "Seat Guests"
+            ],
+            [
+                "Take Order",
+                "Take Order"
+            ],
+            [
+                "Send Order",
+                "Send Order"
+            ],
+            [
+                "Complete Order",
+                "Complete Order"
+            ],
+            [
+                "Take Another Order",
+                "Take Another Order"
+            ],
+            [
+                "Send Order",
+                "Send Order"
+            ],
+            [
+                "Complete Order",
+                "Complete Order"
+            ],
+            [
+                "Take Another Order",
+                "Take Another Order"
+            ],
+            [
+                "Send Order",
+                "Send Order"
+            ],
+            [
+                "Complete Order",
+                "Complete Order"
+            ],
+            [
+                "Take Payment",
+                "Take Payment"
+            ]
+        ],
+        "cost": 0,
+        "visited_states": 11,
+        "queued_states": 36,
+        "traversed_arcs": 36,
+        "lp_solved": 1,
+        "fitness": 1.0,
+        "bwc": 160000
+    },
+    {
+        "alignment": [
+            [
+                "Seat Guests",
+                "Seat Guests"
+            ],
+            [
+                "Take Order",
+                "Take Order"
+            ],
+            [
+                "Send Order",
+                "Send Order"
+            ],
+            [
+                "Complete Order",
+                "Complete Order"
+            ],
+            [
+                "Take Payment",
+                "Take Payment"
+            ]
+        ],
+        "cost": 0,
+        "visited_states": 5,
+        "queued_states": 16,
+        "traversed_arcs": 16,
+        "lp_solved": 1,
+        "fitness": 1.0,
+        "bwc": 100000
+    }
+]

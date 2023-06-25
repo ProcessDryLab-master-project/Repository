@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="alpha_classic_net_1687528249.1868021" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text>alpha_classic_net_1687528249.1868021</text>
+    </name>
+    <page id="n0">
+      <place id="({'Send Order'}, {'Complete Order'})">
+        <name>
+          <text>({'Send Order'}, {'Complete Order'})</text>
+        </name>
+      </place>
+      <place id="({'Take Another Order', 'Take Order'}, {'Send Order'})">
+        <name>
+          <text>({'Take Another Order', 'Take Order'}, {'Send Order'})</text>
+        </name>
+      </place>
+      <place id="end">
+        <name>
+          <text>end</text>
+        </name>
+      </place>
+      <place id="({'Seat Guests'}, {'Take Order'})">
+        <name>
+          <text>({'Seat Guests'}, {'Take Order'})</text>
+        </name>
+      </place>
+      <place id="({'Complete Order'}, {'Take Another Order', 'Take Payment'})">
+        <name>
+          <text>({'Complete Order'}, {'Take Another Order', 'Take Payment'})</text>
+        </name>
+      </place>
+      <place id="start">
+        <name>
+          <text>start</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <transition id="Take Another Order">
+        <name>
+          <text>Take Another Order</text>
+        </name>
+      </transition>
+      <transition id="Take Payment">
+        <name>
+          <text>Take Payment</text>
+        </name>
+      </transition>
+      <transition id="Seat Guests">
+        <name>
+          <text>Seat Guests</text>
+        </name>
+      </transition>
+      <transition id="Complete Order">
+        <name>
+          <text>Complete Order</text>
+        </name>
+      </transition>
+      <transition id="Send Order">
+        <name>
+          <text>Send Order</text>
+        </name>
+      </transition>
+      <transition id="Take Order">
+        <name>
+          <text>Take Order</text>
+        </name>
+      </transition>
+      <arc id="2234425732640" source="start" target="Seat Guests"/>
+      <arc id="2234425860160" source="Seat Guests" target="({'Seat Guests'}, {'Take Order'})"/>
+      <arc id="2234425732928" source="Take Payment" target="end"/>
+      <arc id="2234425860448" source="Send Order" target="({'Send Order'}, {'Complete Order'})"/>
+      <arc id="2234425860256" source="({'Seat Guests'}, {'Take Order'})" target="Take Order"/>
+      <arc id="2234425860544" source="({'Send Order'}, {'Complete Order'})" target="Complete Order"/>
+      <arc id="2234425860736" source="Take Another Order" target="({'Take Another Order', 'Take Order'}, {'Send Order'})"/>
+      <arc id="2234425860832" source="Take Order" target="({'Take Another Order', 'Take Order'}, {'Send Order'})"/>
+      <arc id="2234425860928" source="({'Take Another Order', 'Take Order'}, {'Send Order'})" target="Send Order"/>
+      <arc id="2234425861120" source="Complete Order" target="({'Complete Order'}, {'Take Another Order', 'Take Payment'})"/>
+      <arc id="2234425861216" source="({'Complete Order'}, {'Take Another Order', 'Take Payment'})" target="Take Another Order"/>
+      <arc id="2234425861312" source="({'Complete Order'}, {'Take Another Order', 'Take Payment'})" target="Take Payment"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="end">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>
