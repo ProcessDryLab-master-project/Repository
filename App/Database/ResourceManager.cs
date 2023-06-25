@@ -174,9 +174,10 @@ namespace Repository.App.Database
                 {
                     Console.WriteLine("Child id: " + childId);
                     var childMetadata = metadataDb.GetMetadataObjectById(childId);
-                    if (childMetadata != null) 
+                    if (IncludeChild(metadataObject, childMetadata))
+                    //if (childMetadata != null)
                     {
-                        childMetadata.ResourceId = childId;
+                        childMetadata!.ResourceId = childId;
                         childrenMetadataList.Add(childMetadata);
                     }
                 }
@@ -187,6 +188,22 @@ namespace Repository.App.Database
             {
                 return Results.BadRequest(e);
             }
+        }
+        private bool IncludeChild(MetadataObject parent, MetadataObject? child)
+        {
+            //if (parent == null) return false;
+            //if (parent.ResourceInfo == null) return false;
+            string? parentResourceType = parent?.ResourceInfo?.ResourceType;
+            if (parentResourceType == null) return false;
+
+            //if (child == null) return false;
+            //if (child.resourceinfo == null) return false;
+            string? childResourceType = child?.ResourceInfo?.ResourceType;
+            if (childResourceType == null) return false;
+
+            if(parentResourceType.Equals("EventLog") && childResourceType.Equals("Histogram")) return false;
+
+            return true;
         }
         public IResult GetMetadataObjectStringById(string resourceId)
         {
